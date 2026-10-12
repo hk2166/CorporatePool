@@ -32,7 +32,7 @@ in the same PR that finishes the task. See "Order and parallelism" for what can 
 - Each task's **Done when** list is the acceptance test. Add unit tests for anything in
   lld §§2–5 (seats, score, allocation, promotion) — that logic is the product.
 - Secrets only in `.env.local` / Vercel env vars. Commit an updated `.env.example` instead.
-- Local dev runs against the Supabase CLI (`supabase start`, Dockerised Postgres with PostGIS);
+- Local dev runs against the Supabase CLI (`npx supabase start`, Dockerised Postgres with PostGIS);
   migrations live in `supabase/migrations/`.
 
 ## Working decisions (open questions pinned for the build)
@@ -73,11 +73,17 @@ Phases run in order (1 → 8). Exceptions:
 
 ## Phase 0 — human setup (Hemant, not agents)
 
-- [ ] **H-1** Create a Supabase project (free tier) and a Vercel project linked to this repo
+Step-by-step guide: [docs/setup.md](docs/setup.md).
+
+- [ ] **H-1** Create a Supabase project (free tier, Mumbai region) and a Vercel account linked to
+      GitHub. Import the repo into Vercel only after T-1.1 has merged.
 - [ ] **H-2** Google OAuth client; put the credentials in Supabase Auth → Google
-- [ ] **H-3** Generate VAPID keys (`npx web-push generate-vapid-keys`); add all keys/URLs to
-      Vercel env + `.env.local` (agents list the exact names in `.env.example` as they go)
-- [ ] **H-4** Install Docker + Supabase CLI locally so `supabase start` works for agents
+- [x] **H-3** Generate VAPID keys (`npx web-push generate-vapid-keys`) and put them in
+      `.env.local` (Vercel later), along with `CRON_SECRET` (`openssl rand -hex 32`).
+      `.env.example` lists every Phase 0 variable; agents add new ones to it as they go.
+- [x] **H-4** Docker installed and running (checked 2026-10-12). Homebrew can't install the
+      Supabase CLI on this Mac, so it comes in T-1.1 as a pinned npm devDependency
+      (`npx supabase …`).
 - [ ] **H-5** Write the corridor landmark list: about 30 real stops on the Palwal → Gurgaon
       route(s), each with name, lat and lng, saved as `supabase/seed/landmarks.csv`. **For now
       the file holds 20 demo stops** (names start with `Demo`, evenly spaced on a straight line
@@ -87,8 +93,11 @@ Phases run in order (1 → 8). Exceptions:
 
 ## Phase 1 — foundation
 
-- [ ] **T-1.1 Scaffold.** Next.js 15 + TS strict + Tailwind + ESLint/Prettier; `supabase init`;
-      GitHub Actions CI: typecheck, lint, unit tests on PR. *Done when:* CI is green on a PR
+- [ ] **T-1.1 Scaffold.** Next.js (current stable) + TS strict + Tailwind + ESLint/Prettier;
+      add `supabase` as a pinned devDependency and run `npx supabase init` (keep the existing
+      `supabase/seed/`); in `supabase/config.toml`, turn on
+      `[auth.external.google]`, reading `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `_SECRET`
+      from the environment; GitHub Actions CI: typecheck, lint, unit tests on PR. *Done when:* CI is green on a PR
       that touches a sample component and a sample test.
 - [ ] **T-1.2 Schema migration.** Entire data model from lld "Data model" + db-diagram.md as SQL
       migrations: every table in db-diagram.md (15, including `signup_tokens`, `blocks` and
