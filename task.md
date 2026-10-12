@@ -28,6 +28,8 @@ in the same PR that finishes the task. See "Order and parallelism" for what can 
 - Every change to seat counts goes through `AllocationService` and the conditional UPDATE
   (lld §2). No other code may touch `rides.seats_left`.
 - Reference feature IDs in commit messages: `feat(F-C1): search api`.
+- **No co-authors.** Never add `Co-Authored-By:` trailers, "Generated with …" lines or any other
+  attribution to commits or PRs.
 - One task = one branch = one PR. Keep PRs reviewable (< ~500 lines where possible).
 - Each task's **Done when** list is the acceptance test. Add unit tests for anything in
   lld §§2–5 (seats, score, allocation, promotion) — that logic is the product.
