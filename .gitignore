@@ -1,6 +1,18 @@
 # Claude Code session worktrees live here; never commit them
 .claude/worktrees/
 
+# Next.js build output and tooling
+/.next/
+/out/
+/build
+/coverage
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+*.pem
+npm-debug.log*
+.env*.local
+
 .DS_Store
 .env
 .env.local
