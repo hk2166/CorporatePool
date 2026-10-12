@@ -1,0 +1,7 @@
+# Claude Code session worktrees live here; never commit them
+.claude/worktrees/
+
+.DS_Store
+.env
+.env.local
+node_modules/
