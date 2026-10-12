@@ -15,7 +15,9 @@ How people use the app for the main jobs, step by step. Feature IDs in brackets 
    numbers, no plates yet [F-F1].
 5. Taps **Request seat** on the 8:00 car, and ticks **Any car that fits is fine** [F-D1, F-C4].
 6. Gets one of:
-   - **Confirmed** — a seat was free and the ride wasn't oversubscribed [F-D3];
+   - **Requested**: before the allocation time (10 PM by default), seats aren't given out yet.
+     At 10 PM they go to the most reliable riders [F-D2];
+   - **Confirmed**: after 10 PM, a seat was still free [F-D3];
    - **Waitlisted #2** — the car is full or still allocating; they keep their place in line
      [F-D4];
    - **Placed in another car** — the 8:00 was full, but the 8:15 had room [F-D6].
@@ -30,8 +32,8 @@ Target: steps 3 to 6 take under a minute.
 1. Signs in with Google, adds name and phone [F-A1, F-A2].
 2. Adds the car **once**: photos, model, colour, number plate, seats; UPI ID optional
    [F-A3, F-A5].
-3. Saves the **usual ride** once: stops in order (*Palwal bus stand → Hodal Chowk → Shankar
-   Chowk*), departure 8:00, 3 seats, ₹150 per seat, "AC, no smoking" [F-B1].
+3. Saves the **usual ride** once: stops in order (*Palwal bus stand → stops on the way →
+   Shankar Chowk*), departure 8:00, 3 seats, ₹150 per seat, "AC, no smoking" [F-B1].
 
 Five minutes, one time. Never again.
 
@@ -51,16 +53,17 @@ Five minutes, one time. Never again.
 
 The 8:00 car has 3 seats. By 10 PM, five commuters have requested.
 
-1. While the ride is under-subscribed, requests confirm instantly [F-D3].
-2. When it's oversubscribed, allocation ranks the requests by **reliability score** — built from
+1. Until 10 PM, requests only queue. Nobody is confirmed yet, so a rider who is quick on the
+   phone but unreliable can't jump the line [F-D2].
+2. At 10 PM, allocation ranks the requests by **reliability score**, which is built from
    rides completed, no-shows and late cancellations [F-D2, F-F3]. The three most reliable get the
    seats; the other two are waitlisted in score order [F-D4].
 3. The two waitlisted riders ticked "any car is fine", so the app looks for other matching cars
    with free seats and offers those [F-D6].
 4. Everyone is notified of where they stand [F-E1]. Nobody messages anybody.
 
-*(Exactly when ranking applies vs instant confirmation — a fixed allocation window vs first-come —
-is open question [Q4](decisions.md#q4-how-allocation-works).)*
+*(This is option A of [Q4](decisions.md#q4-how-allocation-works), the proposed default.
+Requests after 10 PM confirm instantly while seats remain.)*
 
 ## 5. A confirmed rider cancels at 7 AM
 

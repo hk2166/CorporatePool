@@ -18,7 +18,7 @@ updated.
 | D8 | The app manages seats **automatically**: live counts, waitlist, auto-promotion, cross-car matching | Hemant, 2026-10-12: "the app should manage automatically how many seats are still left… so no cab should go empty". |
 | D9 | Automatic rider ranking by **reliability** (no-shows, late cancels, completed rides); when seats are scarce, reliable riders win | Hemant, 2026-10-12: "rank the users… give the users with least no-shows the most seats". |
 | D10 | Score rules are public in-app; everyone can see their own score and history; misses stop counting after 90 days | A hidden ranking that costs people seats would feel rigged and kill trust. |
-| D11 | Rides are ordered lists of landmark stops, not drawn road routes | Needs no routing API (free), and matches how commuters already talk ("via Hodal Chowk"). Route-line matching can come later. |
+| D11 | Rides are ordered lists of landmark stops, not drawn road routes | Needs no routing API (free), and matches how commuters already talk ("via <landmark>"). Route-line matching can come later. |
 | D12 | Phone numbers, car photos and plates visible only after a confirmed booking | Privacy by default. |
 
 ## Open questions
@@ -44,7 +44,7 @@ Anyone with a Google account, or invite-only / approved by an admin, like today'
 - **Proposed default:** invite-link only at launch (the group admin posts the link), open
   signup later. Cheap to build, mirrors how the groups work now.
 
-### Q4. How does allocation work, exactly?
+### Q4. How allocation works
 Decided ([D9]) that reliable riders win when seats are scarce. Still open: **when** does ranking
 apply?
 - **Option A — allocation window:** a ride collects requests for its first N hours (say, until

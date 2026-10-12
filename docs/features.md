@@ -64,14 +64,14 @@ The owner's daily job must be one tap. Everything slow happens once, at setup.
 
 ## D. Seats and automatic allocation
 
-The heart of the app. Nobody manages seats by hand; see [lld.md](lld.md#seat-allocation) for the
+The heart of the app. Nobody manages seats by hand; see [lld.md](lld.md#4-seat-allocation) for the
 mechanics.
 
 | ID | Feature | Priority | Status | Notes |
 |---|---|---|---|---|
 | F-D1 | Request seats with a pickup stop and a drop stop | v1 | Proposed | A request does not hold a seat. |
 | F-D2 | Automatic allocation: when requests outnumber seats, the most reliable commuters get them | v1 | Proposed | Ranked by the reliability score (F-F3). How the timing window works is [Q4](decisions.md#q4-how-allocation-works). |
-| F-D3 | Instant confirmation while seats are free and the ride is not oversubscribed | v1 | Proposed | Exact interplay with F-D2 is part of Q4. |
+| F-D3 | Instant confirmation after the allocation time, while seats remain | v1 | Proposed | Before the allocation time, requests queue for F-D2. See Q4. |
 | F-D4 | Waitlist, ordered by reliability, with automatic promotion when a seat opens | v1 | Proposed | A confirmed rider cancels → the next waitlisted rider is confirmed and notified, automatically. |
 | F-D5 | Seat counts always correct: every confirm/cancel updates the count in the same transaction | v1 | Proposed | Two riders can never get the same seat. See [lld.md](lld.md#2-the-last-seat). |
 | F-D6 | Cross-car matching: riders left over on a full car are offered seats in other matching cars | v1 | Proposed | "No car goes empty while someone is waiting." Uses F-C4. |
@@ -96,7 +96,7 @@ mechanics.
 |---|---|---|---|---|
 | F-F1 | Phone number, car photos and plate hidden until a seat is confirmed | v1 | Proposed | |
 | F-F2 | Owner marks no-shows at pickup (part of F-B8) | v1 | Proposed | |
-| F-F3 | Reliability score per commuter, computed automatically from completed rides, no-shows and late cancellations | v1 | Proposed | Drives allocation (F-D2) and the waitlist order (F-D4). Formula in [lld.md](lld.md#reliability-score); old misses stop counting after 90 days. |
+| F-F3 | Reliability score per commuter, computed automatically from completed rides, no-shows and late cancellations | v1 | Proposed | Drives allocation (F-D2) and the waitlist order (F-D4). Formula in [lld.md](lld.md#3-reliability-score); old misses stop counting after 90 days. |
 | F-F4 | The score's rules are public inside the app, and your own score and history are always visible to you | v1 | Proposed | Ranking people in secret breeds distrust. |
 | F-F5 | Dispute a no-show ("the car never came") | v1.1 | Proposed | Protects riders from unfair marks; disputes go to the admin. |
 | F-F6 | Owner reliability too: late cancels and "car never came" count against owners | v1.1 | Proposed | Reliability must cut both ways. |

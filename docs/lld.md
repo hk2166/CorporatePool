@@ -40,6 +40,9 @@ reliability_events(id, user_id, booking_id, kind: COMPLETED|NO_SHOW|LATE_CANCEL|
 reviews(booking_id, from_user, to_user, stars, comment)               -- v1.1
 reports(id, by_user, about_user, ride_id?, reason, status)
 push_subscriptions(user_id, endpoint, p256dh, auth)
+signup_tokens(token, created_by → users, max_uses, used_count, expires_at)  -- invite links (Q3)
+blocks(blocker_id, blocked_id)   PRIMARY KEY(blocker_id, blocked_id)          -- F-F8
+admin_actions(id, admin_id, action, target_user?, target_ride?, reason, created_at)  -- F-G4 audit
 notifications_outbox(id, user_id, kind, payload jsonb, status, created_at)  -- written in the same
                                                    -- transaction, drained by the push sender (§6)
 ```
@@ -112,7 +115,9 @@ therefore always real (F-D5), and Supabase Realtime streams the new value to eve
 page (F-C3). A cancellation is the mirror image: `seats_left + :n`, FULL back to OPEN, then
 promotion (§5).
 
-## 3. Reliability score (F-F3)
+## 3. Reliability score
+
+Feature: F-F3.
 
 Requirements: reward turning up, punish no-shows hardest, let people recover, stay explainable
 on one screen (D10).
@@ -133,7 +138,9 @@ clamped to 0..100
 - v1.1 adds the same treatment for owners (`OWNER_LATE_CANCEL`, F-F6) and disputes that void an
   event (F-F5).
 
-## 4. Seat allocation (F-D2/D3, Q4 option A as proposed)
+## 4. Seat allocation
+
+Features: F-D2 and F-D3. Follows Q4 option A, the proposed default.
 
 A ride goes live in the evening and collects requests until `allocation_at` (default 10 PM, per
 Q6). Then:
@@ -153,7 +160,9 @@ allocate(ride):                          # pg_cron, every 5 min, for rides past 
 - `created_at` breaks score ties, so among equals it's first-come.
 - The whole thing is one transaction per ride; at 300 rides/day this is trivial load.
 
-## 5. No car goes empty (F-D4, F-D6)
+## 5. No car goes empty
+
+Features: F-D4 and F-D6.
 
 Two mechanisms, one goal:
 

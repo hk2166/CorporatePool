@@ -136,6 +136,29 @@ direction LR
     +timestamptz created_at
   }
 
+  class SignupToken {
+    +text token
+    +uuid created_by
+    +int max_uses
+    +int used_count
+    +timestamptz expires_at
+  }
+
+  class Block {
+    +uuid blocker_id
+    +uuid blocked_id
+  }
+
+  class AdminAction {
+    +uuid id
+    +uuid admin_id
+    +text action
+    +uuid target_user
+    +uuid target_ride
+    +text reason
+    +timestamptz created_at
+  }
+
   class RideStatus {
     <<enumeration>>
     OPEN
@@ -183,6 +206,9 @@ direction LR
   User "1" --> "*" Report : files / is about
   User "1" --> "*" PushSubscription : devices
   User "1" --> "*" NotificationOutbox : pending pushes
+  User "1" --> "*" SignupToken : invites with
+  User "1" --> "*" Block : blocks
+  User "1" --> "*" AdminAction : performs (admin)
 
   Ride ..> RideStatus
   Booking ..> BookingStatus
