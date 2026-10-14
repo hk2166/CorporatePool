@@ -55,6 +55,38 @@ dashboard.
 
 ## H-2. Google sign-in
 
+Two scripts do most of the typing. Google has no API or `gcloud` command for creating a
+"Sign in with Google" client, so four console pages are still clicks, but the first script tells
+you exactly what to enter on each.
+
+1. Run the setup script, either in [Google Cloud Shell](https://shell.cloud.google.com) (already
+   signed in) or on your Mac after `gcloud auth login`:
+
+   ```bash
+   cd /Users/hemant/Desktop/personal/CorporatePool && bash scripts/gcp-oauth-setup.sh
+   ```
+
+   - It creates a project called CorporatePool and prints the four pages with what to enter on
+     each. It doesn't change your gcloud settings.
+   - **Cloud Shell:** upload `scripts/gcp-oauth-setup.sh` there and run `bash gcp-oauth-setup.sh`.
+     It doesn't need the rest of the repo.
+   - **If you've done H-1:** add your Supabase project ref (`bash scripts/gcp-oauth-setup.sh
+     <ref>`), and the script also prints the live redirect URI and the dashboard link.
+2. Follow the printed steps. When the client is created, click **Download JSON** in the dialog.
+   Google shows the secret only once.
+3. Write both values into `.env.local`:
+
+   ```bash
+   cd /Users/hemant/Desktop/personal/CorporatePool && node scripts/google-oauth-env.mjs ~/Downloads/client_secret_*.json
+   ```
+
+   - It never prints the secret, and it keeps the other lines in the file.
+   - It warns if a redirect URI is missing from the client.
+4. Paste the client ID and secret from the JSON into the Supabase dashboard (step 4 below), then
+   delete the JSON file.
+
+### What the script's steps are, if you'd rather click through yourself
+
 1. Go to [console.cloud.google.com](https://console.cloud.google.com) and create a project named
    `CorporatePool`.
 2. Open **Google Auth Platform** (in the older interface: *APIs & Services → OAuth consent
