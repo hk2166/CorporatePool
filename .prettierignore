@@ -1,0 +1,6 @@
+# Docs are wrapped by hand; Prettier would rewrite their tables and emphasis.
+*.md
+# Generated or data files
+package-lock.json
+*.csv
+supabase/.temp/
