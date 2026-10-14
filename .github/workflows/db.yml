@@ -1,0 +1,44 @@
+name: Database
+
+# Applies every migration to a fresh database and runs the pgTAP tests in supabase/tests/.
+# Only runs when something that can change the database changes, to save Actions minutes
+# (the repo is private: 2,000 free minutes a month).
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/db.yml"
+      - "package.json"
+      - "package-lock.json"
+  push:
+    branches: [main]
+    paths:
+      - "supabase/**"
+      - ".github/workflows/db.yml"
+      - "package.json"
+      - "package-lock.json"
+
+permissions:
+  contents: read
+
+# A new push to the same PR cancels the run that's still going.
+concurrency:
+  group: db-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Migrations and database tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Starts only the Postgres container, which applies every migration. The tests need
+      # nothing else, and skipping the other services saves several minutes per run.
+      - run: npm run db:start:db-only
+      - run: npm run test:db

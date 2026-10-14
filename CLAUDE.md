@@ -24,6 +24,9 @@ The build plan is [task.md](task.md); design docs are in [docs/](docs/).
 - Local database (needs Docker Desktop running): `npm run db:start`, `db:status` (URLs and local
   keys), `db:reset` (re-applies migrations and seed), `db:stop`. `db:start` and `db:reset` pass
   only the two Google sign-in values from `.env.local` to the CLI. Migrations go in
-  `supabase/migrations/`.
+  `supabase/migrations/` (create with `npx supabase migration new <name>`).
+- Database tests: pgTAP files in `supabase/tests/`, run with `npm run test:db` against the local
+  database. `npm run db:start:db-only` starts just Postgres, which is all the tests need; CI does
+  the same. Every table gets Row-Level Security enabled in the migration that creates it.
 - Do not guess stop names or coordinates. Landmarks come from `supabase/seed/landmarks.csv`
   (task.md H-5).

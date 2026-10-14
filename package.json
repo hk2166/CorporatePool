@@ -10,9 +10,11 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:db": "supabase test db",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:start": "env $(grep -E '^SUPABASE_AUTH_EXTERNAL_GOOGLE_(CLIENT_ID|SECRET)=' .env.local 2>/dev/null | xargs) supabase start",
+    "db:start:db-only": "supabase start -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor",
     "db:stop": "supabase stop",
     "db:reset": "env $(grep -E '^SUPABASE_AUTH_EXTERNAL_GOOGLE_(CLIENT_ID|SECRET)=' .env.local 2>/dev/null | xargs) supabase db reset",
     "db:status": "supabase status"
