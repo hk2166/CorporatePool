@@ -7,7 +7,8 @@ import { readFileSync } from "node:fs";
 
 const args = process.argv.slice(2);
 const strict = args.includes("--strict");
-const path = args.find((a) => !a.startsWith("--")) ?? "supabase/seed/landmarks.csv";
+const path =
+  args.find((a) => !a.startsWith("--")) ?? "supabase/seed/landmarks.csv";
 const COLUMNS = ["name", "kind", "lat", "lng", "notes"];
 const KINDS = ["town", "landmark", "metro", "office"];
 // A rough box around Palwal, Faridabad and Gurgaon. A point outside it is
@@ -23,12 +24,16 @@ function splitCsvLine(line) {
   for (let i = 0; i < line.length; i++) {
     const c = line[i];
     if (quoted) {
-      if (c === '"' && line[i + 1] === '"') { field += '"'; i++; }
-      else if (c === '"') quoted = false;
+      if (c === '"' && line[i + 1] === '"') {
+        field += '"';
+        i++;
+      } else if (c === '"') quoted = false;
       else field += c;
     } else if (c === '"') quoted = true;
-    else if (c === ",") { fields.push(field); field = ""; }
-    else field += c;
+    else if (c === ",") {
+      fields.push(field);
+      field = "";
+    } else field += c;
   }
   fields.push(field);
   return fields.map((f) => f.trim());
@@ -64,7 +69,9 @@ lines.slice(1).forEach((line, i) => {
   const fields = splitCsvLine(line);
   // notes is optional, so a line may stop after lng
   if (fields.length > COLUMNS.length) {
-    errors.push(`Line ${row}: ${fields.length} columns, expected ${COLUMNS.length}; put notes that contain commas in "quotes"`);
+    errors.push(
+      `Line ${row}: ${fields.length} columns, expected ${COLUMNS.length}; put notes that contain commas in "quotes"`,
+    );
     return;
   }
   if (fields.length < COLUMNS.length - 1) {
@@ -76,30 +83,55 @@ lines.slice(1).forEach((line, i) => {
   const lng = Number(lngText);
 
   if (!name) errors.push(`Line ${row}: name is empty`);
-  if (!KINDS.includes(kind)) errors.push(`Line ${row}: kind "${kind}" must be one of ${KINDS.join(", ")}`);
-  if (latText === "" || lngText === "" || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+  if (!KINDS.includes(kind))
+    errors.push(
+      `Line ${row}: kind "${kind}" must be one of ${KINDS.join(", ")}`,
+    );
+  if (
+    latText === "" ||
+    lngText === "" ||
+    !Number.isFinite(lat) ||
+    !Number.isFinite(lng)
+  ) {
     errors.push(`Line ${row}: lat and lng must be numbers`);
     return;
   }
-  if (lat < BOX.latMin || lat > BOX.latMax || lng < BOX.lngMin || lng > BOX.lngMax) {
-    errors.push(`Line ${row}: ${lat}, ${lng} is outside the Palwal–Gurgaon area (lat and lng swapped?)`);
+  if (
+    lat < BOX.latMin ||
+    lat > BOX.latMax ||
+    lng < BOX.lngMin ||
+    lng > BOX.lngMax
+  ) {
+    errors.push(
+      `Line ${row}: ${lat}, ${lng} is outside the Palwal–Gurgaon area (lat and lng swapped?)`,
+    );
     return;
   }
-  const decimals = Math.min((latText.split(".")[1] ?? "").length, (lngText.split(".")[1] ?? "").length);
-  if (decimals < 4) warnings.push(`Line ${row}: "${name}" has only ${decimals} decimal place${decimals === 1 ? "" : "s"}; use 5 so the point is accurate to about a metre`);
+  const decimals = Math.min(
+    (latText.split(".")[1] ?? "").length,
+    (lngText.split(".")[1] ?? "").length,
+  );
+  if (decimals < 4)
+    warnings.push(
+      `Line ${row}: "${name}" has only ${decimals} decimal place${decimals === 1 ? "" : "s"}; use 5 so the point is accurate to about a metre`,
+    );
 
   for (const other of stops) {
     if (other.name.toLowerCase() === name.toLowerCase()) {
       errors.push(`Line ${row}: "${name}" is already on line ${other.row}`);
     } else if (metresBetween(other, { lat, lng }) < TOO_CLOSE_M) {
-      warnings.push(`Line ${row}: "${name}" is within ${TOO_CLOSE_M} m of "${other.name}" (line ${other.row}); same stop twice?`);
+      warnings.push(
+        `Line ${row}: "${name}" is within ${TOO_CLOSE_M} m of "${other.name}" (line ${other.row}); same stop twice?`,
+      );
     }
   }
   stops.push({ row, name, lat, lng });
 });
 
 if (lines.length > 0 && stops.length === 0 && errors.length === 0) {
-  errors.push("No stops yet. Add one line per stop under the header (see docs/setup.md, H-5)");
+  errors.push(
+    "No stops yet. Add one line per stop under the header (see docs/setup.md, H-5)",
+  );
 }
 const demoCount = stops.filter((s) => /^demo\b/i.test(s.name)).length;
 if (demoCount > 0) {
@@ -107,7 +139,9 @@ if (demoCount > 0) {
   (strict ? errors : warnings).push(message);
 }
 if (stops.length > 0 && stops.length < 20) {
-  warnings.push(`${stops.length} stops; aim for 20–40 so riders along the route find a stop near them`);
+  warnings.push(
+    `${stops.length} stops; aim for 20–40 so riders along the route find a stop near them`,
+  );
 }
 
 for (const w of warnings) console.log(`! ${w}`);
