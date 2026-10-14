@@ -11,7 +11,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:start": "env $(grep -E '^SUPABASE_AUTH_EXTERNAL_GOOGLE_(CLIENT_ID|SECRET)=' .env.local 2>/dev/null | xargs) supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "env $(grep -E '^SUPABASE_AUTH_EXTERNAL_GOOGLE_(CLIENT_ID|SECRET)=' .env.local 2>/dev/null | xargs) supabase db reset",
+    "db:status": "supabase status"
   },
   "dependencies": {
     "next": "16.4.0",
@@ -31,6 +35,7 @@
     "eslint-config-prettier": "^10.1.8",
     "jsdom": "^29.1.1",
     "prettier": "^3.9.10",
+    "supabase": "2.120.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^5.0.4"

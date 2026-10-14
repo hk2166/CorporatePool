@@ -78,8 +78,10 @@ Phases run in order (1 → 8). Exceptions:
 Step-by-step guide: [docs/setup.md](docs/setup.md).
 
 - [ ] **H-1** Create a Supabase project (free tier, Mumbai region) and a Vercel account linked to
-      GitHub. Import the repo into Vercel only after T-1.1 has merged.
-- [ ] **H-2** Google OAuth client; put the credentials in Supabase Auth → Google
+      GitHub. Import the repo into Vercel only after T-1.1 has merged. Supabase project done
+      2026-10-14; Vercel still to do.
+- [x] **H-2** Google OAuth client; put the credentials in Supabase Auth → Google. Done and
+      checked 2026-10-14: both callbacks accepted by Google, email sign-up off on the hosted project.
 - [x] **H-3** Generate VAPID keys (`npx web-push generate-vapid-keys`) and put them in
       `.env.local` (Vercel later), along with `CRON_SECRET` (`openssl rand -hex 32`).
       `.env.example` lists every Phase 0 variable; agents add new ones to it as they go.
@@ -95,7 +97,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 
 ## Phase 1 — foundation
 
-- [ ] **T-1.1 Scaffold.** Next.js (current stable) + TS strict + Tailwind + ESLint/Prettier;
+- [x] **T-1.1 Scaffold.** Next.js (current stable) + TS strict + Tailwind + ESLint/Prettier;
       add `supabase` as a pinned devDependency and run `npx supabase init` (keep the existing
       `supabase/seed/`); in `supabase/config.toml`, turn on
       `[auth.external.google]`, reading `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `_SECRET`
