@@ -155,6 +155,7 @@ direction LR
     +text action
     +uuid target_user
     +uuid target_ride
+    +uuid target_report
     +text reason
     +timestamptz created_at
   }

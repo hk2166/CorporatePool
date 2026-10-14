@@ -103,7 +103,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
       `[auth.external.google]`, reading `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `_SECRET`
       from the environment; GitHub Actions CI: typecheck, lint, unit tests on PR. *Done when:* CI is green on a PR
       that touches a sample component and a sample test.
-- [~] **T-1.2 Schema migration.** *(in progress: `chore/db-tests` and the PRs stacked on it)* Entire data model from lld "Data model" + db-diagram.md as SQL
+- [x] **T-1.2 Schema migration.** Entire data model from lld "Data model" + db-diagram.md as SQL
       migrations: every table in db-diagram.md (15, including `signup_tokens`, `blocks` and
       `admin_actions`), enums, the constraints in db-diagram's "what the picture can't
       show" table (unique indexes, `pickup_seq < drop_seq` check, GiST indexes), PostGIS enabled.
