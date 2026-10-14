@@ -21,7 +21,9 @@ The build plan is [task.md](task.md); design docs are in [docs/](docs/).
 
 - Node 22. Supabase CLI runs through npm (`npx supabase …`, pinned as a devDependency); Homebrew
   can't install it on this machine.
-- Local database: `npx supabase start` (needs Docker Desktop running). Migrations go in
+- Local database (needs Docker Desktop running): `npm run db:start`, `db:status` (URLs and local
+  keys), `db:reset` (re-applies migrations and seed), `db:stop`. `db:start` and `db:reset` pass
+  only the two Google sign-in values from `.env.local` to the CLI. Migrations go in
   `supabase/migrations/`.
 - Do not guess stop names or coordinates. Landmarks come from `supabase/seed/landmarks.csv`
   (task.md H-5).
