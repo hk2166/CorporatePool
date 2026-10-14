@@ -31,7 +31,7 @@ direction LR
     +text colour
     +text plate
     +int seats_total
-    +List~text~ photo_urls
+    +List~text~ photo_paths
   }
 
   class Place {

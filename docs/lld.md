@@ -8,11 +8,13 @@ The whole model as one picture: [db-diagram.md](db-diagram.md).
 ## Data model
 
 ```
-users(id, name, photo_url, phone, gender?, upi_vpa?, is_admin,
+users(id, name, photo_url, phone?, gender?, upi_vpa?, is_admin,   -- phone: required by the app
+      -- before booking or offering a ride, but Google sign-in doesn't provide it
       home_place_id?, work_place_id?,                  -- usual commute (F-A6)
       reliability_score, rides_completed, no_shows_90d, late_cancels_90d)
 
-cars(id, owner_id → users, model, colour, plate, seats_total, photo_urls text[])
+cars(id, owner_id → users, model, colour, plate, seats_total,
+     photo_paths text[])                                -- Storage paths; served via signed URLs
 
 places(id, name, geo geography(Point), kind: landmark|metro|office|town, use_count)
 
