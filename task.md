@@ -81,8 +81,11 @@ Phases run in order (1 → 8). Exceptions:
       Vercel env + `.env.local` (agents list the exact names in `.env.example` as they go)
 - [ ] **H-4** Install Docker + Supabase CLI locally so `supabase start` works for agents
 - [ ] **H-5** Write the corridor landmark list: about 30 real stops on the Palwal → Gurgaon
-      route(s), each with name, lat and lng, saved as `supabase/seed/landmarks.csv`. Agents must
-      not guess stops or coordinates.
+      route(s), each with name, lat and lng, saved as `supabase/seed/landmarks.csv`. **For now
+      the file holds 20 demo stops** (names start with `Demo`, evenly spaced on a straight line
+      from roughly Palwal to roughly Shankar Chowk). Build and test against them. Agents must
+      not add, rename or "correct" stops. Only Hemant replaces the demo stops with real ones,
+      and that must happen before launch (T-8.2 checks it).
 
 ## Phase 1 — foundation
 
@@ -99,9 +102,11 @@ Phases run in order (1 → 8). Exceptions:
       on that ride; scores readable by owner + admin; public ride link exposes only route, time,
       price, seats left, owner first name. *Done when:* pgTAP (or SQL test script) proves each
       policy with two test users.
-- [ ] **T-1.4 Seed.** `supabase/seed/`: landmarks loaded from H-5's CSV. Until that file
-      exists, use a two-stop placeholder (Palwal and Shankar Chowk, approximate coordinates,
-      marked `-- placeholder`). Also seed 3 demo users, 1 car, 1 usual ride and 1 live ride. *Done when:*
+- [ ] **T-1.4 Seed.** `supabase/seed/`: load the landmarks from `landmarks.csv` (demo stops
+      for now; the seed must not depend on their names, so real stops can replace them
+      later). Also seed 3 demo users, 1 car, 1 usual ride and 1 live ride. Every seeded person
+      is fake: names start with `Demo`, emails use `example.com`, and phone numbers are
+      obvious placeholders like `+910000000001`. *Done when:*
       fresh reset + seed lets you run the search SQL from lld §1 by hand and get the demo ride.
 
 ## Phase 2 — accounts (F-A1…A6, A9)
@@ -204,7 +209,8 @@ Phases run in order (1 → 8). Exceptions:
       receives a push on Android emulator + desktop.
 - [ ] **T-8.2 Deploy.** Vercel prod + Supabase: all pg_cron schedules live (go-live, allocation,
       sweep, reminders, expiry, score, keep-warm per hld "Scheduled jobs"); `.env.example`
-      complete. *Done when:* the production URL passes T-8.3.
+      complete. *Done when:* the production URL passes T-8.3 and
+      `node scripts/check-landmarks.mjs --strict` passes (no demo stops left).
 - [ ] **T-8.3 E2E smoke (Playwright).** One scripted run of flows 1–5 + 9 of user-flows.md
       against a seeded instance. *Done when:* green in CI nightly.
 
