@@ -155,7 +155,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-4.1 Search API.** lld §1 SQL as an RPC/route: from, to, date, window → matching rides
       ranked by walk_m + time fit. *Done when:* unit tests cover: match, opposite-direction
       excluded (`d.seq > p.seq`), > 2 km excluded, full rides excluded.
-- [ ] **T-4.2 Search UI (F-C1, F-C2).** From/to/when pickers defaulting to saved route ("my
+- [x] **T-4.2 Search UI (F-C1, F-C2).** From/to/when pickers defaulting to saved route ("my
       usual commute, tomorrow"); result cards per flow 1 step 4. *Done when:* flow 1 steps 3–4
       work on mobile.
 - [ ] **T-4.3 Live seat counts (F-C3).** Supabase Realtime on `rides.seats_left` for visible
