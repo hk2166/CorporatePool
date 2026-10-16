@@ -40,7 +40,8 @@ async function ProfileSection({
   const supabase = await createClient();
   const [{ data: profile }, { data: places }] = await Promise.all([
     supabase.rpc("get_my_profile").single(),
-    supabase.from("places").select("id, name").order("name"),
+    // In route order (south to north), like the corridor itself.
+    supabase.rpc("list_places"),
   ]);
   if (!profile) return null;
 
@@ -59,7 +60,7 @@ async function ProfileSection({
       </div>
       <ProfileForm
         welcome={isWelcome}
-        places={places ?? []}
+        places={(places ?? []).map((p) => ({ id: p.id, name: p.name }))}
         profile={{
           name: profile.name,
           phone: profile.phone,
