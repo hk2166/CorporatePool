@@ -15,7 +15,8 @@ export type CurrentUser = {
 // pattern from the Next.js authentication guide). It redirects instead of returning:
 // - to /login when nobody is signed in;
 // - to /auth/join when someone signed in with Google but has no profile yet. It redeems the
-//   invite they opened (Q3), or sends them on to /no-invite if they have none.
+//   invite they opened (Q3), or sends them on to /no-invite if they have none;
+// - to /removed when an admin removed them (T-7.2).
 // It reads cookies, so call it inside a <Suspense> boundary (Cache Components requires that).
 export async function getCurrentUser(): Promise<CurrentUser> {
   const supabase = await createClient();
@@ -28,6 +29,10 @@ export async function getCurrentUser(): Promise<CurrentUser> {
   const { data: profile } = await supabase.rpc("get_my_profile").maybeSingle();
   if (!profile) {
     redirect("/auth/join");
+  }
+  // Removed by an admin (T-7.2): no page is open to them any more.
+  if (profile.removed_at) {
+    redirect("/removed");
   }
 
   return {

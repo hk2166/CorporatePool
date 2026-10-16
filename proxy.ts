@@ -8,6 +8,7 @@ const PUBLIC_PATHS = [
   "/login",
   "/auth/",
   "/no-invite",
+  "/removed",
   "/invite/",
   "/r/",
   "/api/jobs/",

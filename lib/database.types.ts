@@ -329,14 +329,14 @@ isOneToOne: false
                   ]
                 },"rides": {
                   Row: {
-                    "allocation_at": string,"car_id": string,"created_at": string,"depart_at": string,"id": string,"notes": string | null,"owner_id": string,"price_per_seat": number,"reminded_at": string | null,"seats_left": number,"seats_total": number,"status": Database["public"]['Enums']["ride_status"],"usual_ride_id": string | null,"women_only": boolean
+                    "allocation_at": string,"car_id": string,"created_at": string,"depart_at": string,"hidden_at": string | null,"id": string,"notes": string | null,"owner_id": string,"price_per_seat": number,"reminded_at": string | null,"seats_left": number,"seats_total": number,"status": Database["public"]['Enums']["ride_status"],"usual_ride_id": string | null,"women_only": boolean
                   }
                   ComputedFields: never
                   Insert: {
-                    "allocation_at": string,"car_id": string,"created_at"?: string,"depart_at": string,"id"?: string,"notes"?: string | null,"owner_id": string,"price_per_seat": number,"reminded_at"?: string | null,"seats_left": number,"seats_total": number,"status"?: Database["public"]['Enums']["ride_status"],"usual_ride_id"?: string | null,"women_only"?: boolean
+                    "allocation_at": string,"car_id": string,"created_at"?: string,"depart_at": string,"hidden_at"?: string | null,"id"?: string,"notes"?: string | null,"owner_id": string,"price_per_seat": number,"reminded_at"?: string | null,"seats_left": number,"seats_total": number,"status"?: Database["public"]['Enums']["ride_status"],"usual_ride_id"?: string | null,"women_only"?: boolean
                   }
                   Update: {
-                    "allocation_at"?: string,"car_id"?: string,"created_at"?: string,"depart_at"?: string,"id"?: string,"notes"?: string | null,"owner_id"?: string,"price_per_seat"?: number,"reminded_at"?: string | null,"seats_left"?: number,"seats_total"?: number,"status"?: Database["public"]['Enums']["ride_status"],"usual_ride_id"?: string | null,"women_only"?: boolean
+                    "allocation_at"?: string,"car_id"?: string,"created_at"?: string,"depart_at"?: string,"hidden_at"?: string | null,"id"?: string,"notes"?: string | null,"owner_id"?: string,"price_per_seat"?: number,"reminded_at"?: string | null,"seats_left"?: number,"seats_total"?: number,"status"?: Database["public"]['Enums']["ride_status"],"usual_ride_id"?: string | null,"women_only"?: boolean
                   }
                   Relationships: [
                     {
@@ -381,14 +381,14 @@ isOneToOne: false
                   ]
                 },"users": {
                   Row: {
-                    "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"rides_completed": number,"upi_vpa": string | null,"work_place_id": string | null
+                    "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"removed_at": string | null,"rides_completed": number,"upi_vpa": string | null,"work_place_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id": string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name": string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
+                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id": string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name": string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id"?: string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name"?: string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
+                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id"?: string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name"?: string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -457,7 +457,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "admin_occupancy":
+            "admin_close_report":
+{ Args: { "p_admin_id": string,"p_reason": string,"p_report_id": string,"p_resolved": boolean }; Returns: undefined
+                           },
+"admin_occupancy":
 { Args: { "p_from": string,"p_to": string }; Returns: {
               "day": string,"rides": number,"route": string,"seats_filled": number,"seats_offered": number
             }[]
@@ -466,6 +469,20 @@ isOneToOne: false
 { Args: Record<PropertyKey, never>; Returns: {
               "joined_at": string,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"reliability_score": number,"rides_completed": number,"user_id": string
             }[]
+                           },
+"admin_remove_user":
+{ Args: { "p_admin_id": string,"p_reason": string,"p_user_id": string }; Returns: undefined
+                           },
+"admin_removed_users":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "name": string,"removed_at": string,"user_id": string
+            }[]
+                           },
+"admin_restore_user":
+{ Args: { "p_admin_id": string,"p_reason": string,"p_user_id": string }; Returns: undefined
+                           },
+"admin_set_ride_hidden":
+{ Args: { "p_admin_id": string,"p_hidden": boolean,"p_reason": string,"p_ride_id": string }; Returns: undefined
                            },
 "anonymise_account":
 { Args: { "p_user_id": string }; Returns: (string)[]
@@ -510,6 +527,7 @@ isOneToOne: false
 "phone": string | null,
 "photo_url": string | null,
 "reliability_score": number,
+"removed_at": string | null,
 "rides_completed": number,
 "upi_vpa": string | null,
 "work_place_id": string | null
