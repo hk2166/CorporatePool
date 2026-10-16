@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { AddStopLink } from "@/components/add-stop-link";
 import {
   saveProfile,
   type ProfileField,
@@ -98,6 +99,7 @@ export function ProfileForm({ profile, places, welcome }: Props) {
           invalid={Boolean(error("work"))}
         />
       </Field>
+      <AddStopLink next="/profile" empty={places.length === 0} />
 
       <Field
         label="UPI ID (car owners)"

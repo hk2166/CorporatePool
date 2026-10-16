@@ -3,6 +3,10 @@ begin;
 create extension if not exists pgtap with schema extensions;
 select plan(14);
 
+-- Only this test's cars: the demo data's ride (tomorrow 08:00 IST, same route, 3 seats) would
+-- otherwise be "another car with room" whenever the clock puts this test's rides near it.
+update rides set status = 'CANCELLED' where status <> 'CANCELLED';
+
 -- Fake people: owners O1 (the 8:00), O2 (the 8:15), O3 (the 8:30 and an 11:00), riders A–E.
 insert into auth.users (id, email)
 select ('00000000-0000-0000-0000-00000000080' || n)::uuid, 'demo.rematch' || n || '@example.com'
