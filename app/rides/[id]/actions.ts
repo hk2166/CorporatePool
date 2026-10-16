@@ -8,14 +8,16 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export type RideActionState = { error?: string; saved?: boolean };
 
 // Cancels one of the owner's rides (F-B4, user flow 7). cancel_ride() does the work in one
-// transaction: bookings cancelled, riders notified, "any car" riders flagged for re-matching.
+// transaction: bookings cancelled, riders notified, "any car" riders flagged for re-matching;
+// run_rematch() then moves those riders into other cars.
 export async function cancelRide(
   _previous: RideActionState,
   formData: FormData,
 ): Promise<RideActionState> {
   // Server Actions can be called by a direct POST, so check who's asking every time.
   const user = await getCurrentUser();
-  const { error } = await createAdminClient().rpc("cancel_ride", {
+  const admin = createAdminClient();
+  const { error } = await admin.rpc("cancel_ride", {
     p_owner_id: user.id,
     p_ride_id: String(formData.get("rideId") ?? ""),
     p_reason: String(formData.get("reason") ?? ""),
@@ -28,6 +30,9 @@ export async function cancelRide(
           : "Couldn't cancel the ride. Please try again.",
     };
   }
+  // Find the "any car" riders another car straight away rather than at the next 5-minute run
+  // (T-5.4, user flow 7). If this fails, that run picks them up.
+  await admin.rpc("run_rematch");
   redirect("/");
 }
 
