@@ -9,6 +9,7 @@ import { dayLabel, indiaDate, indiaTime } from "@/lib/india-time";
 import { getPublicRide } from "@/lib/public-ride";
 import { shareMessage } from "@/lib/ride-card";
 import { createClient } from "@/lib/supabase/server";
+import { OwnerRiders } from "./owner-riders";
 import { CancelRide, RideNotes } from "./ride-controls";
 import { RiderView } from "./rider-view";
 
@@ -33,12 +34,6 @@ export default function RidePage({
     </>
   );
 }
-
-const STATUS_LABEL: Record<string, string> = {
-  REQUESTED: "requested",
-  CONFIRMED: "confirmed",
-  WAITLISTED: "waitlisted",
-};
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -88,9 +83,18 @@ async function RideDetails({
       .order("seq"),
     supabase
       .from("bookings")
-      .select("id, status, seats, rider:users!bookings_rider_id_fkey(name)")
+      .select(
+        "id, rider_id, status, seats, waitlist_rank, pickup_seq, picked_up_at, rider:users!bookings_rider_id_fkey(name)",
+      )
       .eq("ride_id", ride.id)
-      .in("status", ["REQUESTED", "CONFIRMED", "WAITLISTED"])
+      .in("status", [
+        "REQUESTED",
+        "CONFIRMED",
+        "WAITLISTED",
+        "NO_SHOW",
+        "COMPLETED",
+      ])
+      .order("waitlist_rank", { nullsFirst: true })
       .order("created_at"),
   ]);
 
@@ -140,24 +144,11 @@ async function RideDetails({
           ))}
         </ol>
 
-        <section className="space-y-2">
-          <h2 className="text-sm font-medium text-neutral-500">Riders</h2>
-          {bookings && bookings.length > 0 ? (
-            <ul className="space-y-1">
-              {bookings.map((booking) => (
-                <li key={booking.id} className="flex justify-between">
-                  <span>{booking.rider?.name ?? "A rider"}</span>
-                  <span className="text-sm text-neutral-500">
-                    {booking.seats > 1 ? `${booking.seats} seats, ` : ""}
-                    {STATUS_LABEL[booking.status] ?? booking.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-neutral-500">No bookings yet.</p>
-          )}
-        </section>
+        <OwnerRiders
+          ride={ride}
+          bookings={bookings ?? []}
+          stops={stops ?? []}
+        />
 
         {publicRide && (
           <ShareRideButton message={shareMessage(publicRide, url)} url={url} />
@@ -166,7 +157,14 @@ async function RideDetails({
         {open && (
           <>
             <RideNotes rideId={ride.id} notes={ride.notes ?? ""} />
-            <CancelRide rideId={ride.id} riders={bookings?.length ?? 0} />
+            <CancelRide
+              rideId={ride.id}
+              riders={
+                (bookings ?? []).filter((b) =>
+                  ["REQUESTED", "CONFIRMED", "WAITLISTED"].includes(b.status),
+                ).length
+              }
+            />
           </>
         )}
       </div>

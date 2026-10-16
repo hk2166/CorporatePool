@@ -33,8 +33,12 @@ export async function OwnerSection({ userId }: { userId: string }) {
         .from("rides")
         .select("id, depart_at, seats_total, seats_left, status")
         .eq("owner_id", userId)
-        .neq("status", "CANCELLED")
-        .gte("depart_at", new Date().toISOString())
+        .not("status", "in", "(CANCELLED,COMPLETED)")
+        // A ride that left in the last few hours is still today's: Start, mark, Complete.
+        .gte(
+          "depart_at",
+          new Date(new Date().getTime() - 4 * 60 * 60 * 1000).toISOString(),
+        )
         .order("depart_at")
         .limit(5),
     ]);
@@ -114,9 +118,13 @@ export async function OwnerSection({ userId }: { userId: string }) {
                       <p className="text-sm text-neutral-500">{route}</p>
                     </div>
                     <p className="text-sm">
-                      {ride.seats_left === 0
-                        ? "Full"
-                        : `${ride.seats_left} of ${ride.seats_total} free`}
+                      {ride.status === "STARTED"
+                        ? "Under way"
+                        : new Date(ride.depart_at) <= new Date()
+                          ? "Tap to start"
+                          : ride.seats_left === 0
+                            ? "Full"
+                            : `${ride.seats_left} of ${ride.seats_total} free`}
                     </p>
                   </Link>
                 </li>
