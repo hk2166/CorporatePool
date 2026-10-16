@@ -109,10 +109,12 @@ async function RideCard({
 
       {bookable && (
         <Link
-          href={`/login?next=${encodeURIComponent(`/r/${ride.ride_id}`)}`}
+          // Signed in: straight to the ride. Not signed in: the proxy sends them to /login first
+          // and back here after.
+          href={`/rides/${ride.ride_id}`}
           className="flex h-12 items-center justify-center rounded-xl bg-emerald-600 font-semibold text-white"
         >
-          Sign in to request a seat
+          Request a seat
         </Link>
       )}
 

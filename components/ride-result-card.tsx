@@ -20,7 +20,7 @@ export function RideResultCard({ ride }: { ride: RideResult }) {
   const walk = ride.pickup_walk_m + ride.drop_walk_m;
   return (
     <Link
-      href={`/r/${ride.ride_id}`}
+      href={`/rides/${ride.ride_id}?pickup=${ride.pickup_seq}&drop=${ride.drop_seq}`}
       className="block space-y-3 rounded-2xl border border-neutral-200 p-4 transition hover:border-neutral-400 dark:border-neutral-800 dark:hover:border-neutral-600"
     >
       <div className="flex items-baseline justify-between gap-3">

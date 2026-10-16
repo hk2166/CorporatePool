@@ -10,8 +10,9 @@ import { getPublicRide } from "@/lib/public-ride";
 import { shareMessage } from "@/lib/ride-card";
 import { createClient } from "@/lib/supabase/server";
 import { CancelRide, RideNotes } from "./ride-controls";
+import { RiderView } from "./rider-view";
 
-export const metadata: Metadata = { title: "Your ride · CorporatePool" };
+export const metadata: Metadata = { title: "Ride · CorporatePool" };
 
 export default function RidePage({
   params,
@@ -39,7 +40,10 @@ const STATUS_LABEL: Record<string, string> = {
   WAITLISTED: "waitlisted",
 };
 
-// The owner's view of one of their rides: route, seats, who has booked, notes and cancel.
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// One ride. The owner sees route, seats, who has booked, notes and cancel; anyone else sees
+// the rider's view.
 async function RideDetails({
   params,
   searchParams,
@@ -47,19 +51,34 @@ async function RideDetails({
   params: PageProps<"/rides/[id]">["params"];
   searchParams: PageProps<"/rides/[id]">["searchParams"];
 }) {
-  const [{ id }, { live }] = await Promise.all([params, searchParams]);
+  const [{ id }, { live, pickup, drop }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
   const user = await getCurrentUser();
   const supabase = await createClient();
 
-  const { data: ride } = await supabase
-    .from("rides")
-    .select(
-      "id, owner_id, depart_at, seats_total, seats_left, price_per_seat, notes, status",
-    )
-    .eq("id", id)
-    .maybeSingle();
-  // Only the owner manages a ride here; riders get their own view later.
-  if (!ride || ride.owner_id !== user.id) notFound();
+  const { data: ride } = UUID.test(id)
+    ? await supabase
+        .from("rides")
+        .select(
+          "id, owner_id, car_id, depart_at, allocation_at, seats_total, seats_left, price_per_seat, notes, status, women_only",
+        )
+        .eq("id", id)
+        .maybeSingle()
+    : { data: null };
+  if (!ride) notFound();
+  // Riders get their own view: request a seat, see where they stand.
+  if (ride.owner_id !== user.id) {
+    return (
+      <RiderView
+        ride={ride}
+        userId={user.id}
+        pickup={typeof pickup === "string" ? Number(pickup) : undefined}
+        drop={typeof drop === "string" ? Number(drop) : undefined}
+      />
+    );
+  }
 
   const [{ data: stops }, { data: bookings }] = await Promise.all([
     supabase
