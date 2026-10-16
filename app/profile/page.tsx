@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { DeleteAccount } from "./delete-account";
 import { ProfileForm } from "./profile-form";
 
 export const metadata: Metadata = { title: "Profile · CorporatePool" };
@@ -67,6 +68,7 @@ async function ProfileSection({
           workPlaceId: profile.work_place_id,
         }}
       />
+      {!isWelcome && <DeleteAccount />}
     </div>
   );
 }

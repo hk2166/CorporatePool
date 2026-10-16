@@ -437,7 +437,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "get_car_private":
+            "anonymise_account":
+{ Args: { "p_user_id": string }; Returns: (string)[]
+                           },
+"get_car_private":
 { Args: { "p_car_id": string }; Returns: {
               "photo_paths": (string)[],"plate": string
             }[]

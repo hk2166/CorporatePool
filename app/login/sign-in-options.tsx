@@ -1,13 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type Props = {
   // Where to go after signing in; already checked by safeNextPath.
   next: string;
   error?: string;
+  // A neutral message, like "Your account has been deleted."
+  notice?: string;
   // They opened an invite link and now need to sign in to join.
   invited?: boolean;
   // Email and password sign-in for the local demo people (supabase/seed/20_demo.sql).
@@ -16,7 +18,13 @@ type Props = {
   devLogin: boolean;
 };
 
-export function SignInOptions({ next, error, invited, devLogin }: Props) {
+export function SignInOptions({
+  next,
+  error,
+  notice,
+  invited,
+  devLogin,
+}: Props) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(error ?? null);
   const [busy, setBusy] = useState(false);
@@ -37,9 +45,10 @@ export function SignInOptions({ next, error, invited, devLogin }: Props) {
     }
   }
 
-  async function signInWithPassword(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
+  // A form action rather than onSubmit: until the page's JavaScript has loaded, React renders
+  // this form so that submitting it does nothing, instead of the browser falling back to a
+  // plain GET that would put the email and password in the URL.
+  async function signInWithPassword(form: FormData) {
     setBusy(true);
     setMessage(null);
     const { error } = await createClient().auth.signInWithPassword({
@@ -57,6 +66,15 @@ export function SignInOptions({ next, error, invited, devLogin }: Props) {
 
   return (
     <div className="space-y-6">
+      {notice && (
+        <p
+          role="status"
+          className="rounded-lg bg-neutral-100 px-3 py-2 text-sm text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+        >
+          {notice}
+        </p>
+      )}
+
       {invited && (
         <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
           You&apos;ve been invited. Sign in with Google to join.
@@ -84,7 +102,7 @@ export function SignInOptions({ next, error, invited, devLogin }: Props) {
 
       {devLogin && (
         <form
-          onSubmit={signInWithPassword}
+          action={signInWithPassword}
           className="space-y-3 rounded-xl border border-dashed border-amber-400 p-4"
         >
           <p className="text-sm font-medium text-amber-700 dark:text-amber-400">

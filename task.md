@@ -130,7 +130,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-2.3 Car setup (F-A3).** Photos → Supabase Storage, resized client-side to ≤ 200 KB;
       model/colour/plate/seats. One-time; editable. *Done when:* flow 2 steps 1–2 work; photos
       load via RLS-safe signed URLs only for permitted viewers.
-- [ ] **T-2.4 Account deletion (F-A9).** Hard-delete personal fields, anonymise history rows.
+- [x] **T-2.4 Account deletion (F-A9).** Hard-delete personal fields, anonymise history rows.
       *Done when:* deleted user's bookings remain as "deleted user", no PII left in any table.
 
 ## Phase 3 — rides (F-B1…B4, F-H1)
