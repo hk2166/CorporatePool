@@ -24,7 +24,7 @@ type Props = {
     id: string;
     departTime: string;
     seats: number;
-    price: number;
+    price: number | null;
     notes: string;
     autoDays: number;
     stops: StopInput[];
@@ -209,7 +209,7 @@ export function UsualRideForm({
           htmlFor={`${direction}-price`}
           className="block text-sm font-medium"
         >
-          Price per seat (₹)
+          Your price per seat for this route (₹)
         </label>
         <input
           id={`${direction}-price`}

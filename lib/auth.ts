@@ -1,5 +1,6 @@
 import "server-only";
 import { notFound, redirect } from "next/navigation";
+import { cache } from "react";
 import {
   parseRidePreference,
   type RidePreference,
@@ -24,7 +25,8 @@ export type CurrentUser = {
 //   invite they opened (Q3), or sends them on to /no-invite if they have none;
 // - to /removed when an admin removed them (T-7.2).
 // It reads cookies, so call it inside a <Suspense> boundary (Cache Components requires that).
-export async function getCurrentUser(): Promise<CurrentUser> {
+// Asked once per request: the header and the page share the answer.
+export const getCurrentUser = cache(async (): Promise<CurrentUser> => {
   const supabase = await createClient();
 
   const { data: claimsData } = await supabase.auth.getClaims();
@@ -54,7 +56,7 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     hasPhone: profile.phone !== null,
     ridePreference: parseRidePreference(profile.ride_preference),
   };
-}
+});
 
 // The signed-in person, who must be an admin. Anyone else gets "not found": the admin pages
 // don't advertise themselves. The database checks again in every admin function.

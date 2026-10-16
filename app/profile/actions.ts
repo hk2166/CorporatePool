@@ -66,7 +66,8 @@ export async function saveProfile(
     .update({
       name,
       phone,
-      upi_vpa: upi || null,
+      // Riders' forms have no UPI field: leave theirs as it was.
+      ...(formData.has("upi") ? { upi_vpa: upi || null } : {}),
       home_place_id: home,
       work_place_id: work,
     })

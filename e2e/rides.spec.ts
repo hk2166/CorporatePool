@@ -25,6 +25,12 @@ test("an owner sets up the evening ride home", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByText("Offer your evening ride")).toBeVisible();
     await expect(page.getByText("Offer your morning ride")).toBeVisible();
+
+    // The profile sums up each ride with its price.
+    await page.goto("/profile");
+    await expect(
+      page.getByRole("listitem").filter({ hasText: /^evening/i }),
+    ).toContainText("₹150 a seat");
   } finally {
     await db()
       .from("usual_rides")

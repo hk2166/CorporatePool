@@ -56,7 +56,9 @@ export function RidePreferencePicker({
           role="status"
           className="text-sm text-emerald-700 dark:text-emerald-400"
         >
-          Saved. Your home page now shows this first.
+          {current === "DRIVER" || current === "BOTH"
+            ? "Saved. Offer and Car are in the menu now: list your car, then your rides and price."
+            : "Saved. Your home page now shows this first."}
         </p>
       )}
     </form>

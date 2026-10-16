@@ -41,3 +41,9 @@ export function homeSections(
       return ["riding", "driving"];
   }
 }
+
+// Car owners are members who said they drive (or both). Only they get the Car and Offer
+// pages in the menu; everyone else sees Find and Profile.
+export function isCarOwner(preference: RidePreference | null): boolean {
+  return preference === "DRIVER" || preference === "BOTH";
+}
