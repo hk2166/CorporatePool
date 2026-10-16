@@ -219,6 +219,8 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [ ] **T-8.1 PWA (F-H2).** Manifest, icons, service worker, install prompt, iOS
       add-to-home-screen hint (push needs it). *Done when:* Lighthouse PWA pass; installed app
       receives a push on Android emulator + desktop.
+      *Built (manifest, icons, service worker, install prompt, iOS hint); waiting on a
+      real-device push check once deployed (T-8.2).*
 - [ ] **T-8.2 Deploy.** Vercel prod + Supabase: all pg_cron schedules live (go-live, allocation,
       sweep, reminders, expiry, score, keep-warm per hld "Scheduled jobs"); `.env.example`
       complete. *Done when:* the production URL passes T-8.3 and

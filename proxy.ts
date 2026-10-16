@@ -13,6 +13,8 @@ const PUBLIC_PATHS = [
   "/r/",
   "/api/jobs/",
   "/sw.js",
+  "/manifest.webmanifest",
+  "/apple-icon",
 ];
 
 function isPublic(pathname: string): boolean {
