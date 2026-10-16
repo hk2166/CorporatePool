@@ -12,3 +12,10 @@ export const GOOGLE_SITE_VERIFICATION =
 
 // When the privacy policy and terms last changed. Update it with them.
 export const LEGAL_UPDATED = "16 October 2026";
+
+// Who built the app, credited at the foot of every page.
+export const MAKER = {
+  name: "Hemant",
+  github: "hk2166",
+  githubUrl: "https://github.com/hk2166",
+};
