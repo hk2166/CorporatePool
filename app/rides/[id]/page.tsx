@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
+import { LiveSeatsLeft, LiveSeatsProvider } from "@/components/live-seats";
 import { ShareRideButton } from "@/components/share-ride-button";
 import { getCurrentUser } from "@/lib/auth";
 import { dayLabel, indiaDate, indiaTime } from "@/lib/india-time";
@@ -80,71 +81,76 @@ async function RideDetails({
   const publicRide = open ? await getPublicRide(ride.id) : null;
   const url = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/r/${ride.id}`;
 
+  // Seats and the rider list update by themselves while the owner watches (F-C3).
   return (
-    <div className="space-y-6">
-      {live === "1" && open && (
-        <p
-          role="status"
-          className="rounded-xl bg-emerald-50 px-4 py-3 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
-        >
-          You&apos;re live. Share it in your WhatsApp group so riders can book.
-        </p>
-      )}
-      <div className="space-y-1">
-        <p className="text-sm text-neutral-500">{dayLabel(day)}</p>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          {indiaTime(ride.depart_at)} ·{" "}
-          {ride.status === "CANCELLED"
-            ? "Cancelled"
-            : ride.seats_left === 0
-              ? "Full"
-              : `${ride.seats_left} of ${ride.seats_total} seats free`}
-        </h1>
-        <p className="text-neutral-600 dark:text-neutral-400">
-          ₹{ride.price_per_seat} a seat
-        </p>
-      </div>
-
-      <ol className="space-y-1">
-        {(stops ?? []).map((stop) => (
-          <li key={stop.seq} className="flex justify-between gap-3">
-            <span>{stop.label}</span>
-            <span className="text-sm text-neutral-500">
-              {stop.seq === 0 ? "sets off" : `+${stop.eta_offset_min} min`}
-            </span>
-          </li>
-        ))}
-      </ol>
-
-      <section className="space-y-2">
-        <h2 className="text-sm font-medium text-neutral-500">Riders</h2>
-        {bookings && bookings.length > 0 ? (
-          <ul className="space-y-1">
-            {bookings.map((booking) => (
-              <li key={booking.id} className="flex justify-between">
-                <span>{booking.rider?.name ?? "A rider"}</span>
-                <span className="text-sm text-neutral-500">
-                  {booking.seats > 1 ? `${booking.seats} seats, ` : ""}
-                  {STATUS_LABEL[booking.status] ?? booking.status}
-                </span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-neutral-500">No bookings yet.</p>
+    <LiveSeatsProvider rideIds={[ride.id]} refresh={open}>
+      <div className="space-y-6">
+        {live === "1" && open && (
+          <p
+            role="status"
+            className="rounded-xl bg-emerald-50 px-4 py-3 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
+          >
+            You&apos;re live. Share it in your WhatsApp group so riders can
+            book.
+          </p>
         )}
-      </section>
+        <div className="space-y-1">
+          <p className="text-sm text-neutral-500">{dayLabel(day)}</p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {indiaTime(ride.depart_at)} ·{" "}
+            <LiveSeatsLeft
+              rideId={ride.id}
+              seatsLeft={ride.seats_left}
+              status={ride.status}
+              total={ride.seats_total}
+            />
+          </h1>
+          <p className="text-neutral-600 dark:text-neutral-400">
+            ₹{ride.price_per_seat} a seat
+          </p>
+        </div>
 
-      {publicRide && (
-        <ShareRideButton message={shareMessage(publicRide, url)} url={url} />
-      )}
+        <ol className="space-y-1">
+          {(stops ?? []).map((stop) => (
+            <li key={stop.seq} className="flex justify-between gap-3">
+              <span>{stop.label}</span>
+              <span className="text-sm text-neutral-500">
+                {stop.seq === 0 ? "sets off" : `+${stop.eta_offset_min} min`}
+              </span>
+            </li>
+          ))}
+        </ol>
 
-      {open && (
-        <>
-          <RideNotes rideId={ride.id} notes={ride.notes ?? ""} />
-          <CancelRide rideId={ride.id} riders={bookings?.length ?? 0} />
-        </>
-      )}
-    </div>
+        <section className="space-y-2">
+          <h2 className="text-sm font-medium text-neutral-500">Riders</h2>
+          {bookings && bookings.length > 0 ? (
+            <ul className="space-y-1">
+              {bookings.map((booking) => (
+                <li key={booking.id} className="flex justify-between">
+                  <span>{booking.rider?.name ?? "A rider"}</span>
+                  <span className="text-sm text-neutral-500">
+                    {booking.seats > 1 ? `${booking.seats} seats, ` : ""}
+                    {STATUS_LABEL[booking.status] ?? booking.status}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-neutral-500">No bookings yet.</p>
+          )}
+        </section>
+
+        {publicRide && (
+          <ShareRideButton message={shareMessage(publicRide, url)} url={url} />
+        )}
+
+        {open && (
+          <>
+            <RideNotes rideId={ride.id} notes={ride.notes ?? ""} />
+            <CancelRide rideId={ride.id} riders={bookings?.length ?? 0} />
+          </>
+        )}
+      </div>
+    </LiveSeatsProvider>
   );
 }

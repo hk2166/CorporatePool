@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SeatsLeft } from "@/components/seats-left";
+import { LiveSeatsLeft } from "@/components/live-seats";
 import type { Database } from "@/lib/database.types";
 import { indiaTime } from "@/lib/india-time";
 import { walkLabel } from "@/lib/search-query";
@@ -15,6 +15,7 @@ const BOOKING_LABEL: Record<string, string> = {
 
 // One car in the search results (user flow 1 step 4): when it reaches the rider's stop, the
 // price, seats left, who's driving and how far the stops are. No phone numbers or plates.
+// The seat count is live when the card sits inside a <LiveSeatsProvider>.
 export function RideResultCard({ ride }: { ride: RideResult }) {
   const walk = ride.pickup_walk_m + ride.drop_walk_m;
   return (
@@ -54,7 +55,11 @@ export function RideResultCard({ ride }: { ride: RideResult }) {
             {ride.owner_first_name} · {ride.car_colour} {ride.car_model}
           </span>
         </span>
-        <SeatsLeft seatsLeft={ride.seats_left} />
+        <LiveSeatsLeft
+          rideId={ride.ride_id}
+          seatsLeft={ride.seats_left}
+          status={ride.status}
+        />
       </div>
 
       {(ride.women_only || ride.my_booking_status) && (

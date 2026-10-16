@@ -1,7 +1,7 @@
 -- Whole-schema guards (T-1.2).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(4);
+select plan(5);
 
 -- The data model in docs/lld.md, exactly. When a task adds a table, add it here too.
 select tables_are(
@@ -51,6 +51,16 @@ select is(
       )),
   null,
   'every SECURITY DEFINER function pins its search_path'
+);
+
+-- Realtime streams row changes to browsers (T-4.3). Each published table is a deliberate
+-- choice, so the list is pinned here.
+select is(
+  (select array_agg(t.tablename::text order by t.tablename::text)
+     from pg_publication_tables t
+    where t.pubname = 'supabase_realtime'),
+  array['rides'],
+  'Realtime publishes only rides'
 );
 
 select * from finish();

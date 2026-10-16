@@ -158,7 +158,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-4.2 Search UI (F-C1, F-C2).** From/to/when pickers defaulting to saved route ("my
       usual commute, tomorrow"); result cards per flow 1 step 4. *Done when:* flow 1 steps 3–4
       work on mobile.
-- [ ] **T-4.3 Live seat counts (F-C3).** Supabase Realtime on `rides.seats_left` for visible
+- [x] **T-4.3 Live seat counts (F-C3).** Supabase Realtime on `rides.seats_left` for visible
       cards + ride page. *Done when:* two browsers open; booking in one moves the count in the
       other without refresh.
 
