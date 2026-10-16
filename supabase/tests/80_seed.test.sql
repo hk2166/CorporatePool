@@ -29,7 +29,7 @@ select is(
   'seed: tomorrow''s demo ride has a 3-stop route'
 );
 
--- lld.md §1, run by hand: "Palwal → Shankar Chowk, tomorrow 07:00–09:00" ----------------------- 4
+-- Search (lld.md §1) on the demo data: "Palwal → Shankar Chowk, tomorrow 07:00–09:00" ----- 4
 -- The rider stands 300 m from the first stop and wants to get to the last one.
 
 create temporary table search_input on commit drop as
@@ -43,22 +43,13 @@ select extensions.st_project(s_first.geo, 300, radians(0))::extensions.geography
  where s_first.ride_id = '5eed0000-0000-0000-0000-0000000000d1' and s_first.seq = 0
    and s_last.ride_id = '5eed0000-0000-0000-0000-0000000000d1' and s_last.seq = 2;
 
--- The query from lld.md §1, with the inputs as columns of search_input.
+-- The matcher behind search_rides(), as the demo rider.
 create function pg_temp.search(p_from extensions.geography, p_to extensions.geography,
                                p_lo timestamptz, p_hi timestamptz)
-returns table (ride_id uuid, pickup_seq smallint, drop_seq smallint, walk_m double precision)
+returns table (ride_id uuid, pickup_seq smallint, drop_seq smallint)
 language sql as $$
-  select distinct on (r.id) r.id, p.seq, d.seq,
-         extensions.st_distance(p.geo, p_from) + extensions.st_distance(d.geo, p_to)
-    from public.rides r
-    join public.ride_stops p on p.ride_id = r.id
-    join public.ride_stops d on d.ride_id = r.id and d.seq > p.seq
-   where r.status in ('OPEN', 'ALLOCATING')
-     and r.seats_left > 0
-     and r.depart_at between p_lo and p_hi
-     and extensions.st_dwithin(p.geo, p_from, 2000)
-     and extensions.st_dwithin(d.geo, p_to, 2000)
-   order by r.id, 4
+  select m.ride_id, m.pickup_seq, m.drop_seq
+    from private.match_rides('5eed0000-0000-0000-0000-000000000002', p_from, p_to, p_lo, p_hi) m
 $$;
 
 select is(
