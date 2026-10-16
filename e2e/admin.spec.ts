@@ -1,14 +1,28 @@
 import { expect, test } from "@playwright/test";
 import { db, PASSWORD, RIDE, RIDER, SECOND, signedIn, signIn } from "./support";
 
-// The admin dashboard: today's numbers, a member in full, and the rides list. It only reads,
-// so it doesn't disturb the demo ride the user flows share.
+// The admin pages: the one-page dashboard, today's numbers, a member in full, and the rides
+// list. It only reads, so it doesn't disturb the demo ride the user flows share.
 test("an admin sees who uses the app, where they go, and the rides", async ({
   page,
 }) => {
   await signIn(page, SECOND.email);
-  await page.getByRole("link", { name: /^Admin:/ }).click();
+  await page.getByRole("link", { name: /^Admin dashboard/ }).click();
 
+  // The dashboard: every panel on one page, over a time range.
+  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Active today" }),
+  ).toContainText(/[1-9]/);
+  await expect(
+    page
+      .getByRole("region", { name: "Upcoming rides" })
+      .locator(`a[href="/rides/${RIDE}"]`),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "7d" }).click();
+  await expect(page.getByText(/Last 7 days/)).toBeVisible();
+
+  await page.getByRole("link", { name: "Admin", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
   // Signing in just now counts as being in the app today.
   await expect(

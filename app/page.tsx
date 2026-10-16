@@ -64,10 +64,10 @@ async function SignedInHome() {
       </Link>
       {user.isAdmin && (
         <Link
-          href="/admin"
+          href="/admin/dashboard"
           className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium dark:border-neutral-700"
         >
-          Admin: daily users, members, rides, rankings and more
+          Admin dashboard: users, rides, join requests, feedback and more
         </Link>
       )}
       <OwnerSection userId={user.id} />
