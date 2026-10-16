@@ -28,5 +28,10 @@ The build plan is [task.md](task.md); design docs are in [docs/](docs/).
 - Database tests: pgTAP files in `supabase/tests/`, run with `npm run test:db` against the local
   database. `npm run db:start:db-only` starts just Postgres, which is all the tests need; CI does
   the same. Every table gets Row-Level Security enabled in the migration that creates it.
+- Access model (T-1.3): the browser reads through RLS as the signed-in user; anything with rules
+  (going live, seats, bookings, scores) is written by server code with the secret key. Private
+  columns (`cars.plate`, `cars.photo_paths`, and in `users` the phone, UPI ID, gender, home/work
+  stops and scores) have no column privilege for `authenticated`, so never `select *` on those
+  tables from the browser: list the columns, and read private ones through the `get_*` functions.
 - Do not guess stop names or coordinates. Landmarks come from `supabase/seed/landmarks.csv`
   (task.md H-5).
