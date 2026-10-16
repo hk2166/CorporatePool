@@ -68,6 +68,13 @@ describe("LiveSeatsLeft", () => {
     expect(screen.getByText("Cancelled")).toBeDefined();
   });
 
+  it("says when the ride is under way or done", () => {
+    render(<LiveSeatsLeft rideId="a" seatsLeft={1} status="STARTED" />);
+    render(<LiveSeatsLeft rideId="b" seatsLeft={1} status="COMPLETED" />);
+    expect(screen.getByText("Under way")).toBeDefined();
+    expect(screen.getByText("Completed")).toBeDefined();
+  });
+
   it("can show the total too", () => {
     render(<LiveSeatsLeft rideId="a" seatsLeft={2} status="OPEN" total={4} />);
     expect(screen.getByText("2 of 4 seats free")).toBeDefined();

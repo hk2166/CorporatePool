@@ -113,8 +113,8 @@ export function LiveSeatsProvider({
   return <LiveRides.Provider value={rides}>{children}</LiveRides.Provider>;
 }
 
-// "3 seats left", "Full" or "Cancelled", updated the moment it changes. With `total`, it reads
-// "3 of 4 seats free" instead.
+// "3 seats left", "Full", "Cancelled", "Under way" or "Completed", updated the moment it
+// changes. With `total`, it reads "3 of 4 seats free" instead.
 export function LiveSeatsLeft({
   rideId,
   seatsLeft,
@@ -132,6 +132,8 @@ export function LiveSeatsLeft({
 
   let text: string;
   if (current === "CANCELLED") text = "Cancelled";
+  else if (current === "STARTED") text = "Under way";
+  else if (current === "COMPLETED") text = "Completed";
   else if (seats <= 0) text = "Full";
   else if (total) text = `${seats} of ${total} seats free`;
   else text = `${seats} ${seats === 1 ? "seat" : "seats"} left`;

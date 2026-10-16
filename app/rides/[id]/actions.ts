@@ -60,3 +60,74 @@ export async function saveRideNotes(
   refresh();
   return { saved: true };
 }
+
+// The morning of the ride (F-B8, user flow 3 step 5): start, mark each rider, complete. The
+// database functions check the ride is the owner's and in the right state (T-5.6).
+const RIDE_DAY_ERRORS: Record<string, string> = {
+  TOO_EARLY: "You can start the ride from an hour before it leaves.",
+  NOT_STARTABLE: "This ride can't be started.",
+  NOT_STARTED: "Start the ride first.",
+  NOT_ON_RIDE: "This rider isn't on the ride.",
+  PICKED_UP: "This rider was picked up. Undo that first.",
+  IS_NO_SHOW: "Undo the no-show first.",
+};
+
+async function rideDay(
+  fn: "start_ride" | "complete_ride",
+  formData: FormData,
+): Promise<RideActionState> {
+  const user = await getCurrentUser();
+  const { error } = await createAdminClient().rpc(fn, {
+    p_owner_id: user.id,
+    p_ride_id: String(formData.get("rideId") ?? ""),
+  });
+  if (error) {
+    return {
+      error:
+        (error.hint && RIDE_DAY_ERRORS[error.hint]) ??
+        "That didn't work. Please try again.",
+    };
+  }
+  refresh();
+  return {};
+}
+
+export async function startRide(
+  _previous: RideActionState,
+  formData: FormData,
+): Promise<RideActionState> {
+  return rideDay("start_ride", formData);
+}
+
+export async function completeRide(
+  _previous: RideActionState,
+  formData: FormData,
+): Promise<RideActionState> {
+  return rideDay("complete_ride", formData);
+}
+
+// Picked up, no-show (costs the rider 15 points), or undo for a wrong tap.
+export async function markRider(
+  _previous: RideActionState,
+  formData: FormData,
+): Promise<RideActionState> {
+  const user = await getCurrentUser();
+  const outcome = String(formData.get("outcome") ?? "");
+  if (!["picked_up", "no_show", "undo"].includes(outcome)) {
+    return { error: "That didn't work. Please try again." };
+  }
+  const { error } = await createAdminClient().rpc("mark_rider", {
+    p_owner_id: user.id,
+    p_booking_id: String(formData.get("bookingId") ?? ""),
+    p_outcome: outcome,
+  });
+  if (error) {
+    return {
+      error:
+        (error.hint && RIDE_DAY_ERRORS[error.hint]) ??
+        "That didn't work. Please try again.",
+    };
+  }
+  refresh();
+  return {};
+}
