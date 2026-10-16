@@ -198,7 +198,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
       cancelled/edited, car full. *Done when:* outbox rows are written in the same transaction
       as the change (lld §6) and a crash
       between write and send loses nothing (retry test).
-- [ ] **T-6.4 Reminders (F-E3).** 5-min pg_cron: pickup-in-15-min to riders + owner. *Done
+- [x] **T-6.4 Reminders (F-E3).** 5-min pg_cron: pickup-in-15-min to riders + owner. *Done
       when:* idempotent — a rider never gets the same reminder twice.
 - [ ] **T-6.5 Report & block (F-F8).** Report form → `reports`; blocked pairs never match in
       search/allocation. *Done when:* a blocked rider's request to that owner's ride is refused.

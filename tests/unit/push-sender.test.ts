@@ -103,6 +103,20 @@ describe("deliver", () => {
 });
 
 describe("notificationText", () => {
+  it("reminds a rider of their stop and time", () => {
+    expect(
+      notificationText(
+        "reminder",
+        {
+          ride_id: ride,
+          stop: "Demo Stop 09",
+          pickup_at: "2026-10-17T03:05:00+00:00",
+        },
+        departAt,
+      ).body,
+    ).toBe("Demo Stop 09 at 08:35.");
+  });
+
   it("says what happened, when, and links to the ride", () => {
     expect(
       notificationText("booking_confirmed", { ride_id: ride }, departAt),
