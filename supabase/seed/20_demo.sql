@@ -80,7 +80,7 @@ begin
 
   insert into public.cars (id, owner_id, model, colour, plate, seats_total) values
     ('5eed0000-0000-0000-0000-0000000000c1', '5eed0000-0000-0000-0000-000000000001',
-     'Demo Hatchback', 'White', 'DEMO0001', 4);
+     'Demo Hatchback', 'White', 'XX01DM0001', 4);
 
   insert into public.usual_rides (id, owner_id, car_id, depart_time, seats_offered,
                                   price_per_seat, notes, stops) values
