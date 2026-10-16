@@ -9,16 +9,22 @@ export function AppHeader() {
       <Link href="/" className="font-semibold tracking-tight">
         CorporatePool
       </Link>
-      <nav className="flex items-center gap-1">
+      <nav className="flex items-center">
+        <Link
+          href="/usual-ride"
+          className="rounded-lg px-2 py-2 text-sm font-medium whitespace-nowrap text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+        >
+          Ride
+        </Link>
         <Link
           href="/car"
-          className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+          className="rounded-lg px-2 py-2 text-sm font-medium whitespace-nowrap text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
         >
           Car
         </Link>
         <Link
           href="/profile"
-          className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+          className="rounded-lg px-2 py-2 text-sm font-medium whitespace-nowrap text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
         >
           Profile
         </Link>

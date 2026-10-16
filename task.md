@@ -135,7 +135,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 
 ## Phase 3 — rides (F-B1…B4, F-H1)
 
-- [ ] **T-3.1 Usual ride editor (F-B1).** Stops (ordered, from landmarks or map pin), time,
+- [x] **T-3.1 Usual ride editor (F-B1).** Stops (ordered, from landmarks or map pin), time,
       seats, price, notes; suggested cost-share figure shown (Q5). *Done when:* flow 2 step 3
       works; stops persist as jsonb per schema.
 - [ ] **T-3.2 Go live (F-B2).** One-tap screen with tweak-before-post; copies template →

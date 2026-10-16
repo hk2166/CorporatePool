@@ -483,6 +483,11 @@ isOneToOne: false
               "late_cancels_90d": number,"no_shows_90d": number,"reliability_score": number,"rides_completed": number
             }[]
                            },
+"list_places":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "id": string,"kind": Database["public"]['Enums']["place_kind"],"lat": number,"lng": number,"name": string
+            }[]
+                           },
 "redeem_invite":
 { Args: { "p_name": string,"p_photo_url": string,"p_token": string,"p_user_id": string }; Returns: boolean
                            }
