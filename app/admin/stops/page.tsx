@@ -5,7 +5,13 @@ import { AppHeader } from "@/components/app-header";
 import { getCurrentAdmin } from "@/lib/auth";
 import { formatCoordinates } from "@/lib/coordinates";
 import { createClient } from "@/lib/supabase/server";
-import { DeleteStopForm, MergeForm, StopForm } from "./stop-forms";
+import {
+  DeleteStopForm,
+  MergeForm,
+  StopForm,
+  StopRequestForm,
+} from "./stop-forms";
+import { dayLabel, indiaDate, indiaTime } from "@/lib/india-time";
 
 export const metadata: Metadata = { title: "Stops · Admin · CorporatePool" };
 
@@ -27,21 +33,89 @@ export default function StopsPage() {
   );
 }
 
-// The stop list everyone picks from (F-G6, Q2): add, change, merge duplicates, delete.
+// The stop list everyone picks from (F-G6, Q2): members' requests first, then add, change,
+// merge duplicates, delete. Positions can be pasted as Google Maps links.
 async function Stops() {
   await getCurrentAdmin();
   const supabase = await createClient();
-  const { data: stops } = await supabase.rpc("list_places");
+  const [{ data: stops }, { data: requests }] = await Promise.all([
+    supabase.rpc("list_places"),
+    // The access rules let admins read every request.
+    supabase
+      .from("stop_requests")
+      .select(
+        "id, name, lat, lng, maps_link, created_at, by:users!stop_requests_requested_by_fkey(id, name)",
+      )
+      .eq("status", "PENDING")
+      .order("created_at"),
+  ]);
 
   return (
     <div className="space-y-8">
+      {(requests ?? []).length > 0 && (
+        <section className="space-y-3">
+          <h2 className="text-lg font-semibold">
+            Requested by members ({requests?.length})
+          </h2>
+          <p className="text-sm text-neutral-500">
+            Check the spot on the map, fix the name or position if needed, then
+            add it or turn it down.
+          </p>
+          <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+            {(requests ?? []).map((r) => {
+              const map =
+                r.maps_link ??
+                (r.lat !== null && r.lng !== null
+                  ? `https://www.google.com/maps/search/?api=1&query=${r.lat},${r.lng}`
+                  : null);
+              return (
+                <li
+                  key={r.id}
+                  className="space-y-3 rounded-2xl border border-amber-300 p-4 dark:border-amber-800"
+                >
+                  <div className="space-y-1">
+                    <p className="font-medium">{r.name}</p>
+                    <p className="text-sm text-neutral-500">
+                      {r.by?.name ?? "A member"} ·{" "}
+                      {dayLabel(indiaDate(new Date(r.created_at)))}{" "}
+                      {indiaTime(r.created_at)}
+                      {r.lat === null && " · no position given"}
+                    </p>
+                    {map && (
+                      <a
+                        href={map}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-9 items-center text-sm underline"
+                      >
+                        Open in Google Maps
+                      </a>
+                    )}
+                  </div>
+                  <StopRequestForm
+                    requestId={r.id}
+                    name={r.name}
+                    coordinates={
+                      r.lat !== null && r.lng !== null
+                        ? formatCoordinates(r.lat, r.lng)
+                        : (r.maps_link ?? "")
+                    }
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
+
       <section className="space-y-3">
         <h1 className="text-2xl font-semibold tracking-tight">
           Stops <span className="text-neutral-500">({stops?.length ?? 0})</span>
         </h1>
         <p className="text-sm text-neutral-500">
-          Landmarks riders and owners pick from, south to north. In Google Maps,
-          press and hold a spot to copy its coordinates.
+          Landmarks riders and owners pick from, south to north. To add one, in
+          Google Maps, press and hold the spot to drop a pin, tap Share, then
+          Copy link, and paste it here. Coordinates work too.
         </p>
         <StopForm submitLabel="Add" />
       </section>

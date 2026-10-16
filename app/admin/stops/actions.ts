@@ -2,14 +2,16 @@
 
 import { refresh } from "next/cache";
 import { getCurrentAdmin } from "@/lib/auth";
-import { parseCoordinates } from "@/lib/coordinates";
 import type { Database } from "@/lib/database.types";
+import { resolveLocation } from "@/lib/resolve-location";
 import { createClient } from "@/lib/supabase/server";
 
 export type StopState = { error?: string; done?: string };
 
 type PlaceKind = Database["public"]["Enums"]["place_kind"];
 const KINDS: PlaceKind[] = ["landmark", "metro", "office", "town"];
+const NO_POSITION =
+  'Paste a Google Maps link (press and hold the spot, then Share → Copy link) or coordinates like "28.1440, 77.3290".';
 
 // Adds a stop, or changes one (F-G6). As the signed-in admin; the database checks.
 export async function saveStop(
@@ -20,15 +22,15 @@ export async function saveStop(
   const id = String(formData.get("id") ?? "") || null;
   const name = String(formData.get("name") ?? "").trim();
   const kind = String(formData.get("kind") ?? "landmark") as PlaceKind;
-  const point = parseCoordinates(String(formData.get("coordinates") ?? ""));
+  const { point } = await resolveLocation(
+    String(formData.get("coordinates") ?? ""),
+  );
   if (name.length < 2 || name.length > 80) {
     return { error: "A name of 2 to 80 characters." };
   }
   if (!KINDS.includes(kind)) return { error: "Pick what kind of stop it is." };
   if (!point) {
-    return {
-      error: 'Paste the coordinates from Google Maps, like "28.1440, 77.3290".',
-    };
+    return { error: NO_POSITION };
   }
   const supabase = await createClient();
   const { error } = await supabase.rpc("admin_save_place", {
@@ -88,4 +90,57 @@ export async function mergeStops(
   }
   refresh();
   return { done: `Merged. ${data} references moved.` };
+}
+
+// Adds a stop a member asked for, with the name, kind and position the admin settled on.
+export async function addRequestedStop(
+  _previous: StopState,
+  formData: FormData,
+): Promise<StopState> {
+  await getCurrentAdmin();
+  const name = String(formData.get("name") ?? "").trim();
+  const kind = String(formData.get("kind") ?? "landmark") as PlaceKind;
+  const { point } = await resolveLocation(
+    String(formData.get("coordinates") ?? ""),
+  );
+  if (name.length < 2 || name.length > 80) {
+    return { error: "A name of 2 to 80 characters." };
+  }
+  if (!KINDS.includes(kind)) return { error: "Pick what kind of stop it is." };
+  if (!point) return { error: NO_POSITION };
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_add_stop_request", {
+    p_request_id: String(formData.get("requestId") ?? ""),
+    p_name: name,
+    p_kind: kind,
+    p_lat: point.lat,
+    p_lng: point.lng,
+  });
+  if (error) {
+    return {
+      error:
+        error.code === "23505"
+          ? "There's already a stop with that name."
+          : error.hint === "DECIDED"
+            ? "Someone already handled this request."
+            : "Couldn't add the stop.",
+    };
+  }
+  refresh();
+  return { done: `Added ${name}.` };
+}
+
+// Turns down a stop request (a duplicate, or not a real stop).
+export async function rejectStopRequest(
+  _previous: StopState,
+  formData: FormData,
+): Promise<StopState> {
+  await getCurrentAdmin();
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_reject_stop_request", {
+    p_request_id: String(formData.get("requestId") ?? ""),
+  });
+  if (error) return { error: "Couldn't turn it down." };
+  refresh();
+  return { done: "Turned down." };
 }

@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-// Under every stop picker: a way to add a stop that isn't in the list yet (app/stops/new). When
-// the list is empty it's a call to action, since nothing works until the first stops exist.
-// After adding, it says the stop is now in the list.
+// Under every stop picker: a way to get a stop that isn't in the list yet (app/stops/new):
+// members ask an admin, admins add it. When the list is empty it's a call to action, since
+// nothing works until the first stops exist. Afterwards it says what happened.
 export function AddStopLink({
   next,
   empty,
@@ -14,7 +14,9 @@ export function AddStopLink({
   next: string;
   empty: boolean;
 }) {
-  const added = useSearchParams().get("stopAdded");
+  const params = useSearchParams();
+  const added = params.get("stopAdded");
+  const requested = params.get("stopRequested") === "1";
   const href = `/stops/new?next=${encodeURIComponent(next)}`;
 
   if (empty) {
@@ -29,13 +31,18 @@ export function AddStopLink({
           href={href}
           className="inline-flex h-10 items-center rounded-lg bg-amber-600 px-4 font-medium text-white"
         >
-          Add the first stop
+          Request the first stop
         </Link>
       </div>
     );
   }
   return (
     <p className="text-sm text-neutral-500">
+      {requested && (
+        <span className="mr-1 font-medium text-emerald-700 dark:text-emerald-400">
+          Thanks! An admin will add your stop soon.
+        </span>
+      )}
       {added && (
         <span className="mr-1 font-medium text-emerald-700 dark:text-emerald-400">
           {added === "new"
@@ -45,7 +52,7 @@ export function AddStopLink({
       )}
       Stop not listed?{" "}
       <Link href={href} className="underline">
-        Add a stop
+        Request a stop
       </Link>
     </p>
   );
