@@ -147,7 +147,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [ ] **T-3.4 Public ride page + OG card (F-H1).** `/r/[code]` with OG meta so WhatsApp previews
       *Palwal → Shankar Chowk · 8:00 · 2 seats · ₹150*; share button. *Done when:* page shows
       only public fields (T-1.3); OG tags verified in a card-preview test.
-- [ ] **T-3.5 Edit / cancel ride (F-B4).** Cancel notifies + flags all bookings for re-match
+- [x] **T-3.5 Edit / cancel ride (F-B4).** Cancel notifies + flags all bookings for re-match
       (consumed by T-5.4). *Done when:* flow 7 steps 1–2 state changes are correct in DB.
 
 ## Phase 4 — search (F-C1…C4)

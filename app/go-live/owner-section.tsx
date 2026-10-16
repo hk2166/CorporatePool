@@ -80,26 +80,28 @@ export async function OwnerSection({ userId }: { userId: string }) {
             {upcoming.map((ride) => {
               const day = indiaDate(new Date(ride.depart_at));
               return (
-                <li
-                  key={ride.id}
-                  className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3 dark:border-neutral-800"
-                >
-                  <div>
-                    <p className="font-medium">
-                      {day === today
-                        ? "Today"
-                        : day === tomorrow
-                          ? "Tomorrow"
-                          : dayLabel(day)}{" "}
-                      · {indiaTime(ride.depart_at)}
+                <li key={ride.id}>
+                  <Link
+                    href={`/rides/${ride.id}`}
+                    className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-900"
+                  >
+                    <div>
+                      <p className="font-medium">
+                        {day === today
+                          ? "Today"
+                          : day === tomorrow
+                            ? "Tomorrow"
+                            : dayLabel(day)}{" "}
+                        · {indiaTime(ride.depart_at)}
+                      </p>
+                      <p className="text-sm text-neutral-500">{route}</p>
+                    </div>
+                    <p className="text-sm">
+                      {ride.seats_left === 0
+                        ? "Full"
+                        : `${ride.seats_left} of ${ride.seats_total} free`}
                     </p>
-                    <p className="text-sm text-neutral-500">{route}</p>
-                  </div>
-                  <p className="text-sm">
-                    {ride.seats_left === 0
-                      ? "Full"
-                      : `${ride.seats_left} of ${ride.seats_total} free`}
-                  </p>
+                  </Link>
                 </li>
               );
             })}

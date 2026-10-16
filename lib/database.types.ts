@@ -89,14 +89,14 @@ isOneToOne: false
                   ]
                 },"bookings": {
                   Row: {
-                    "any_car_ok": boolean,"created_at": string,"decided_at": string | null,"drop_seq": number,"id": string,"pickup_seq": number,"ride_id": string,"rider_id": string,"seats": number,"status": Database["public"]['Enums']["booking_status"],"waitlist_rank": number | null
+                    "any_car_ok": boolean,"created_at": string,"decided_at": string | null,"drop_seq": number,"id": string,"pickup_seq": number,"rematch_requested": boolean,"ride_id": string,"rider_id": string,"seats": number,"status": Database["public"]['Enums']["booking_status"],"waitlist_rank": number | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "any_car_ok"?: boolean,"created_at"?: string,"decided_at"?: string | null,"drop_seq": number,"id"?: string,"pickup_seq": number,"ride_id": string,"rider_id": string,"seats"?: number,"status"?: Database["public"]['Enums']["booking_status"],"waitlist_rank"?: number | null
+                    "any_car_ok"?: boolean,"created_at"?: string,"decided_at"?: string | null,"drop_seq": number,"id"?: string,"pickup_seq": number,"rematch_requested"?: boolean,"ride_id": string,"rider_id": string,"seats"?: number,"status"?: Database["public"]['Enums']["booking_status"],"waitlist_rank"?: number | null
                   }
                   Update: {
-                    "any_car_ok"?: boolean,"created_at"?: string,"decided_at"?: string | null,"drop_seq"?: number,"id"?: string,"pickup_seq"?: number,"ride_id"?: string,"rider_id"?: string,"seats"?: number,"status"?: Database["public"]['Enums']["booking_status"],"waitlist_rank"?: number | null
+                    "any_car_ok"?: boolean,"created_at"?: string,"decided_at"?: string | null,"drop_seq"?: number,"id"?: string,"pickup_seq"?: number,"rematch_requested"?: boolean,"ride_id"?: string,"rider_id"?: string,"seats"?: number,"status"?: Database["public"]['Enums']["booking_status"],"waitlist_rank"?: number | null
                   }
                   Relationships: [
                     {
@@ -439,6 +439,9 @@ isOneToOne: false
           Functions: {
             "anonymise_account":
 { Args: { "p_user_id": string }; Returns: (string)[]
+                           },
+"cancel_ride":
+{ Args: { "p_owner_id": string,"p_reason"?: string,"p_ride_id": string }; Returns: number
                            },
 "get_car_private":
 { Args: { "p_car_id": string }; Returns: {
