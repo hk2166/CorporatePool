@@ -147,14 +147,14 @@ isOneToOne: false
                   ]
                 },"notifications_outbox": {
                   Row: {
-                    "attempts": number,"created_at": string,"id": string,"kind": string,"payload": NonNullable<Json>,"sent_at": string | null,"status": Database["public"]['Enums']["outbox_status"],"user_id": string
+                    "attempts": number,"claimed_until": string | null,"created_at": string,"id": string,"kind": string,"payload": NonNullable<Json>,"sent_at": string | null,"status": Database["public"]['Enums']["outbox_status"],"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "attempts"?: number,"created_at"?: string,"id"?: string,"kind": string,"payload"?: NonNullable<Json>,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["outbox_status"],"user_id": string
+                    "attempts"?: number,"claimed_until"?: string | null,"created_at"?: string,"id"?: string,"kind": string,"payload"?: NonNullable<Json>,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["outbox_status"],"user_id": string
                   }
                   Update: {
-                    "attempts"?: number,"created_at"?: string,"id"?: string,"kind"?: string,"payload"?: NonNullable<Json>,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["outbox_status"],"user_id"?: string
+                    "attempts"?: number,"claimed_until"?: string | null,"created_at"?: string,"id"?: string,"kind"?: string,"payload"?: NonNullable<Json>,"sent_at"?: string | null,"status"?: Database["public"]['Enums']["outbox_status"],"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -466,8 +466,16 @@ isOneToOne: false
 "cancel_ride":
 { Args: { "p_owner_id": string,"p_reason"?: string,"p_ride_id": string }; Returns: number
                            },
+"claim_notifications":
+{ Args: { "p_limit"?: number }; Returns: {
+              "attempts": number,"id": string,"kind": string,"payload": Json,"user_id": string
+            }[]
+                           },
 "complete_ride":
 { Args: { "p_owner_id": string,"p_ride_id": string }; Returns: undefined
+                           },
+"finish_notifications":
+{ Args: { "p_failed": (string)[],"p_sent": (string)[] }; Returns: undefined
                            },
 "get_car_private":
 { Args: { "p_car_id": string }; Returns: {

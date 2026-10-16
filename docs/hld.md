@@ -32,7 +32,7 @@ complexity (allocation, scoring) lives in code and SQL, not in infrastructure.
     ├─ Auth                 Google sign-in
     ├─ Storage              car photos
     ├─ Realtime             live seat counts on open ride pages
-    └─ pg_cron (+ Edge Functions)   scheduled jobs, below
+    └─ pg_cron (+ pg_net → app)     scheduled jobs, below
        │
   Other free services
     ├─ MapLibre + OpenFreeMap   map tiles, no API key
@@ -68,7 +68,9 @@ rewrite.
 ## Scheduled jobs
 
 Vercel Hobby cron runs at most daily, so timing-sensitive jobs live in the database with
-**pg_cron**, calling a Supabase Edge Function via pg_net when they need to send pushes:
+**pg_cron**. When a job needs the outside world (sending pushes), the database calls the app's
+own `/api/jobs/*` routes through **pg_net** with a shared secret (`CRON_SECRET`, kept in
+Supabase Vault). That keeps one codebase and one deploy instead of a separate Edge Function.
 
 | Job | When | What it does |
 |---|---|---|
@@ -76,7 +78,8 @@ Vercel Hobby cron runs at most daily, so timing-sensitive jobs live in the datab
 | Allocation | every 5 min | Runs ranked allocation for rides whose window just closed (Q4 option A) |
 | Waitlist sweep | every 5 min | Promotes waitlisted riders into any seats opened by cancellations; cross-car offers (F-D6) |
 | Reminders | every 5 min | "Pickup in 15 minutes" pushes (F-E3) |
-| Expiry | every 15 min | Expires unanswered requests at departure; marks stale rides completed |
+| Push sender | right after notifications are written, and every minute while any wait | Wakes `/api/jobs/send-pushes`, which sends the outbox with Web Push; retried up to 10 times (lld.md §6) |
+| Expiry | every 5 min | Expires unanswered requests at departure; completes rides 3 hours after departure |
 | Score refresh | daily | Recomputes reliability scores with the 90-day decay (F-F3) |
 | Keep-warm | daily | Touches the DB so the free project never pauses |
 
