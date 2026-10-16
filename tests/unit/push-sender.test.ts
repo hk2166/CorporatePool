@@ -103,6 +103,30 @@ describe("deliver", () => {
 });
 
 describe("notificationText", () => {
+  it("tells the owner who booked, from where to where, and how many so far", () => {
+    const text = notificationText(
+      "rider_booked",
+      {
+        ride_id: "r1",
+        rider: "Priya",
+        from: "Agra Chowk",
+        to: "Cyber City",
+        status: "REQUESTED",
+        riders: 3,
+      },
+      "2026-10-19T02:30:00Z",
+    );
+    expect(text.title).toBe("Priya asked for a seat");
+    expect(text.body).toBe(
+      "Agra Chowk → Cyber City, Mon, 19 Oct 08:00. 3 riders so far.",
+    );
+    expect(text.url).toBe("/my-riders");
+    expect(
+      notificationText("rider_booked", { status: "CONFIRMED", riders: 1 })
+        .title,
+    ).toBe("A rider booked a seat");
+  });
+
   it("reminds a rider of their stop and time", () => {
     expect(
       notificationText(
@@ -167,6 +191,7 @@ describe("notificationText", () => {
       "ride_completed",
       "reminder",
       "ride_full",
+      "rider_booked",
       "booking_cancelled",
       "ride_auto_live",
     ];
