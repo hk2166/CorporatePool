@@ -207,7 +207,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 
 - [x] **T-7.1 Rankings + occupancy.** Score table (sortable); seats offered vs filled per
       day/route. *Done when:* numbers reconcile with raw SQL on seeded fixtures.
-- [ ] **T-7.2 Reports queue + actions.** Review reports, remove user, hide ride — all as
+- [x] **T-7.2 Reports queue + actions.** Review reports, remove user, hide ride — all as
       audit-trail rows. *Done when:* removed user loses access; hidden ride vanishes from
       search but not from history.
 - [ ] **T-7.3 Landmark manager + invite links (F-G6, Q3).** CRUD/merge landmarks; generate
