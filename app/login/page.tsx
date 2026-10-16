@@ -5,6 +5,11 @@ import { SignInOptions } from "./sign-in-options";
 
 export const metadata: Metadata = { title: "Sign in · CorporatePool" };
 
+// Messages for ?notice=… codes.
+const NOTICES: Record<string, string> = {
+  "account-deleted": "Your account has been deleted.",
+};
+
 // Messages for ?error=… codes that /auth/callback sends people back with.
 const ERRORS: Record<string, string> = {
   "sign-in-failed": "Sign-in didn't finish. Please try again.",
@@ -44,6 +49,8 @@ async function Options({
   );
   const error =
     typeof params.error === "string" ? ERRORS[params.error] : undefined;
+  const notice =
+    typeof params.notice === "string" ? NOTICES[params.notice] : undefined;
   // Set by /auth/join when someone opened an invite link before signing in.
   const invited = params.invited === "1";
 
@@ -51,6 +58,7 @@ async function Options({
     <SignInOptions
       next={next}
       error={error}
+      notice={notice}
       invited={invited}
       devLogin={process.env.NEXT_PUBLIC_DEV_LOGIN === "true"}
     />
