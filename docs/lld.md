@@ -229,21 +229,36 @@ between "seat confirmed" and "push sent" loses nothing.
 
 ## 7. API
 
+There's no separate REST API. Pages read through Supabase with Row-Level Security; everything
+with rules is a database function, called by a Server Action (or a job route) after
+`lib/auth.ts` has checked who's asking. The functions check again.
+
 ```
-Auth      (Supabase handles sign-in; our API trusts its JWT)
-GET   /places?q=palwal
-GET   /rides/search?from=lat,lng&to=lat,lng&window=08:00-09:00&date=2026-10-13
-GET   /rides/:id                      public — powers the WhatsApp preview card (F-H1)
-POST  /cars                PATCH /cars/:id
-POST  /usual-rides         PATCH /usual-rides/:id
-POST  /usual-rides/:id/golive        body: {date, overrides?}        → the one tap (F-B2)
-PATCH /rides/:id                     edit | cancel | start | complete
-POST  /rides/:id/bookings            body: {pickup_seq, drop_seq, seats, any_car_ok}
-PATCH /bookings/:id                  cancel | no_show | picked_up
-GET   /me                  /me/rides   /me/bookings   /me/reliability
-POST  /push/subscribe      POST /reports
-GET   /admin/rankings      /admin/occupancy           POST /admin/actions
+Read (signed in, under the access rules)
+  list_places()                     search_rides(from, to, date, window, seats)
+  get_public_ride(id)   (also anon) get_my_profile()   get_contact(user)   get_car_private(car)
+  get_reliability(user)             admin_rankings()   admin_occupancy(from, to)   (admins)
+
+Write (server only, service role)
+  go_live(owner, usual_ride, date, …)          cancel_ride(owner, ride, reason)
+  request_seat(rider, ride, pickup, drop, seats, any_car_ok)
+  cancel_booking(rider, booking)
+  start_ride(owner, ride)   mark_rider(owner, booking, outcome)   complete_ride(owner, ride)
+  admin_remove_user / admin_restore_user / admin_set_ride_hidden / admin_close_report
+  redeem_invite(…)   anonymise_account(…)
+  admin_save_place / admin_merge_places         (admins, signed in)
+
+Jobs (pg_cron, inside the database)
+  run_auto_go_live()   run_allocation()   run_promotion_sweep()   run_rematch()
+  run_ride_expiry()    run_reminders()    recompute_scores()
+  claim_notifications() / finish_notifications()   ← the push sender
+
+App routes the database (or Vercel cron) calls, with CRON_SECRET
+  POST /api/jobs/send-pushes        GET /api/jobs/keep-warm
 ```
+
+Pages: `/search`, `/rides/[id]` (owner and rider views), `/r/[id]` (public card),
+`/reliability`, `/report/[user]`, `/admin/*`, plus profile, car, usual ride and go live.
 
 ## 8. Failure cases worth designing for
 
