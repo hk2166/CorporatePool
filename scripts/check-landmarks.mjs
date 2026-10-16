@@ -4,6 +4,7 @@
 // Exits with code 1 if anything must be fixed; warnings alone don't fail.
 // --strict also fails on demo stops (names starting "Demo"); the launch task (T-8.2) uses it.
 import { readFileSync } from "node:fs";
+import { splitCsvLine } from "./lib/csv.mjs";
 
 const args = process.argv.slice(2);
 const strict = args.includes("--strict");
@@ -15,29 +16,6 @@ const KINDS = ["town", "landmark", "metro", "office"];
 // almost always swapped lat/lng or a typo.
 const BOX = { latMin: 27.9, latMax: 28.7, lngMin: 76.8, lngMax: 77.6 };
 const TOO_CLOSE_M = 50;
-
-// Splits one CSV line, allowing "quoted, fields" and "" escapes.
-function splitCsvLine(line) {
-  const fields = [];
-  let field = "";
-  let quoted = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
-    if (quoted) {
-      if (c === '"' && line[i + 1] === '"') {
-        field += '"';
-        i++;
-      } else if (c === '"') quoted = false;
-      else field += c;
-    } else if (c === '"') quoted = true;
-    else if (c === ",") {
-      fields.push(field);
-      field = "";
-    } else field += c;
-  }
-  fields.push(field);
-  return fields.map((f) => f.trim());
-}
 
 // Straight-line distance in metres; accurate enough at this scale.
 function metresBetween(a, b) {

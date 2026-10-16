@@ -113,7 +113,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
       on that ride; scores readable by owner + admin; public ride link exposes only route, time,
       price, seats left, owner first name. *Done when:* pgTAP (or SQL test script) proves each
       policy with two test users.
-- [ ] **T-1.4 Seed.** `supabase/seed/`: load the landmarks from `landmarks.csv` (demo stops
+- [x] **T-1.4 Seed.** `supabase/seed/`: load the landmarks from `landmarks.csv` (demo stops
       for now; the seed must not depend on their names, so real stops can replace them
       later). Also seed 3 demo users, 1 car, 1 usual ride and 1 live ride. Every seeded person
       is fake: names start with `Demo`, emails use `example.com`, and phone numbers are

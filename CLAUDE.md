@@ -37,4 +37,8 @@ The build plan is [task.md](task.md); design docs are in [docs/](docs/).
   tables to visitors by default) and give any SECURITY DEFINER function `set search_path = ''`.
   `supabase/tests/90_schema.test.sql` fails CI otherwise.
 - Do not guess stop names or coordinates. Landmarks come from `supabase/seed/landmarks.csv`
-  (task.md H-5).
+  (task.md H-5). After changing the CSV, run `npm run seed:landmarks` to rebuild
+  `supabase/seed/10_landmarks.sql`; CI fails if it's stale.
+- Local demo data (`supabase/seed/20_demo.sql`, local only): three people who can sign in to the
+  local app with email and password, listed at the top of that file, plus a car, a usual ride
+  and tomorrow's 08:00 ride. Tests must not depend on it except `80_seed.test.sql`.

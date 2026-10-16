@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - "supabase/**"
+      - "scripts/**"
       - ".github/workflows/db.yml"
       - "package.json"
       - "package-lock.json"
@@ -14,6 +15,7 @@ on:
     branches: [main]
     paths:
       - "supabase/**"
+      - "scripts/**"
       - ".github/workflows/db.yml"
       - "package.json"
       - "package-lock.json"
@@ -38,6 +40,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # The stop list is valid, and the SQL seed built from it is up to date (T-1.4).
+      - run: node scripts/check-landmarks.mjs
+      - run: node scripts/seed-landmarks.mjs --check
       # Starts only the Postgres container, which applies every migration. The tests need
       # nothing else, and skipping the other services saves several minutes per run.
       - run: npm run db:start:db-only
