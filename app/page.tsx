@@ -53,6 +53,14 @@ async function SignedInHome() {
       <MySeats userId={user.id} />
       <PushToggle compact />
       <FindSeatCard />
+      {user.isAdmin && (
+        <Link
+          href="/admin"
+          className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium dark:border-neutral-700"
+        >
+          Admin: rankings, occupancy, reports, stops and invites
+        </Link>
+      )}
       <OwnerSection userId={user.id} />
     </div>
   );

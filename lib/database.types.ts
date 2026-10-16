@@ -457,7 +457,17 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "anonymise_account":
+            "admin_occupancy":
+{ Args: { "p_from": string,"p_to": string }; Returns: {
+              "day": string,"rides": number,"route": string,"seats_filled": number,"seats_offered": number
+            }[]
+                           },
+"admin_rankings":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "joined_at": string,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"reliability_score": number,"rides_completed": number,"user_id": string
+            }[]
+                           },
+"anonymise_account":
 { Args: { "p_user_id": string }; Returns: (string)[]
                            },
 "cancel_booking":

@@ -1,5 +1,5 @@
 import "server-only";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export type CurrentUser = {
@@ -37,4 +37,12 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     isAdmin: profile.is_admin,
     hasPhone: profile.phone !== null,
   };
+}
+
+// The signed-in person, who must be an admin. Anyone else gets "not found": the admin pages
+// don't advertise themselves. The database checks again in every admin function.
+export async function getCurrentAdmin(): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user.isAdmin) notFound();
+  return user;
 }
