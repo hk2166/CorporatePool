@@ -144,7 +144,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-3.3 Auto go-live (F-B3).** pg_cron evening job for `auto_golive_days`; skip-a-day UI.
       *Done when:* job is idempotent (run twice → one ride) and skip notifies allocated riders
       (outbox row; push comes in Phase 6).
-- [ ] **T-3.4 Public ride page + OG card (F-H1).** `/r/[code]` with OG meta so WhatsApp previews
+- [x] **T-3.4 Public ride page + OG card (F-H1).** `/r/[code]` with OG meta so WhatsApp previews
       *Palwal → Shankar Chowk · 8:00 · 2 seats · ₹150*; share button. *Done when:* page shows
       only public fields (T-1.3); OG tags verified in a card-preview test.
 - [x] **T-3.5 Edit / cancel ride (F-B4).** Cancel notifies + flags all bookings for re-match

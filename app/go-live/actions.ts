@@ -1,6 +1,7 @@
 "use server";
 
 import { refresh } from "next/cache";
+import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { addDays, indiaDate } from "@/lib/india-time";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -57,8 +58,8 @@ export async function goLive(
     };
   }
 
-  refresh();
-  return { rideId: data.ride_id };
+  // On to the ride, where the owner can share it in the WhatsApp group (user flow 3).
+  redirect(`/rides/${data.ride_id}?live=1`);
 }
 
 // "Skip tomorrow" for owners with automatic go-live (F-B3), before the 17:00 job has run.
