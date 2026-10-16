@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GOOGLE_SITE_VERIFICATION } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,6 +21,8 @@ export const metadata: Metadata = {
   title: "CorporatePool",
   description:
     "Free shared rides to work: drivers fill their empty seats, riders find a seat.",
+  // <meta name="google-site-verification">, on every page.
+  verification: { google: GOOGLE_SITE_VERIFICATION },
   // Installed on an iPhone's home screen, it opens full screen like an app (T-8.1).
   appleWebApp: {
     capable: true,

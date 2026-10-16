@@ -31,7 +31,8 @@ function isPublic(pathname: string): boolean {
 // Runs before every page request, with two jobs:
 // 1. Keep the Supabase sign-in cookie fresh. Access tokens last an hour; refreshing here means
 //    pages always see a valid session.
-// 2. Send visitors who aren't signed in to /login. This is only a fast first check: pages still
+// 2. Send visitors who aren't signed in to /login (or, at the site's address, show them the
+//    front page). This is only a fast first check: pages still
 //    ask lib/auth.ts who's signed in, as the Next.js docs recommend.
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -61,6 +62,18 @@ export async function proxy(request: NextRequest) {
   // Verifies the token (and refreshes it if needed) before anything else runs.
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims?.sub);
+
+  // Someone not signed in who opens the site's address sees the front page there (no
+  // redirect): it's what Google checks when verifying the site, and what a newcomer needs.
+  if (!signedIn && request.nextUrl.pathname === "/") {
+    const home = request.nextUrl.clone();
+    home.pathname = "/home";
+    const rewrite = NextResponse.rewrite(home);
+    for (const cookie of response.cookies.getAll()) {
+      rewrite.cookies.set(cookie);
+    }
+    return rewrite;
+  }
 
   if (!signedIn && !isPublic(request.nextUrl.pathname)) {
     const login = request.nextUrl.clone();
