@@ -33,11 +33,11 @@ test("a rider who starts driving too changes it on their profile", async ({
     await expect(
       page.getByRole("link", { name: "Add your car" }),
     ).toBeVisible();
-    // Car owners get Offer and Car in the menu too.
+    // Car owners get Offer and Riders in the menu too.
     await expect(menu.getByRole("link")).toHaveText([
       "Find",
       "Offer",
-      "Car",
+      "Riders",
       "Profile",
     ]);
   } finally {

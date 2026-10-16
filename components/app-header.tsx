@@ -4,7 +4,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { isCarOwner } from "@/lib/ride-preference";
 
 // The bar at the top of every signed-in page. Everyone gets Find and Profile; car owners also
-// get Offer (their morning and evening rides) and Car. The logo and the two common links are
+// get Offer (their morning and evening rides) and Riders (who has booked them). The car, set
+// up once, is linked from the profile. The logo and the two common links are
 // part of the static shell; who's signed in (and so the owner links) streams in. Signing out
 // lives on the profile page, to keep this bar to one line on a phone. It stays at the top
 // while the page scrolls, and lines up with the widest pages on a laptop.
@@ -45,8 +46,8 @@ function Menu({ owner }: { owner: boolean }) {
           <Link href="/usual-ride" className={linkClass}>
             Offer
           </Link>
-          <Link href="/car" className={linkClass}>
-            Car
+          <Link href="/my-riders" className={linkClass}>
+            Riders
           </Link>
         </>
       )}
