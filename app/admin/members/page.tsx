@@ -16,7 +16,7 @@ export default function MembersPage({
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-3xl flex-1 lg:max-w-5xl space-y-6 px-4 py-6">
         <AdminNav current="/admin/members" />
         <Suspense
           fallback={
@@ -94,7 +94,7 @@ async function Members({
           {q ? `Nobody matches “${q}”.` : "No members yet."}
         </p>
       )}
-      <ol className="space-y-2">
+      <ol className="grid grid-cols-1 gap-2 lg:grid-cols-2">
         {sorted.map((m, i) => (
           <li key={m.user_id}>
             <Link

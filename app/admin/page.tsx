@@ -15,7 +15,7 @@ export default function OverviewPage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-3xl flex-1 lg:max-w-5xl space-y-6 px-4 py-6">
         <AdminNav current="/admin" />
         <Suspense
           fallback={
@@ -97,7 +97,7 @@ async function Overview() {
             <span className="font-medium underline">Add stops</span>
           </Link>
         )}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           <Stat
             label="Members"
             value={s.members}

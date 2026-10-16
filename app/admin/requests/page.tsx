@@ -16,7 +16,7 @@ export default function RequestsPage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-3xl flex-1 lg:max-w-5xl space-y-6 px-4 py-6">
         <AdminNav current="/admin/requests" />
         <Suspense
           fallback={
@@ -72,7 +72,7 @@ async function Requests() {
         {pending.length === 0 && (
           <p className="text-sm text-neutral-500">Nobody is waiting.</p>
         )}
-        <ul className="space-y-3">
+        <ul className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {pending.map((r) => (
             <li
               key={r.user_id}

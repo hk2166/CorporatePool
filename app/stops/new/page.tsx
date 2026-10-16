@@ -13,7 +13,7 @@ export default function AddStopPage({ searchParams }: PageProps<"/stops/new">) {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-md flex-1 md:max-w-xl space-y-6 px-4 py-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold tracking-tight">Add a stop</h1>
           <p className="text-neutral-600 dark:text-neutral-400">
