@@ -4,6 +4,7 @@ import { useActionState, useMemo, useState } from "react";
 import { AddStopLink } from "@/components/add-stop-link";
 import { StopOptions } from "@/components/city-stop-select";
 import { suggestedPricePerSeat } from "@/lib/pricing";
+import { pickedByOthers } from "@/lib/stop-choices";
 import {
   MAX_STOPS,
   WEEKDAYS,
@@ -164,7 +165,13 @@ export function UsualRideForm({
                       className={`${fieldClass} min-w-0 flex-1`}
                     >
                       <option value="">Choose a spot</option>
-                      <StopOptions places={places} />
+                      <StopOptions
+                        places={places}
+                        exclude={pickedByOthers(
+                          stops.map((s) => s.placeId),
+                          index,
+                        )}
+                      />
                     </select>
                     {index === 0 ? (
                       <span className="w-24 shrink-0 text-sm text-neutral-500">

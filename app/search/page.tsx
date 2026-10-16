@@ -3,7 +3,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AddStopLink } from "@/components/add-stop-link";
-import { StopOptions } from "@/components/city-stop-select";
+import { RoutePicker } from "@/components/route-picker";
 import { AppHeader } from "@/components/app-header";
 import { LiveSeatsProvider } from "@/components/live-seats";
 import { RideResultCard } from "@/components/ride-result-card";
@@ -87,34 +87,12 @@ async function SearchSection({
         {/* A plain GET form: works before the page's JavaScript loads, and every search has a
           URL. The key resets the fields when the URL changes (say, after "Going back"). */}
         <Form key={`form:${href}`} action="/search" className="space-y-4">
-          <Field label="From" htmlFor="from">
-            <select
-              id="from"
-              name="from"
-              required
-              defaultValue={from?.id ?? ""}
-              className={selectClass}
-            >
-              <option value="" disabled>
-                Where you get in
-              </option>
-              <StopOptions places={places ?? []} />
-            </select>
-          </Field>
-          <Field label="To" htmlFor="to">
-            <select
-              id="to"
-              name="to"
-              required
-              defaultValue={to?.id ?? ""}
-              className={selectClass}
-            >
-              <option value="" disabled>
-                Where you get out
-              </option>
-              <StopOptions places={places ?? []} />
-            </select>
-          </Field>
+          <RoutePicker
+            places={places ?? []}
+            from={from?.id ?? ""}
+            to={to?.id ?? ""}
+            selectClass={selectClass}
+          />
           <AddStopLink next="/search" empty={(places ?? []).length === 0} />
 
           <div className="grid grid-cols-[1fr_auto] gap-3">
