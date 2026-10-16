@@ -5,8 +5,8 @@ A free app for sharing the daily office commute, starting with rides from Palwal
 to Shankar Chowk, 3 seats, ₹150"* and commuters reply to grab a seat. (CorporatePool is a working
 name.)
 
-> **Status: idea and design discussion.** There is no code yet. These docs are where we agree on
-> what to build before we build it.
+> **Status: built, waiting to go live.** Every v1 feature in task.md is built and tested;
+> launching needs the live accounts and the real stop list ([docs/deploy.md](docs/deploy.md)).
 
 ## How it works, in short
 
@@ -54,6 +54,21 @@ name.)
 
 | Stage | State |
 |---|---|
-| Idea and features | In discussion |
-| HLD / LLD | First draft, waiting on the open questions |
-| Code | Not started |
+| Idea, features, HLD / LLD | Agreed defaults written up (decisions.md); docs follow the code |
+| Code | Phases 0–8 of task.md built: sign-in and invites, cars and usual rides, go live, search, booking and allocation, reliability, notifications, admin, installable app |
+| Tests | Database (pgTAP), a two-connection race for the last seat, unit tests (Vitest), user flows in a browser (Playwright, nightly) |
+| Launch | Waiting on the real stop list (H-5) and the live accounts (docs/deploy.md) |
+
+## Run it locally
+
+Needs Docker and Node (docs/setup.md, H-4).
+
+```bash
+npm install
+npm run db:start      # local Supabase with demo data
+npm run jobs:local    # let the local database wake the app's job routes
+npm run dev           # http://localhost:3000, demo sign-in on /login
+```
+
+Tests: `npm test` (unit), `npm run test:db` (database), `npm run test:race`, `npm run test:e2e`
+(browser; needs the dev server running).
