@@ -56,10 +56,11 @@ export default function PrivacyPage() {
             <strong>What the app records as you use it:</strong> the rides you
             offer, the seats you request and what happened to them (confirmed,
             waitlisted, cancelled, completed or missed), your reliability score
-            and the events behind it, reports you file, people you block, the
-            days you open the app (just the date, to count daily users; not
-            times or pages), and, if you turn on notifications, the browser
-            address notifications are sent to.
+            and the events behind it, reports you file, feedback you send and
+            what you upvote, people you block, the days you open the app (just
+            the date, to count daily users; not times or pages), and, if you
+            turn on notifications, the browser address notifications are sent
+            to.
           </p>
           <p>
             <strong>If you ask to join</strong> without an invite link: your
@@ -105,9 +106,10 @@ export default function PrivacyPage() {
               <strong>Your group&apos;s admins</strong> can also see your email
               address and phone number, your usual stops, car and usual ride,
               the rides you offer and seats you ask for, the days you used the
-              app, and reports about you. They use this only to run the group:
-              to see how it&apos;s used, sort out problems, and remove members
-              who break the rules.
+              app, reports about you, and which feedback you sent (other members
+              see feedback but not who sent it). They use this only to run the
+              group: to see how it&apos;s used, sort out problems, and remove
+              members who break the rules.
             </li>
             <li>
               <strong>Blocks</strong> are visible only to the person who made

@@ -11,7 +11,7 @@ select tables_are(
     'usual_rides', 'usual_ride_skips', 'rides', 'ride_stops',
     'bookings', 'reliability_events', 'reviews',
     'reports', 'admin_actions', 'push_subscriptions', 'notifications_outbox', 'member_activity',
-    'join_requests'
+    'join_requests', 'feedback', 'feedback_votes'
   ],
   'public has exactly the tables of the data model'
 );

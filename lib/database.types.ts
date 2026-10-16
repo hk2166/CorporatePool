@@ -145,6 +145,52 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"feedback": {
+                  Row: {
+                    "admin_reply": string | null,"author_id": string | null,"created_at": string,"details": string | null,"id": string,"kind": string,"status": string,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "admin_reply"?: string | null,"author_id"?: string | null,"created_at"?: string,"details"?: string | null,"id"?: string,"kind": string,"status"?: string,"title": string
+                  }
+                  Update: {
+                    "admin_reply"?: string | null,"author_id"?: string | null,"created_at"?: string,"details"?: string | null,"id"?: string,"kind"?: string,"status"?: string,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "feedback_author_id_fkey"
+      columns: ["author_id"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"feedback_votes": {
+                  Row: {
+                    "created_at": string,"feedback_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"feedback_id": string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"feedback_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "feedback_votes_feedback_id_fkey"
+      columns: ["feedback_id"]
+isOneToOne: false
+      referencedRelation: "feedback"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "feedback_votes_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"join_requests": {
                   Row: {
                     "created_at": string,"decided_at": string | null,"decided_by": string | null,"email": string | null,"name": string,"note": string | null,"photo_url": string | null,"status": string,"user_id": string
@@ -569,6 +615,9 @@ isOneToOne: false
               "dropoff": string,"pickup": string,"riders": number,"trips": number
             }[]
                            },
+"admin_update_feedback":
+{ Args: { "p_admin_id": string,"p_feedback_id": string,"p_reply"?: string,"p_status": string }; Returns: undefined
+                           },
 "anonymise_account":
 { Args: { "p_user_id": string }; Returns: (string)[]
                            },
@@ -638,6 +687,11 @@ isOneToOne: false
               "created": boolean,"ride_id": string
             }[]
                            },
+"list_feedback":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "admin_reply": string,"author_id": string,"author_name": string,"created_at": string,"details": string,"id": string,"kind": string,"mine": boolean,"status": string,"title": string,"voted": boolean,"votes": number
+            }[]
+                           },
 "list_places":
 { Args: Record<PropertyKey, never>; Returns: {
               "id": string,"kind": Database["public"]['Enums']["place_kind"],"lat": number,"lng": number,"name": string
@@ -688,6 +742,12 @@ isOneToOne: false
                            },
 "start_ride":
 { Args: { "p_owner_id": string,"p_ride_id": string }; Returns: undefined
+                           },
+"submit_feedback":
+{ Args: { "p_details"?: string,"p_kind": string,"p_title": string }; Returns: string
+                           },
+"vote_feedback":
+{ Args: { "p_feedback_id": string,"p_vote": boolean }; Returns: number
                            }
           }
           Enums: {
