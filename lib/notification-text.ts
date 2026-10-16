@@ -136,6 +136,25 @@ export function notificationText(
         body: `Every seat for ${at} is taken.`,
         url,
       };
+    case "rider_booked": {
+      const rider = str(payload.rider) ?? "A rider";
+      const from = str(payload.from);
+      const to = str(payload.to);
+      const riders = typeof payload.riders === "number" ? payload.riders : null;
+      return {
+        title:
+          payload.status === "CONFIRMED"
+            ? `${rider} booked a seat`
+            : `${rider} asked for a seat`,
+        body:
+          [from && to && `${from} → ${to}`, at].filter(Boolean).join(", ") +
+          "." +
+          (riders
+            ? ` ${riders} ${riders === 1 ? "rider" : "riders"} so far.`
+            : ""),
+        url: "/my-riders",
+      };
+    }
     case "booking_cancelled":
       return {
         title: "A rider dropped out",
