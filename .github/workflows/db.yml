@@ -48,6 +48,8 @@ jobs:
       # nothing else, and skipping the other services saves several minutes per run.
       - run: npm run db:start:db-only
       - run: npm run test:db
+      # Two real connections racing for a car's last seat (T-5.1). Uses the runner's psql.
+      - run: npm run test:race
       # lib/database.types.ts must match the migrations, so app code type-checks against the
       # real schema. Fix with: npm run db:types
       - name: Generated database types are up to date

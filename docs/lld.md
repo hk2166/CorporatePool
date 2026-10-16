@@ -122,6 +122,12 @@ RETURNING seats_left;
 -- no row returned ⇒ the seat is gone: the booking becomes WAITLISTED instead
 ```
 
+In the code this is `private.take_seats()` (and `private.give_back_seats()` for the mirror
+image); nothing else writes `seats_left`. Every function that changes a ride's seats or
+bookings (`request_seat()`, allocation, cancellations) also locks the ride row first, so they
+take turns. That also makes the ALLOCATING status unnecessary: nobody can see a ride halfway
+through allocation. `npm run test:race` races two real connections for a last seat.
+
 Two riders tapping in the same second: Postgres serialises the two updates; the second finds
 `seats_left = 0`, matches no row, and that rider is waitlisted. The seat count the app shows is
 therefore always real (F-D5), and Supabase Realtime streams the new value to every open ride

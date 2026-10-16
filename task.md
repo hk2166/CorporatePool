@@ -164,7 +164,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 
 ## Phase 5 — booking & allocation (F-D1…D8) — **the core; test hardest**
 
-- [ ] **T-5.1 Request + instant confirm (F-D1, F-D3).** A request has pickup, drop, seats and
+- [x] **T-5.1 Request + instant confirm (F-D1, F-D3).** A request has pickup, drop, seats and
       `any_car_ok`. Before `allocation_at` it stays REQUESTED. After it, confirm through the
       conditional UPDATE (lld §2) in one transaction, or set WAITLISTED if no seat is left
       (see the Q4 row above). *Done when:* a concurrency test sends two parallel post-window
