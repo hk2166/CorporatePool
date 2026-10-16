@@ -89,14 +89,14 @@ isOneToOne: false
                   ]
                 },"bookings": {
                   Row: {
-                    "any_car_ok": boolean,"created_at": string,"decided_at": string | null,"drop_seq": number,"id": string,"pickup_seq": number,"rematch_requested": boolean,"ride_id": string,"rider_id": string,"seats": number,"status": Database["public"]['Enums']["booking_status"],"waitlist_rank": number | null
+                    "any_car_ok": boolean,"created_at": string,"decided_at": string | null,"drop_seq": number,"id": string,"picked_up_at": string | null,"pickup_seq": number,"rematch_requested": boolean,"ride_id": string,"rider_id": string,"seats": number,"status": Database["public"]['Enums']["booking_status"],"waitlist_rank": number | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "any_car_ok"?: boolean,"created_at"?: string,"decided_at"?: string | null,"drop_seq": number,"id"?: string,"pickup_seq": number,"rematch_requested"?: boolean,"ride_id": string,"rider_id": string,"seats"?: number,"status"?: Database["public"]['Enums']["booking_status"],"waitlist_rank"?: number | null
+                    "any_car_ok"?: boolean,"created_at"?: string,"decided_at"?: string | null,"drop_seq": number,"id"?: string,"picked_up_at"?: string | null,"pickup_seq": number,"rematch_requested"?: boolean,"ride_id": string,"rider_id": string,"seats"?: number,"status"?: Database["public"]['Enums']["booking_status"],"waitlist_rank"?: number | null
                   }
                   Update: {
-                    "any_car_ok"?: boolean,"created_at"?: string,"decided_at"?: string | null,"drop_seq"?: number,"id"?: string,"pickup_seq"?: number,"rematch_requested"?: boolean,"ride_id"?: string,"rider_id"?: string,"seats"?: number,"status"?: Database["public"]['Enums']["booking_status"],"waitlist_rank"?: number | null
+                    "any_car_ok"?: boolean,"created_at"?: string,"decided_at"?: string | null,"drop_seq"?: number,"id"?: string,"picked_up_at"?: string | null,"pickup_seq"?: number,"rematch_requested"?: boolean,"ride_id"?: string,"rider_id"?: string,"seats"?: number,"status"?: Database["public"]['Enums']["booking_status"],"waitlist_rank"?: number | null
                   }
                   Relationships: [
                     {
@@ -466,6 +466,9 @@ isOneToOne: false
 "cancel_ride":
 { Args: { "p_owner_id": string,"p_reason"?: string,"p_ride_id": string }; Returns: number
                            },
+"complete_ride":
+{ Args: { "p_owner_id": string,"p_ride_id": string }; Returns: undefined
+                           },
 "get_car_private":
 { Args: { "p_car_id": string }; Returns: {
               "photo_paths": (string)[],"plate": string
@@ -519,6 +522,9 @@ isOneToOne: false
               "id": string,"kind": Database["public"]['Enums']["place_kind"],"lat": number,"lng": number,"name": string
             }[]
                            },
+"mark_rider":
+{ Args: { "p_booking_id": string,"p_outcome": string,"p_owner_id": string }; Returns: Database["public"]['Enums']["booking_status"]
+                           },
 "redeem_invite":
 { Args: { "p_name": string,"p_photo_url": string,"p_token": string,"p_user_id": string }; Returns: boolean
                            },
@@ -539,10 +545,16 @@ isOneToOne: false
 "run_rematch":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
+"run_ride_expiry":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "search_rides":
 { Args: { "p_date": string,"p_from_lat": number,"p_from_lng": number,"p_seats"?: number,"p_time_from"?: string,"p_time_to"?: string,"p_to_lat": number,"p_to_lng": number }; Returns: {
               "allocation_at": string,"car_colour": string,"car_model": string,"depart_at": string,"drop_at": string,"drop_label": string,"drop_seq": number,"drop_walk_m": number,"end_label": string,"my_booking_status": Database["public"]['Enums']["booking_status"],"notes": string,"owner_first_name": string,"owner_photo_url": string,"pickup_at": string,"pickup_label": string,"pickup_seq": number,"pickup_walk_m": number,"price_per_seat": number,"ride_id": string,"seats_left": number,"seats_total": number,"start_label": string,"status": Database["public"]['Enums']["ride_status"],"women_only": boolean
             }[]
+                           },
+"start_ride":
+{ Args: { "p_owner_id": string,"p_ride_id": string }; Returns: undefined
                            }
           }
           Enums: {
