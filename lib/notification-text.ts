@@ -80,6 +80,14 @@ export function notificationText(
         url,
       };
     }
+    case "booking_ended":
+      return {
+        title: "No longer on this ride",
+        body: payload.finding_another_car
+          ? `You're no longer on ${at}. We're looking for another car for you.`
+          : `You're no longer on ${at}. Find another seat any time.`,
+        url: "/search",
+      };
     case "booking_expired":
       return {
         title: "No seat this time",

@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { BlockedList } from "@/app/report/blocked-list";
 import { PushToggle } from "@/components/push-toggle";
 import { SignOutButton } from "@/components/sign-out-button";
 import { DeleteAccount } from "./delete-account";
@@ -74,6 +75,7 @@ async function ProfileSection({
       {!isWelcome && (
         <>
           <PushToggle />
+          <BlockedList />
           <SignOutButton />
           <DeleteAccount />
         </>
