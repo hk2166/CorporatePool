@@ -14,8 +14,9 @@ export default function NoInvitePage() {
         </h1>
         <p className="text-neutral-600 dark:text-neutral-400">
           CorporatePool is invite-only, so everyone on it is part of the same
-          commuting group. Ask your group admin for an invite link, open it, and
-          sign in again.
+          commuting group. Ask your group admin for an invite link and open it
+          on this device. If you already opened one, it may have expired or been
+          used up.
         </p>
       </div>
       <SignOutButton />

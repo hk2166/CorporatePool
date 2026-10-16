@@ -479,6 +479,9 @@ isOneToOne: false
 { Args: { "p_user_id": string }; Returns: {
               "late_cancels_90d": number,"no_shows_90d": number,"reliability_score": number,"rides_completed": number
             }[]
+                           },
+"redeem_invite":
+{ Args: { "p_name": string,"p_photo_url": string,"p_token": string,"p_user_id": string }; Returns: boolean
                            }
           }
           Enums: {
