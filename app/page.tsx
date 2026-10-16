@@ -55,6 +55,13 @@ async function SignedInHome() {
       <PushToggle compact />
       <InstallPrompt />
       <FindSeatCard />
+      <Link
+        href="/feedback"
+        className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm dark:border-neutral-700"
+      >
+        <span className="font-medium">Ideas or problems?</span> Send feedback
+        and upvote what you want next.
+      </Link>
       {user.isAdmin && (
         <Link
           href="/admin"

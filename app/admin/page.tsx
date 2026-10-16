@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AdminNav } from "@/app/admin/admin-nav";
 import { AppHeader } from "@/components/app-header";
 import { percent, sortMembers } from "@/lib/admin";
+import { arrangeFeedback } from "@/lib/feedback";
 import { getCurrentAdmin } from "@/lib/auth";
 import { addDays, dayLabel, indiaDate } from "@/lib/india-time";
 import { createClient } from "@/lib/supabase/server";
@@ -36,23 +37,26 @@ async function Overview() {
   await getCurrentAdmin();
   const supabase = await createClient();
   const today = indiaDate();
-  const [summary, daily, trips, members, waiting] = await Promise.all([
-    supabase.rpc("admin_summary").single(),
-    supabase.rpc("admin_daily_stats", {
-      p_from: addDays(today, -(DAYS - 1)),
-      p_to: today,
-    }),
-    supabase.rpc("admin_top_trips", {
-      p_from: addDays(today, -29),
-      p_to: addDays(today, 1),
-      p_limit: 8,
-    }),
-    supabase.rpc("admin_members"),
-    supabase
-      .from("join_requests")
-      .select("user_id", { count: "exact", head: true })
-      .eq("status", "PENDING"),
-  ]);
+  const [summary, daily, trips, members, waiting, feedback] = await Promise.all(
+    [
+      supabase.rpc("admin_summary").single(),
+      supabase.rpc("admin_daily_stats", {
+        p_from: addDays(today, -(DAYS - 1)),
+        p_to: today,
+      }),
+      supabase.rpc("admin_top_trips", {
+        p_from: addDays(today, -29),
+        p_to: addDays(today, 1),
+        p_limit: 8,
+      }),
+      supabase.rpc("admin_members"),
+      supabase
+        .from("join_requests")
+        .select("user_id", { count: "exact", head: true })
+        .eq("status", "PENDING"),
+      supabase.rpc("list_feedback"),
+    ],
+  );
   if (summary.error || daily.error || trips.error || members.error) {
     return <p role="alert">Couldn&apos;t load the overview.</p>;
   }
@@ -67,6 +71,7 @@ async function Overview() {
   const riders = sortMembers(current, "taken")
     .filter((m) => m.rides_taken > 0)
     .slice(0, 5);
+  const wanted = arrangeFeedback(feedback.data ?? [], "top").open.slice(0, 3);
 
   return (
     <div className="space-y-10">
@@ -235,6 +240,33 @@ async function Overview() {
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Most wanted</h2>
+        <p className="text-sm text-neutral-500">
+          The open ideas and problems with the most upvotes.
+        </p>
+        {wanted.length === 0 ? (
+          <p className="text-sm text-neutral-500">No feedback yet.</p>
+        ) : (
+          <ol className="divide-y divide-neutral-200 rounded-2xl border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+            {wanted.map((f) => (
+              <li
+                key={f.id}
+                className="flex items-baseline justify-between gap-3 px-4 py-2 text-sm"
+              >
+                <span className="min-w-0 break-words">{f.title}</span>
+                <span className="whitespace-nowrap text-neutral-500 tabular-nums">
+                  {f.votes} {f.votes === 1 ? "vote" : "votes"}
+                </span>
+              </li>
+            ))}
+          </ol>
+        )}
+        <Link href="/admin/feedback" className="block text-sm underline">
+          All feedback
+        </Link>
       </section>
 
       <section className="grid gap-6 sm:grid-cols-2">
