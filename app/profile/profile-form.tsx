@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { AddStopLink } from "@/components/add-stop-link";
 import { CityStopSelect } from "@/components/city-stop-select";
 import { pickedByOthers } from "@/lib/stop-choices";
+import { PaymentQrField, type PaymentQr } from "./payment-qr-field";
 import {
   saveProfile,
   type ProfileField,
@@ -21,6 +22,9 @@ type Props = {
     workPlaceId: string | null;
   };
   places: Place[];
+  userId: string;
+  // The owner's saved UPI QR code, with a short-lived link to show it.
+  upiQr: PaymentQr;
   // Finishing sign-up: saving moves on to the home page.
   welcome: boolean;
   // Only car owners are asked for a UPI ID (riders pay them with it).
@@ -32,7 +36,14 @@ const initialState: ProfileFormState = { errors: {}, saved: false };
 const inputClass =
   "h-12 w-full rounded-xl border border-neutral-300 bg-white px-3 text-base text-neutral-900 aria-invalid:border-red-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100";
 
-export function ProfileForm({ profile, places, welcome, isOwner }: Props) {
+export function ProfileForm({
+  profile,
+  places,
+  userId,
+  upiQr,
+  welcome,
+  isOwner,
+}: Props) {
   const [state, action, pending] = useActionState(saveProfile, initialState);
   const error = (field: ProfileField) => state.errors[field];
   // After a failed save, show what was typed; otherwise what's saved.
@@ -142,6 +153,9 @@ export function ProfileForm({ profile, places, welcome, isOwner }: Props) {
             className={inputClass}
           />
         </Field>
+      )}
+      {isOwner && (
+        <PaymentQrField userId={userId} saved={upiQr} error={error("upi_qr")} />
       )}
 
       {state.errors.form && (

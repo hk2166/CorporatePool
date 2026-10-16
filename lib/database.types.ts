@@ -505,14 +505,14 @@ isOneToOne: false
                   ]
                 },"users": {
                   Row: {
-                    "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"removed_at": string | null,"ride_alerts": string,"ride_preference": string | null,"rides_completed": number,"upi_vpa": string | null,"work_place_id": string | null
+                    "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"removed_at": string | null,"ride_alerts": string,"ride_preference": string | null,"rides_completed": number,"upi_qr_path": string | null,"upi_vpa": string | null,"work_place_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id": string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name": string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_alerts"?: string,"ride_preference"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
+                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id": string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name": string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_alerts"?: string,"ride_preference"?: string | null,"rides_completed"?: number,"upi_qr_path"?: string | null,"upi_vpa"?: string | null,"work_place_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id"?: string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name"?: string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_alerts"?: string,"ride_preference"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
+                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id"?: string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name"?: string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_alerts"?: string,"ride_preference"?: string | null,"rides_completed"?: number,"upi_qr_path"?: string | null,"upi_vpa"?: string | null,"work_place_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -698,6 +698,7 @@ isOneToOne: false
 "ride_alerts": string,
 "ride_preference": string | null,
 "rides_completed": number,
+"upi_qr_path": string | null,
 "upi_vpa": string | null,
 "work_place_id": string | null
             }[]
@@ -707,6 +708,9 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"get_payment_qr":
+{ Args: { "p_user_id": string }; Returns: string
+                           },
 "get_public_ride":
 { Args: { "p_ride_id": string }; Returns: {
               "depart_at": string,"owner_first_name": string,"price_per_seat": number,"ride_id": string,"seats_left": number,"status": Database["public"]['Enums']["ride_status"],"stops": Json,"women_only": boolean
