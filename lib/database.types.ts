@@ -722,6 +722,9 @@ isOneToOne: false
               "created": boolean,"ride_id": string
             }[]
                            },
+"keep_alive":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
 "list_feedback":
 { Args: Record<PropertyKey, never>; Returns: {
               "admin_reply": string,"author_id": string,"author_name": string,"created_at": string,"details": string,"id": string,"kind": string,"mine": boolean,"status": string,"title": string,"voted": boolean,"votes": number
@@ -760,6 +763,9 @@ isOneToOne: false
                            },
 "run_auto_go_live":
 { Args: { "p_day"?: string }; Returns: number
+                           },
+"run_housekeeping":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            },
 "run_promotion_sweep":
 { Args: Record<PropertyKey, never>; Returns: number
