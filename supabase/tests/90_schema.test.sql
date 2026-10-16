@@ -1,7 +1,7 @@
 -- Whole-schema guards (T-1.2).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(2);
+select plan(4);
 
 -- The data model in docs/lld.md, exactly. When a task adds a table, add it here too.
 select tables_are(
@@ -25,6 +25,32 @@ select is(
       and not c.relrowsecurity),
   null,
   'every table in public has Row-Level Security on'
+);
+
+-- Visitors who aren't signed in reach the database only through functions granted to them
+-- (get_public_ride). Supabase grants new tables to `anon` by default, so every migration that
+-- creates a table must revoke it (T-1.3).
+select is(
+  (select array_agg(distinct g.table_name::text order by g.table_name::text)
+     from information_schema.role_table_grants g
+    where g.grantee = 'anon' and g.table_schema = 'public'),
+  null,
+  'anon has no privileges on any table in public'
+);
+
+-- A SECURITY DEFINER function runs with its owner's rights. Without a fixed search_path,
+-- whoever calls it could make it pick up their own lookalike tables or functions.
+select is(
+  (select array_agg(p.proname::text order by p.proname::text)
+     from pg_proc p
+    where p.pronamespace in ('public'::regnamespace, 'private'::regnamespace)
+      and p.prosecdef
+      and not exists (
+        select 1 from unnest(coalesce(p.proconfig, '{}')) as c(setting)
+         where c.setting like 'search_path=%'
+      )),
+  null,
+  'every SECURITY DEFINER function pins its search_path'
 );
 
 select * from finish();

@@ -33,5 +33,8 @@ The build plan is [task.md](task.md); design docs are in [docs/](docs/).
   columns (`cars.plate`, `cars.photo_paths`, and in `users` the phone, UPI ID, gender, home/work
   stops and scores) have no column privilege for `authenticated`, so never `select *` on those
   tables from the browser: list the columns, and read private ones through the `get_*` functions.
+- A new table's migration must also `revoke all on <table> from anon` (Supabase grants new
+  tables to visitors by default) and give any SECURITY DEFINER function `set search_path = ''`.
+  `supabase/tests/90_schema.test.sql` fails CI otherwise.
 - Do not guess stop names or coordinates. Landmarks come from `supabase/seed/landmarks.csv`
   (task.md H-5).
