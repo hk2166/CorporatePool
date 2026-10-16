@@ -19,6 +19,21 @@
   }
 }
 
+/* Phones: iPhone Safari zooms the page into any text field smaller than 16px when it's
+   tapped, and doesn't zoom back. Keep fields at 16px on small screens, whatever the design
+   says. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

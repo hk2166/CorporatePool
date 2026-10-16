@@ -86,7 +86,7 @@ async function Rankings({
                 >
                   <Link
                     href={`/admin/rankings?sort=${c.key}`}
-                    className={key === c.key ? "underline" : ""}
+                    className={`inline-flex min-h-9 items-center ${key === c.key ? "underline" : ""}`}
                   >
                     {c.label}
                   </Link>

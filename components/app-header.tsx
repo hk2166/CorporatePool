@@ -6,7 +6,10 @@ import Link from "next/link";
 export function AppHeader() {
   return (
     <header className="flex items-center justify-between gap-3 border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
-      <Link href="/" className="font-semibold tracking-tight">
+      <Link
+        href="/"
+        className="inline-flex min-h-10 items-center font-semibold tracking-tight"
+      >
         CorporatePool
       </Link>
       <nav className="flex items-center">

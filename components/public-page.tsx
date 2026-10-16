@@ -32,14 +32,23 @@ export function PublicPage({ children }: { children: ReactNode }) {
       <footer className="border-t border-neutral-200 dark:border-neutral-800">
         <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-sm text-neutral-500">
           <span>CorporatePool · Free shared rides to work</span>
-          <nav className="flex gap-4">
-            <Link href="/home" className="hover:underline">
+          <nav className="flex gap-1">
+            <Link
+              href="/home"
+              className="inline-flex min-h-10 items-center px-2 hover:underline"
+            >
               Home
             </Link>
-            <Link href="/privacy" className="hover:underline">
+            <Link
+              href="/privacy"
+              className="inline-flex min-h-10 items-center px-2 hover:underline"
+            >
               Privacy
             </Link>
-            <Link href="/terms" className="hover:underline">
+            <Link
+              href="/terms"
+              className="inline-flex min-h-10 items-center px-2 hover:underline"
+            >
               Terms
             </Link>
           </nav>

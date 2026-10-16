@@ -11,7 +11,7 @@ export async function ScoreChip({ userId }: { userId: string }) {
   return (
     <Link
       href="/reliability"
-      className="rounded-full border border-neutral-300 px-3 py-1 text-sm whitespace-nowrap dark:border-neutral-700"
+      className="inline-flex min-h-9 items-center gap-1 rounded-full border border-neutral-300 px-3 text-sm whitespace-nowrap dark:border-neutral-700"
     >
       Reliability{" "}
       <span className="font-semibold tabular-nums">

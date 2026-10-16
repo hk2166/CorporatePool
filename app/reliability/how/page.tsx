@@ -92,7 +92,10 @@ export default function HowTheScoreWorksPage() {
           </p>
         </section>
 
-        <Link href="/reliability" className="block text-sm underline">
+        <Link
+          href="/reliability"
+          className="inline-flex min-h-10 items-center text-sm underline"
+        >
           See your own score and history
         </Link>
       </main>

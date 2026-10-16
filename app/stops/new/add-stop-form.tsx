@@ -113,7 +113,10 @@ export function AddStopForm({ next }: { next: string }) {
         >
           {pending ? "Adding…" : "Add stop"}
         </button>
-        <Link href={next} className="px-3 text-sm text-neutral-500 underline">
+        <Link
+          href={next}
+          className="inline-flex min-h-10 items-center px-3 text-sm text-neutral-500 underline"
+        >
           Cancel
         </Link>
       </div>

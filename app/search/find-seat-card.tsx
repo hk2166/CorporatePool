@@ -55,7 +55,7 @@ export async function FindSeatCard() {
           {home} → {work}
         </span>
       </Link>
-      <div className="flex gap-4 text-sm">
+      <div className="flex flex-wrap gap-x-4 text-sm">
         <Link
           href={searchHref({
             ...anyTime,
@@ -63,11 +63,14 @@ export async function FindSeatCard() {
             to: me.home_place_id,
             date: today,
           })}
-          className="underline"
+          className="inline-flex min-h-10 items-center underline"
         >
           Going home today
         </Link>
-        <Link href="/search" className="underline">
+        <Link
+          href="/search"
+          className="inline-flex min-h-10 items-center underline"
+        >
           Another route
         </Link>
       </div>
