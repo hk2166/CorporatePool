@@ -1,5 +1,6 @@
 -- Access rules for places, cars, usual_rides, rides and ride_stops (T-1.3, part 1).
--- Each block signs in as one person and checks what they can and can't do.
+-- Each block signs in as one person and checks what they can and can't do. Counts only look
+-- at this file's own rows, so the demo seed (T-1.4) doesn't affect them.
 -- Signing in = role `authenticated` plus the user id in request.jwt.claims, which is what
 -- auth.uid() reads. `anon` is a visitor who isn't signed in.
 begin;
@@ -50,13 +51,19 @@ insert into bookings (ride_id, rider_id, pickup_seq, drop_seq, status, decided_a
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-0000-0000-0000000000f2"}', true);
 
-select is((select count(*) from places), 2::bigint, 'stranger: can read the stop list');
+select is((select count(*) from places where id in ('10000000-0000-0000-0000-0000000000f1', '10000000-0000-0000-0000-0000000000f2')), 2::bigint,
+  'stranger: can read the stop list');
 select throws_ok($$
   insert into places (name, geo) values
     ('Demo Fake', extensions.st_makepoint(77.1, 28.2)::extensions.geography)
 $$, '42501', null, 'stranger: can''t add stops');
-select is((select count(*) from rides), 1::bigint, 'stranger: can see rides (search)');
-select is((select count(*) from ride_stops), 2::bigint, 'stranger: can see ride routes');
+select is((select count(*) from rides where id = '40000000-0000-0000-0000-0000000000f0'), 1::bigint,
+  'stranger: can see rides (search)');
+select is(
+  (select count(*) from ride_stops where ride_id = '40000000-0000-0000-0000-0000000000f0'),
+  2::bigint,
+  'stranger: can see ride routes'
+);
 select throws_ok($$
   insert into rides (owner_id, car_id, depart_at, allocation_at, seats_total, seats_left,
                      price_per_seat) values
@@ -144,7 +151,11 @@ select is(
 
 select set_config('request.jwt.claims', '{"sub": "00000000-0000-0000-0000-0000000000f2"}', true);
 delete from places;
-select is((select count(*) from places), 3::bigint, 'stranger: deleting stops removes nothing');
+select is(
+  (select count(*) from places where id in ('10000000-0000-0000-0000-0000000000f1', '10000000-0000-0000-0000-0000000000f2') or name = 'Demo Admin Stop'),
+  3::bigint,
+  'stranger: deleting stops removes nothing'
+);
 
 -- A visitor who isn't signed in ------------------------------------------------------------ 6
 
