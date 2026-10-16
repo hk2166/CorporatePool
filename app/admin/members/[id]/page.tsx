@@ -93,7 +93,10 @@ async function Member({
   return (
     <div className="space-y-8">
       <section className="space-y-2">
-        <Link href="/admin/members" className="text-sm underline">
+        <Link
+          href="/admin/members"
+          className="inline-flex min-h-10 items-center text-sm underline"
+        >
           All members
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight">

@@ -27,7 +27,7 @@ export function RefreshPicker() {
   }, [every, router]);
 
   return (
-    <div className="flex h-8 items-stretch overflow-hidden rounded-[3px] border border-[#2c3036] bg-[#181b1f] text-[13px] text-[#ccccdc]">
+    <div className="flex h-9 items-stretch overflow-hidden sm:h-8 rounded-[3px] border border-[#2c3036] bg-[#181b1f] text-[13px] text-[#ccccdc]">
       <button
         type="button"
         onClick={() => startTransition(() => router.refresh())}

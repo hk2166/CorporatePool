@@ -154,7 +154,7 @@ export function UsualRideForm({ places, car, usualRide }: Props) {
           <button
             type="button"
             onClick={addStop}
-            className="text-sm font-medium text-emerald-700 dark:text-emerald-400"
+            className="min-h-10 text-sm font-medium text-emerald-700 dark:text-emerald-400"
           >
             + Add a stop
           </button>

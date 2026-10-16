@@ -571,7 +571,7 @@ function Toolbar({ range }: { range: RangeDays }) {
       <div className="flex items-center gap-2">
         <nav
           aria-label="Time range"
-          className="flex h-8 overflow-hidden rounded-[3px] border border-[#2c3036] text-[13px]"
+          className="flex h-9 overflow-hidden rounded-[3px] border border-[#2c3036] text-[13px] sm:h-8"
         >
           {RANGES.map((r) => (
             <Link

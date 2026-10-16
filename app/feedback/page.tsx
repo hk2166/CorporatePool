@@ -70,7 +70,7 @@ async function FeedbackList({
                 key={s.key}
                 href={`/feedback?sort=${s.key}`}
                 aria-current={s.key === sort ? "true" : undefined}
-                className={`rounded-full border px-3 py-1 text-sm whitespace-nowrap ${
+                className={`inline-flex min-h-9 items-center rounded-full border px-3 text-sm whitespace-nowrap ${
                   s.key === sort
                     ? "border-neutral-900 font-medium dark:border-white"
                     : "border-neutral-300 text-neutral-600 dark:border-neutral-700 dark:text-neutral-400"

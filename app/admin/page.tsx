@@ -264,7 +264,10 @@ async function Overview() {
             ))}
           </ol>
         )}
-        <Link href="/admin/feedback" className="block text-sm underline">
+        <Link
+          href="/admin/feedback"
+          className="inline-flex min-h-10 items-center text-sm underline"
+        >
           All feedback
         </Link>
       </section>
@@ -368,7 +371,10 @@ function TopList({
               key={r.id}
               className="flex items-center justify-between gap-3 px-4 py-2 text-sm"
             >
-              <Link href={`/admin/members/${r.id}`} className="hover:underline">
+              <Link
+                href={`/admin/members/${r.id}`}
+                className="inline-flex min-h-9 items-center hover:underline"
+              >
                 <span className="mr-2 text-neutral-500 tabular-nums">
                   {i + 1}.
                 </span>
@@ -381,7 +387,10 @@ function TopList({
           ))}
         </ol>
       )}
-      <Link href={more} className="block text-sm underline">
+      <Link
+        href={more}
+        className="inline-flex min-h-10 items-center text-sm underline"
+      >
         See everyone
       </Link>
     </div>

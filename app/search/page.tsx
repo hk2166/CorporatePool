@@ -260,13 +260,16 @@ async function Results({
 
   return (
     <section className="space-y-3" aria-label="Cars that fit">
-      <div className="flex items-baseline justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         <h2 className="font-medium">
           {rides.length === 0
             ? `No cars ${day} yet`
             : `${rides.length} ${rides.length === 1 ? "car" : "cars"} ${day}`}
         </h2>
-        <Link href={reverse} className="text-sm whitespace-nowrap underline">
+        <Link
+          href={reverse}
+          className="inline-flex min-h-10 items-center text-sm whitespace-nowrap underline"
+        >
           Going back?
         </Link>
       </div>
