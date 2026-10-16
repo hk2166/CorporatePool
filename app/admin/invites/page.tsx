@@ -48,8 +48,9 @@ async function Invites() {
       <section className="space-y-3">
         <h1 className="text-2xl font-semibold tracking-tight">Invites</h1>
         <p className="text-sm text-neutral-500">
-          CorporatePool is invite-only. Anyone who opens a link and signs in
-          with Google joins, until its places run out or it expires.
+          Anyone who opens a link and signs in with Google joins, until its
+          places run out or it expires. People without a link can ask to join
+          instead; they wait under Requests until you accept them.
         </p>
         <InviteForm />
       </section>

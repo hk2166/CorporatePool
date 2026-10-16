@@ -145,6 +145,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"join_requests": {
+                  Row: {
+                    "created_at": string,"decided_at": string | null,"decided_by": string | null,"email": string | null,"name": string,"note": string | null,"photo_url": string | null,"status": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"email"?: string | null,"name": string,"note"?: string | null,"photo_url"?: string | null,"status"?: string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"email"?: string | null,"name"?: string,"note"?: string | null,"photo_url"?: string | null,"status"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "join_requests_decided_by_fkey"
+      columns: ["decided_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"member_activity": {
                   Row: {
                     "day": string,"user_id": string
@@ -496,6 +516,9 @@ isOneToOne: false
               "active_members": number,"day": string,"new_members": number,"requests": number,"rides": number,"seats_filled": number,"seats_offered": number
             }[]
                            },
+"admin_decide_join_request":
+{ Args: { "p_accept": boolean,"p_admin_id": string,"p_user_id": string }; Returns: undefined
+                           },
 "admin_member":
 { Args: { "p_user_id": string }; Returns: {
               "active_days_30": number,"car": string,"email": string,"gender": string,"home": string,"is_admin": boolean,"joined_at": string,"last_active": string,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string,"plate": string,"reliability_score": number,"removed_at": string,"rides_completed": number,"upi_vpa": string,"user_id": string,"usual_days": number,"usual_route": string,"usual_time": string,"work": string
@@ -636,6 +659,9 @@ isOneToOne: false
 { Args: { "p_any_car_ok"?: boolean,"p_drop_seq": number,"p_pickup_seq": number,"p_ride_id": string,"p_rider_id": string,"p_seats"?: number }; Returns: {
               "booking_id": string,"status": Database["public"]['Enums']["booking_status"],"waitlist_rank": number
             }[]
+                           },
+"request_to_join":
+{ Args: { "p_note"?: string }; Returns: undefined
                            },
 "run_allocation":
 { Args: Record<PropertyKey, never>; Returns: number

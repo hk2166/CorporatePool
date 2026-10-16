@@ -62,7 +62,7 @@ export default function HomePage() {
           <p className="text-sm text-neutral-500">
             Sign up and log in with your Google account. Commuting groups are
             private: you join through an invite link from your group&apos;s
-            admin.
+            admin, or ask to join and an admin lets you in.
           </p>
         </section>
 
