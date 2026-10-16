@@ -26,7 +26,12 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     redirect("/login");
   }
 
-  const { data: profile } = await supabase.rpc("get_my_profile").maybeSingle();
+  // Alongside, note that they opened the app today, for the admin's daily-user count. Once a
+  // day per person (the database ignores repeats), and never for removed members.
+  const [{ data: profile }] = await Promise.all([
+    supabase.rpc("get_my_profile").maybeSingle(),
+    supabase.rpc("record_visit"),
+  ]);
   if (!profile) {
     redirect("/auth/join");
   }

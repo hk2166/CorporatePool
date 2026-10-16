@@ -60,7 +60,7 @@ async function SignedInHome() {
           href="/admin"
           className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium dark:border-neutral-700"
         >
-          Admin: rankings, occupancy, reports, stops and invites
+          Admin: daily users, members, rides, rankings and more
         </Link>
       )}
       <OwnerSection userId={user.id} />

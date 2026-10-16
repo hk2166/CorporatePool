@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// End-to-end tests (T-8.3): user flows 1–5 and 9 of docs/user-flows.md in a real browser,
-// against the local Supabase stack with its demo data and the demo sign-in
-// (NEXT_PUBLIC_DEV_LOGIN=true). CI runs them nightly (.github/workflows/e2e.yml). Locally:
+// End-to-end tests (T-8.3): user flows 1–5 and 9 of docs/user-flows.md, and the admin
+// dashboard, in a real browser, against the local Supabase stack with its demo data and the
+// demo sign-in (NEXT_PUBLIC_DEV_LOGIN=true). CI runs them nightly (.github/workflows/e2e.yml). Locally:
 //
 //   npm run db:start && npm run dev   (in another terminal)
 //   npm run test:e2e
