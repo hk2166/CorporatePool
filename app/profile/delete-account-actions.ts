@@ -46,6 +46,14 @@ export async function deleteAccount(
   ]);
   if (files.size > 0) await bucket.remove([...files]);
 
+  // The UPI QR code: the file, and the profile's link to it.
+  const qrBucket = admin.storage.from("payment-qr");
+  const { data: qrFolder } = await qrBucket.list(user.id, { limit: 100 });
+  if (qrFolder && qrFolder.length > 0) {
+    await qrBucket.remove(qrFolder.map((file) => `${user.id}/${file.name}`));
+  }
+  await admin.from("users").update({ upi_qr_path: null }).eq("id", user.id);
+
   // The sign-in account. Deleted outright when nothing points at the person; otherwise (they
   // have ride history) a soft delete, which scrubs the email and Google link so it no longer
   // identifies anyone but keeps the id that history refers to.

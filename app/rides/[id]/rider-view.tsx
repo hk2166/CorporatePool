@@ -317,14 +317,13 @@ async function Confirmed({
           </a>
         </div>
       )}
-      {contact?.upi_vpa && (
-        <a
-          href={upiLink({ vpa: contact.upi_vpa, name: contact.name, amount })}
-          className="flex h-12 items-center justify-center rounded-xl bg-neutral-900 font-medium text-white dark:bg-white dark:text-neutral-900"
-        >
-          Pay ₹{amount} by UPI after the ride
-        </a>
-      )}
+      <PayOwner
+        ownerId={ride.owner_id}
+        contact={contact}
+        amount={amount}
+        firstName={firstName}
+        buttonLabel={`Pay ₹${amount} by UPI after the ride`}
+      />
     </section>
   );
 }
@@ -346,19 +345,79 @@ async function Completed({
     .maybeSingle();
   const amount = ride.price_per_seat * seats;
   return (
-    <Status title={`You rode with ${ownerFirstName}`} tone="good">
-      +2 reliability points.{" "}
-      {contact?.upi_vpa ? (
-        <a
-          href={upiLink({ vpa: contact.upi_vpa, name: contact.name, amount })}
-          className="font-medium underline"
-        >
-          Pay ₹{amount} by UPI
-        </a>
-      ) : (
-        `Settle the ₹${amount} with ${ownerFirstName} directly.`
+    <>
+      <Status title={`You rode with ${ownerFirstName}`} tone="good">
+        +2 reliability points. Settle the ₹{amount} with {ownerFirstName}{" "}
+        directly, or pay below.
+      </Status>
+      <PayOwner
+        ownerId={ride.owner_id}
+        contact={contact}
+        amount={amount}
+        firstName={ownerFirstName}
+        buttonLabel={`Pay ₹${amount} by UPI`}
+      />
+    </>
+  );
+}
+
+// Paying the owner, however they've set it up: a button that opens the rider's UPI app with
+// the amount filled in, their UPI ID to copy, and their QR code to scan. The database hands
+// these over to riders with a seat in their car only (get_contact, get_payment_qr).
+async function PayOwner({
+  ownerId,
+  contact,
+  amount,
+  firstName,
+  buttonLabel,
+}: {
+  ownerId: string;
+  contact: { name: string; upi_vpa: string | null } | null;
+  amount: number;
+  firstName: string;
+  buttonLabel: string;
+}) {
+  const supabase = await createClient();
+  const { data: qrPath } = await supabase.rpc("get_payment_qr", {
+    p_user_id: ownerId,
+  });
+  const { data: qr } = qrPath
+    ? await supabase.storage.from("payment-qr").createSignedUrl(qrPath, 3600)
+    : { data: null };
+  const vpa = contact?.upi_vpa;
+  if (!contact || (!vpa && !qr?.signedUrl)) return null;
+
+  return (
+    <div className="space-y-3 rounded-xl bg-white p-3 text-neutral-900 dark:bg-neutral-900 dark:text-neutral-100">
+      {vpa && (
+        <>
+          <a
+            href={upiLink({ vpa, name: contact.name, amount })}
+            className="flex h-12 items-center justify-center rounded-xl bg-neutral-900 font-medium text-white dark:bg-white dark:text-neutral-900"
+          >
+            {buttonLabel}
+          </a>
+          <p className="text-sm">
+            {firstName}&apos;s UPI ID:{" "}
+            <span className="font-mono font-medium select-all">{vpa}</span>
+          </p>
+        </>
       )}
-    </Status>
+      {qr?.signedUrl && (
+        <figure className="space-y-1">
+          {/* A short-lived signed URL from private storage: not worth the optimiser. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={qr.signedUrl}
+            alt={`${firstName}'s UPI QR code`}
+            className="mx-auto h-48 w-48 rounded-lg border border-neutral-200 bg-white object-contain"
+          />
+          <figcaption className="text-center text-sm text-neutral-500">
+            Scan with any UPI app to pay ₹{amount}
+          </figcaption>
+        </figure>
+      )}
+    </div>
   );
 }
 

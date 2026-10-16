@@ -60,6 +60,10 @@ async function ProfileSection({
     ]);
   if (!profile) return null;
   const owner = isCarOwner(parseRidePreference(profile.ride_preference));
+  const qrPath = owner ? profile.upi_qr_path : null;
+  const { data: qr } = qrPath
+    ? await supabase.storage.from("payment-qr").createSignedUrl(qrPath, 3600)
+    : { data: null };
 
   return (
     <div className="space-y-6">
@@ -78,6 +82,8 @@ async function ProfileSection({
       <ProfileForm
         welcome={isWelcome}
         isOwner={owner}
+        userId={user.id}
+        upiQr={qrPath ? { path: qrPath, url: qr?.signedUrl ?? null } : null}
         places={(places ?? []).map((p) => ({
           id: p.id,
           name: p.name,

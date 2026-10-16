@@ -9,7 +9,8 @@ import {
 } from "@/lib/profile-fields";
 import { createClient } from "@/lib/supabase/server";
 
-export type ProfileField = "name" | "phone" | "upi" | "home" | "work";
+export type ProfileField =
+  "name" | "phone" | "upi" | "upi_qr" | "home" | "work";
 
 export type ProfileFormState = {
   errors: Partial<Record<ProfileField | "form", string>>;
@@ -47,6 +48,13 @@ export async function saveProfile(
   const upi = text("upi");
   if (upi && !isUpiId(upi)) errors.upi = "A UPI ID looks like name@okaxis.";
 
+  // Optional, owners only: their UPI QR code, already uploaded into their own folder of the
+  // payment-qr bucket. Riders' forms don't have it: leave theirs as it was.
+  const upiQr = formData.has("upi_qr") ? text("upi_qr") || null : undefined;
+  if (upiQr && !qrPathOf(user.id).test(upiQr)) {
+    errors.upi_qr = "The QR code couldn't be saved. Please add it again.";
+  }
+
   const home = text("home") || null;
   const work = text("work") || null;
   if (home && work && home === work) {
@@ -61,6 +69,11 @@ export async function saveProfile(
   // As the signed-in person: the access rules (T-1.3) only let them change these columns of
   // their own row.
   const supabase = await createClient();
+  // The QR code saved before, so its file can go once a new one (or none) is saved.
+  const { data: before } =
+    upiQr === undefined
+      ? { data: null }
+      : await supabase.rpc("get_my_profile").maybeSingle();
   const { error } = await supabase
     .from("users")
     .update({
@@ -68,6 +81,7 @@ export async function saveProfile(
       phone,
       // Riders' forms have no UPI field: leave theirs as it was.
       ...(formData.has("upi") ? { upi_vpa: upi || null } : {}),
+      ...(upiQr === undefined ? {} : { upi_qr_path: upiQr }),
       home_place_id: home,
       work_place_id: work,
     })
@@ -97,6 +111,11 @@ export async function saveProfile(
     };
   }
 
+  // Best effort: a file left behind is only wasted space, never visible to anyone.
+  if (before?.upi_qr_path && before.upi_qr_path !== upiQr) {
+    await supabase.storage.from("payment-qr").remove([before.upi_qr_path]);
+  }
+
   // New members finishing sign-up go on to the app.
   // Drivers go on to their car and rides; everyone else to the app.
   if (formData.get("welcome") === "1") {
@@ -107,4 +126,9 @@ export async function saveProfile(
     );
   }
   return { errors: {}, saved: true };
+}
+
+// <the person's id>/<random id>.jpg, as the QR field names its uploads.
+function qrPathOf(userId: string): RegExp {
+  return new RegExp(`^${userId}/[0-9a-f-]{36}\\.jpg$`);
 }
