@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:db": "supabase test db",
+    "test:race": "bash scripts/race-last-seat.sh",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:start": "env $(grep -E '^SUPABASE_AUTH_EXTERNAL_GOOGLE_(CLIENT_ID|SECRET)=' .env.local 2>/dev/null | xargs) supabase start",

@@ -519,6 +519,11 @@ isOneToOne: false
 "redeem_invite":
 { Args: { "p_name": string,"p_photo_url": string,"p_token": string,"p_user_id": string }; Returns: boolean
                            },
+"request_seat":
+{ Args: { "p_any_car_ok"?: boolean,"p_drop_seq": number,"p_pickup_seq": number,"p_ride_id": string,"p_rider_id": string,"p_seats"?: number }; Returns: {
+              "booking_id": string,"status": Database["public"]['Enums']["booking_status"],"waitlist_rank": number
+            }[]
+                           },
 "run_auto_go_live":
 { Args: { "p_day"?: string }; Returns: number
                            },
