@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "CorporatePool",
     short_name: "CorporatePool",
     description:
-      "Free shared rides for the daily office commute, Palwal to Gurgaon.",
+      "Free shared rides to work: drivers fill their empty seats, riders find a seat.",
     start_url: "/",
     scope: "/",
     display: "standalone",

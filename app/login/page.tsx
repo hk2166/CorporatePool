@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { safeNextPath } from "@/lib/safe-next-path";
 import { SignInOptions } from "./sign-in-options";
@@ -23,7 +24,10 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
       <header className="space-y-2">
         <h1 className="text-3xl font-semibold tracking-tight">CorporatePool</h1>
         <p className="text-neutral-600 dark:text-neutral-400">
-          Free shared rides for the daily commute, Palwal to Gurgaon.
+          Free shared rides to work.{" "}
+          <Link href="/home" className="underline">
+            What is CorporatePool?
+          </Link>
         </p>
       </header>
       {/* The query string is only known per request, so it streams in. */}
