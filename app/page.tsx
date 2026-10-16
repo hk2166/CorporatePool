@@ -5,6 +5,7 @@ import { ScoreChip } from "@/app/reliability/score-chip";
 import { MySeats } from "@/app/rides/my-seats";
 import { FindSeatCard } from "@/app/search/find-seat-card";
 import { AppHeader } from "@/components/app-header";
+import { InstallPrompt } from "@/components/install-prompt";
 import { PushToggle } from "@/components/push-toggle";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -52,6 +53,7 @@ async function SignedInHome() {
       )}
       <MySeats userId={user.id} />
       <PushToggle compact />
+      <InstallPrompt />
       <FindSeatCard />
       {user.isAdmin && (
         <Link

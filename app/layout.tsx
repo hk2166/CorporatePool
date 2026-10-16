@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -20,6 +20,16 @@ export const metadata: Metadata = {
   title: "CorporatePool",
   description:
     "Free shared rides for the daily office commute, Palwal to Gurgaon.",
+  // Installed on an iPhone's home screen, it opens full screen like an app (T-8.1).
+  appleWebApp: {
+    capable: true,
+    title: "CorporatePool",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#059669",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
