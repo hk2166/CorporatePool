@@ -8,6 +8,7 @@ on:
     paths:
       - "supabase/**"
       - "scripts/**"
+      - "lib/database.types.ts"
       - ".github/workflows/db.yml"
       - "package.json"
       - "package-lock.json"
@@ -47,3 +48,7 @@ jobs:
       # nothing else, and skipping the other services saves several minutes per run.
       - run: npm run db:start:db-only
       - run: npm run test:db
+      # lib/database.types.ts must match the migrations, so app code type-checks against the
+      # real schema. Fix with: npm run db:types
+      - name: Generated database types are up to date
+        run: npx supabase gen types typescript --local | diff - lib/database.types.ts
