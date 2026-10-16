@@ -460,6 +460,9 @@ isOneToOne: false
             "anonymise_account":
 { Args: { "p_user_id": string }; Returns: (string)[]
                            },
+"cancel_booking":
+{ Args: { "p_booking_id": string,"p_rider_id": string }; Returns: boolean
+                           },
 "cancel_ride":
 { Args: { "p_owner_id": string,"p_reason"?: string,"p_ride_id": string }; Returns: number
                            },
@@ -529,6 +532,9 @@ isOneToOne: false
                            },
 "run_auto_go_live":
 { Args: { "p_day"?: string }; Returns: number
+                           },
+"run_promotion_sweep":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "search_rides":
 { Args: { "p_date": string,"p_from_lat": number,"p_from_lng": number,"p_seats"?: number,"p_time_from"?: string,"p_time_to"?: string,"p_to_lat": number,"p_to_lng": number }; Returns: {

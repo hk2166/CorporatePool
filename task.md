@@ -174,7 +174,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-5.2 Allocation job (F-D2, Q4).** pg_cron 5-min job: rides past `allocation_at` →
       rank REQUESTED by `(score DESC, created_at ASC)`, confirm top, waitlist rest (lld §4).
       *Done when:* fixture of 5 requests / 3 seats allocates exactly per lld §4; job idempotent.
-- [ ] **T-5.3 Waitlist promotion (F-D4).** On cancel: seat back, FULL→OPEN, promote lowest rank
+- [x] **T-5.3 Waitlist promotion (F-D4).** On cancel: seat back, FULL→OPEN, promote lowest rank
       in-request; 5-min sweep as safety net (lld §5). *Done when:* flow 5 passes end-to-end in a
       test; sweep catches an artificially missed promotion.
 - [ ] **T-5.4 Cross-car matching (F-D6).** `rematch()` per lld §5 for `any_car_ok` waitlisted +
