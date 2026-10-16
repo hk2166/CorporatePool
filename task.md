@@ -138,7 +138,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-3.1 Usual ride editor (F-B1).** Stops (ordered, from landmarks or map pin), time,
       seats, price, notes; suggested cost-share figure shown (Q5). *Done when:* flow 2 step 3
       works; stops persist as jsonb per schema.
-- [ ] **T-3.2 Go live (F-B2).** One-tap screen with tweak-before-post; copies template →
+- [x] **T-3.2 Go live (F-B2).** One-tap screen with tweak-before-post; copies template →
       `rides` + `ride_stops` (lld "usual_rides vs rides"); sets `allocation_at` 22:00 (Q6).
       *Done when:* flow 3 steps 1–2 work; double-tap creates one ride (unique constraint).
 - [ ] **T-3.3 Auto go-live (F-B3).** pg_cron evening job for `auto_golive_days`; skip-a-day UI.

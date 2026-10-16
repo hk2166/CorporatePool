@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
+import { OwnerSection } from "@/app/go-live/owner-section";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -11,25 +12,25 @@ export default function Home() {
         {/* Who's signed in is only known per request, so that part streams in. */}
         <Suspense
           fallback={
-            <div className="h-10 animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-800" />
+            <div className="space-y-4">
+              <div className="h-10 animate-pulse rounded-lg bg-neutral-100 dark:bg-neutral-800" />
+              <div className="h-48 animate-pulse rounded-2xl bg-neutral-100 dark:bg-neutral-800" />
+            </div>
           }
         >
-          <Greeting />
+          <SignedInHome />
         </Suspense>
-        <p className="text-neutral-600 dark:text-neutral-400">
-          Finding and offering rides is coming next.
-        </p>
       </main>
     </>
   );
 }
 
-async function Greeting() {
+async function SignedInHome() {
   const user = await getCurrentUser();
   const firstName = user.name.split(" ")[0];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight">Hi, {firstName}</h1>
       {!user.hasPhone && (
         <Link
@@ -40,6 +41,8 @@ async function Greeting() {
           <span className="font-medium underline">Go to your profile</span>
         </Link>
       )}
+      <OwnerSection userId={user.id} />
+      <p className="text-sm text-neutral-500">Finding a seat is coming next.</p>
     </div>
   );
 }
