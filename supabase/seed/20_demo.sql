@@ -51,7 +51,9 @@ insert into public.users (id, name, phone, upi_vpa, is_admin, ride_preference) v
   ('5eed0000-0000-0000-0000-000000000002', 'Demo Rider', '+919999900002', null, false, 'RIDER'),
   ('5eed0000-0000-0000-0000-000000000003', 'Demo Admin', '+919999900003', null, true, 'BOTH');
 
--- The car, the usual ride and tomorrow's ride, on a route picked by position, not name.
+-- The car, the usual ride and tomorrow's ride, on a route picked by position among the demo
+-- stops ("Demo …" in landmarks.csv). The real stops the migrations add are left out, so the
+-- demo route stays the same whatever real stops exist.
 do $$
 declare
   v_start public.places;
@@ -62,16 +64,16 @@ declare
   v_depart timestamptz :=
     ((now() at time zone 'Asia/Kolkata')::date + 1 + time '08:00') at time zone 'Asia/Kolkata';
 begin
-  select count(*) into v_stop_count from public.places;
+  select count(*) into v_stop_count from public.places where name like 'Demo %';
   if v_stop_count < 3 then
     raise exception 'The demo ride needs at least 3 stops in supabase/seed/landmarks.csv';
   end if;
 
-  select * into v_start from public.places
+  select * into v_start from public.places where name like 'Demo %'
    order by extensions.st_y(geo::extensions.geometry), name limit 1;
-  select * into v_end from public.places
+  select * into v_end from public.places where name like 'Demo %'
    order by extensions.st_y(geo::extensions.geometry) desc, name limit 1;
-  select * into v_middle from public.places
+  select * into v_middle from public.places where name like 'Demo %'
    order by extensions.st_y(geo::extensions.geometry), name
   offset (v_stop_count - 1) / 2 limit 1;
 
