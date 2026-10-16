@@ -2,5 +2,6 @@
 *.md
 # Generated or data files
 package-lock.json
+lib/database.types.ts
 *.csv
 supabase/.temp/

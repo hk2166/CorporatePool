@@ -122,7 +122,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 
 ## Phase 2 — accounts (F-A1…A6, A9)
 
-- [ ] **T-2.1 Auth.** Google sign-in via Supabase Auth; invite-token gate (Q3): signup requires a
+- [~] **T-2.1 Auth.** *(in progress: sign-in merged with `feat/auth`; invite redemption next)* Google sign-in via Supabase Auth; invite-token gate (Q3): signup requires a
       valid `signup_tokens` row; session middleware. *Done when:* new Google user with token →
       profile row created; without token → friendly rejection.
 - [ ] **T-2.2 Profile + usual stops.** Name/photo/phone form; pick home & office from landmark
