@@ -67,6 +67,11 @@ export default function PrivacyPage() {
             to.
           </p>
           <p>
+            <strong>If you ask for a stop</strong>: its name, the Google Maps
+            link you paste and the position read from it. Admins see who asked,
+            and the stop, once added, is shared with every member.
+          </p>
+          <p>
             <strong>If you ask to join</strong> without an invite link: your
             name, email address and photo from Google, and the note you write.
             The group&apos;s admins see them to decide. If you&apos;re turned

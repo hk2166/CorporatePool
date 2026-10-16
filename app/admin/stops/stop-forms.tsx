@@ -1,7 +1,14 @@
 "use client";
 
 import { useActionState } from "react";
-import { deleteStop, mergeStops, saveStop, type StopState } from "./actions";
+import {
+  addRequestedStop,
+  deleteStop,
+  mergeStops,
+  rejectStopRequest,
+  saveStop,
+  type StopState,
+} from "./actions";
 
 const initialState: StopState = {};
 const input =
@@ -74,8 +81,8 @@ export function StopForm({
           name="coordinates"
           defaultValue={coordinates}
           required
-          placeholder="28.1440, 77.3290 (from Google Maps)"
-          aria-label="Coordinates"
+          placeholder="Google Maps link, or 28.1440, 77.3290"
+          aria-label="Google Maps link or coordinates"
           className={input}
         />
         <button
@@ -160,5 +167,87 @@ export function MergeForm({
       </button>
       <Feedback state={state} />
     </form>
+  );
+}
+
+// A member's stop request: add it as a stop (name, kind and position can be fixed first), or
+// turn it down.
+export function StopRequestForm({
+  requestId,
+  name,
+  coordinates,
+}: {
+  requestId: string;
+  name: string;
+  coordinates: string;
+}) {
+  const [state, action, pending] = useActionState(
+    addRequestedStop,
+    initialState,
+  );
+  const [rejected, reject, rejecting] = useActionState(
+    rejectStopRequest,
+    initialState,
+  );
+  return (
+    <div className="space-y-2">
+      <form action={action} className="space-y-2">
+        <input type="hidden" name="requestId" value={requestId} />
+        <div className="grid grid-cols-[1fr_auto] gap-2">
+          <input
+            name="name"
+            defaultValue={name}
+            required
+            minLength={2}
+            maxLength={80}
+            aria-label={`Name for ${name}`}
+            className={input}
+          />
+          <select
+            name="kind"
+            defaultValue="landmark"
+            aria-label={`Kind for ${name}`}
+            className={input}
+          >
+            {KINDS.map((k) => (
+              <option key={k} value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex gap-2">
+          <input
+            name="coordinates"
+            defaultValue={coordinates}
+            required
+            placeholder="Google Maps link, or 28.1440, 77.3290"
+            aria-label={`Where ${name} is`}
+            className={input}
+          />
+          <button
+            type="submit"
+            disabled={pending}
+            aria-label={`Add ${name}`}
+            className="h-10 shrink-0 rounded-lg bg-emerald-600 px-4 text-sm font-medium text-white disabled:opacity-60"
+          >
+            {pending ? "…" : "Add stop"}
+          </button>
+        </div>
+        <Feedback state={state} />
+      </form>
+      <form action={reject}>
+        <input type="hidden" name="requestId" value={requestId} />
+        <button
+          type="submit"
+          disabled={rejecting}
+          aria-label={`Turn down ${name}`}
+          className="h-9 rounded-lg border border-neutral-300 px-3 text-sm font-medium disabled:opacity-60 dark:border-neutral-700"
+        >
+          {rejecting ? "…" : "Turn down"}
+        </button>
+        <Feedback state={rejected} />
+      </form>
+    </div>
   );
 }

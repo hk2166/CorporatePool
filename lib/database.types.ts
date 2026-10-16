@@ -471,6 +471,38 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"stop_requests": {
+                  Row: {
+                    "created_at": string,"decided_at": string | null,"decided_by": string | null,"id": string,"lat": number | null,"lng": number | null,"maps_link": string | null,"name": string,"place_id": string | null,"requested_by": string | null,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"id"?: string,"lat"?: number | null,"lng"?: number | null,"maps_link"?: string | null,"name": string,"place_id"?: string | null,"requested_by"?: string | null,"status"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"id"?: string,"lat"?: number | null,"lng"?: number | null,"maps_link"?: string | null,"name"?: string,"place_id"?: string | null,"requested_by"?: string | null,"status"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "stop_requests_decided_by_fkey"
+      columns: ["decided_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stop_requests_place_id_fkey"
+      columns: ["place_id"]
+isOneToOne: false
+      referencedRelation: "places"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "stop_requests_requested_by_fkey"
+      columns: ["requested_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"users": {
                   Row: {
                     "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"removed_at": string | null,"ride_preference": string | null,"rides_completed": number,"upi_vpa": string | null,"work_place_id": string | null
@@ -549,10 +581,8 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "add_place":
-{ Args: { "p_lat": number,"p_lng": number,"p_name": string }; Returns: {
-              "created": boolean,"place_id": string
-            }[]
+            "admin_add_stop_request":
+{ Args: { "p_kind": Database["public"]['Enums']["place_kind"],"p_lat": number,"p_lng": number,"p_name": string,"p_request_id": string }; Returns: string
                            },
 "admin_close_report":
 { Args: { "p_admin_id": string,"p_reason": string,"p_report_id": string,"p_resolved": boolean }; Returns: undefined
@@ -587,6 +617,9 @@ isOneToOne: false
 { Args: Record<PropertyKey, never>; Returns: {
               "joined_at": string,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"reliability_score": number,"rides_completed": number,"user_id": string
             }[]
+                           },
+"admin_reject_stop_request":
+{ Args: { "p_request_id": string }; Returns: undefined
                            },
 "admin_remove_user":
 { Args: { "p_admin_id": string,"p_reason": string,"p_user_id": string }; Returns: undefined
@@ -714,6 +747,9 @@ isOneToOne: false
 { Args: { "p_any_car_ok"?: boolean,"p_drop_seq": number,"p_pickup_seq": number,"p_ride_id": string,"p_rider_id": string,"p_seats"?: number }; Returns: {
               "booking_id": string,"status": Database["public"]['Enums']["booking_status"],"waitlist_rank": number
             }[]
+                           },
+"request_stop":
+{ Args: { "p_lat"?: number,"p_link"?: string,"p_lng"?: number,"p_name": string }; Returns: string
                            },
 "request_to_join":
 { Args: { "p_note"?: string }; Returns: undefined
