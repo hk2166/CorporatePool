@@ -205,7 +205,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 
 ## Phase 7 — admin (F-G1, G2, G4, G6)
 
-- [ ] **T-7.1 Rankings + occupancy.** Score table (sortable); seats offered vs filled per
+- [x] **T-7.1 Rankings + occupancy.** Score table (sortable); seats offered vs filled per
       day/route. *Done when:* numbers reconcile with raw SQL on seeded fixtures.
 - [ ] **T-7.2 Reports queue + actions.** Review reports, remove user, hide ride — all as
       audit-trail rows. *Done when:* removed user loses access; hidden ride vanishes from
