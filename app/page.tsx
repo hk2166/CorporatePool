@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { OwnerSection } from "@/app/go-live/owner-section";
+import { ScoreChip } from "@/app/reliability/score-chip";
 import { MySeats } from "@/app/rides/my-seats";
 import { FindSeatCard } from "@/app/search/find-seat-card";
 import { AppHeader } from "@/components/app-header";
@@ -33,7 +34,12 @@ async function SignedInHome() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Hi, {firstName}</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Hi, {firstName}
+        </h1>
+        <ScoreChip userId={user.id} />
+      </div>
       {!user.hasPhone && (
         <Link
           href="/profile"

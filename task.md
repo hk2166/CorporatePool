@@ -191,7 +191,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-6.1 Reliability events + score (F-F3).** Append events from T-5.6/T-5.3 outcomes;
       score formula + daily recompute with 90-day decay exactly per lld §3. *Done when:* unit
       tests: new user 50; +2/ride capped +40; −15 no-show; −5 late cancel; clamp 0–100; decay.
-- [ ] **T-6.2 My reliability (F-F4, F-I2).** Score, event history with reasons, and a public
+- [x] **T-6.2 My reliability (F-F4, F-I2).** Score, event history with reasons, and a public
       "how the score works" page. *Done when:* a rider can trace every point change to an event.
 - [ ] **T-6.3 Web push (F-E1, F-E2).** VAPID subscribe + outbox drainer (edge function via
       pg_net); events: confirmed, waitlisted, promoted, ride cancelled/edited, car full. *Done
