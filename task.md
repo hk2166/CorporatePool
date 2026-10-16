@@ -109,7 +109,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
       show" table (unique indexes, `pickup_seq < drop_seq` check, GiST indexes), PostGIS enabled.
       *Done when:* `supabase db reset` applies cleanly; a migration test inserts/violates each
       constraint.
-- [~] **T-1.3 RLS policies (D12).** *(in progress: part 1 of 3 merged with `chore/rls-rides-places`)* Phone/plate/photos readable only within a confirmed booking
+- [x] **T-1.3 RLS policies (D12).** Phone/plate/photos readable only within a confirmed booking
       on that ride; scores readable by owner + admin; public ride link exposes only route, time,
       price, seats left, owner first name. *Done when:* pgTAP (or SQL test script) proves each
       policy with two test users.
