@@ -36,7 +36,7 @@ async function Overview() {
   await getCurrentAdmin();
   const supabase = await createClient();
   const today = indiaDate();
-  const [summary, daily, trips, members] = await Promise.all([
+  const [summary, daily, trips, members, waiting] = await Promise.all([
     supabase.rpc("admin_summary").single(),
     supabase.rpc("admin_daily_stats", {
       p_from: addDays(today, -(DAYS - 1)),
@@ -48,6 +48,10 @@ async function Overview() {
       p_limit: 8,
     }),
     supabase.rpc("admin_members"),
+    supabase
+      .from("join_requests")
+      .select("user_id", { count: "exact", head: true })
+      .eq("status", "PENDING"),
   ]);
   if (summary.error || daily.error || trips.error || members.error) {
     return <p role="alert">Couldn&apos;t load the overview.</p>;
@@ -68,6 +72,17 @@ async function Overview() {
     <div className="space-y-10">
       <section className="space-y-3">
         <h1 className="text-2xl font-semibold tracking-tight">Overview</h1>
+        {!!waiting.count && (
+          <Link
+            href="/admin/requests"
+            className="block rounded-xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200"
+          >
+            {waiting.count === 1
+              ? "1 person is asking to join."
+              : `${waiting.count} people are asking to join.`}{" "}
+            <span className="font-medium underline">Accept or reject</span>
+          </Link>
+        )}
         {s.stops === 0 && (
           <Link
             href="/admin/stops"

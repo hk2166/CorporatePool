@@ -16,7 +16,8 @@ export const SECOND = {
   email: "seed-admin@example.com",
 };
 export const RIDE = "5eed0000-0000-0000-0000-0000000000d1";
-const PASSWORD = process.env.E2E_DEMO_PASSWORD ?? "demo-password";
+// The demo sign-in for every test account, including ones a test creates.
+export const PASSWORD = process.env.E2E_DEMO_PASSWORD ?? "demo-password";
 
 // The database, with the secret key: the tests use it to set the scene and to stand in for
 // the clock ("it's now past 22:00"), never to do what a person would do on screen.

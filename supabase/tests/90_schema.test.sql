@@ -10,7 +10,8 @@ select tables_are(
     'places', 'users', 'cars', 'signup_tokens', 'blocks',
     'usual_rides', 'usual_ride_skips', 'rides', 'ride_stops',
     'bookings', 'reliability_events', 'reviews',
-    'reports', 'admin_actions', 'push_subscriptions', 'notifications_outbox', 'member_activity'
+    'reports', 'admin_actions', 'push_subscriptions', 'notifications_outbox', 'member_activity',
+    'join_requests'
   ],
   'public has exactly the tables of the data model'
 );

@@ -62,6 +62,13 @@ export default function PrivacyPage() {
             address notifications are sent to.
           </p>
           <p>
+            <strong>If you ask to join</strong> without an invite link: your
+            name, email address and photo from Google, and the note you write.
+            The group&apos;s admins see them to decide. If you&apos;re turned
+            down, we keep the request so the decision sticks; email us (below)
+            to have it deleted.
+          </p>
+          <p>
             <strong>Cookies:</strong> one sign-in cookie that keeps you logged
             in. Your browser also remembers a few settings on your device, such
             as whether you dismissed the install prompt.

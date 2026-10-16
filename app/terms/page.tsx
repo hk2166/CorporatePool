@@ -45,7 +45,8 @@ export default function TermsPage() {
             <li>You must be at least 18.</li>
             <li>
               You sign in with your Google account and join a group through an
-              invite link from its admin.
+              invite link from its admin, or by asking to join and being
+              accepted by an admin.
             </li>
             <li>
               Keep your details accurate, including a mobile number you answer:

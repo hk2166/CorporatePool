@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { RIDE, RIDER, SECOND, signIn } from "./support";
+import { db, PASSWORD, RIDE, RIDER, SECOND, signedIn, signIn } from "./support";
 
 // The admin dashboard: today's numbers, a member in full, and the rides list. It only reads,
 // so it doesn't disturb the demo ride the user flows share.
@@ -33,4 +33,54 @@ test("an admin sees who uses the app, where they go, and the rides", async ({
   await page.getByRole("link", { name: "Rides", exact: true }).click();
   await expect(page.getByRole("heading", { name: /Coming up/ })).toBeVisible();
   await expect(page.locator(`a[href="/rides/${RIDE}"]`)).toBeVisible();
+});
+
+// Someone signs in without an invite, asks to join, and an admin lets them in.
+test("someone without an invite asks to join and an admin accepts", async ({
+  browser,
+}) => {
+  const d = db();
+  const email = `demo-newcomer-${Date.now()}@example.com`;
+  const { data, error } = await d.auth.admin.createUser({
+    email,
+    password: PASSWORD,
+    email_confirm: true,
+    user_metadata: { full_name: "Demo Newcomer" },
+  });
+  if (error) throw error;
+  const id = data.user.id;
+
+  try {
+    const page = await (await browser.newContext()).newPage();
+    await page.goto("/login");
+    await page.locator('input[name="email"]').fill(email);
+    await page.locator('input[name="password"]').fill(PASSWORD);
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page).toHaveURL(/\/no-invite$/);
+
+    await page
+      .getByLabel(/A note for the admin/)
+      .fill("Demo note: mornings from the demo stop");
+    await page.getByRole("button", { name: "Ask to join" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Request sent" }),
+    ).toBeVisible();
+
+    const admin = await signedIn(browser, SECOND.email);
+    await admin.goto("/admin/requests");
+    await expect(
+      admin.getByText("Demo note: mornings from the demo stop"),
+    ).toBeVisible();
+    await admin.getByRole("button", { name: "Accept Demo Newcomer" }).click();
+    await expect(
+      admin.getByRole("link", { name: "Demo Newcomer" }),
+    ).toBeVisible();
+
+    // In: the new member lands on their profile to add a phone number.
+    await page.getByRole("link", { name: "Check again" }).click();
+    await expect(page).toHaveURL(/\/profile/);
+  } finally {
+    await d.from("users").delete().eq("id", id);
+    await d.auth.admin.deleteUser(id);
+  }
 });
