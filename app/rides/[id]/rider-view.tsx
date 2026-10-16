@@ -207,6 +207,15 @@ export async function RiderView({
           />
         )}
 
+        {booking && (
+          <Link
+            href={`/report/${ride.owner_id}?ride=${ride.id}`}
+            className="block text-sm text-neutral-500 underline"
+          >
+            Report or block {ownerFirstName}
+          </Link>
+        )}
+
         {!active && !open && !booking && (
           <p className="text-sm text-neutral-500">
             This ride isn&apos;t taking requests any more.{" "}

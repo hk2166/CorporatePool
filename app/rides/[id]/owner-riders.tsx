@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { callLink, whatsappLink } from "@/lib/contact-links";
 import { indiaTime } from "@/lib/india-time";
 import { createClient } from "@/lib/supabase/server";
@@ -107,8 +108,14 @@ export async function OwnerRiders({
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-neutral-500">
-                  {stopAt(b.pickup_seq)}
+                <p className="flex justify-between gap-3 text-sm text-neutral-500">
+                  <span>{stopAt(b.pickup_seq)}</span>
+                  <Link
+                    href={`/report/${b.rider_id}?ride=${ride.id}`}
+                    className="underline"
+                  >
+                    Report or block
+                  </Link>
                 </p>
                 {number && (open || started) && (
                   <div className="flex gap-2">
