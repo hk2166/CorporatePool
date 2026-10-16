@@ -7,6 +7,8 @@ export type CurrentUser = {
   name: string;
   photoUrl: string | null;
   isAdmin: boolean;
+  // A phone number is needed before booking or offering a ride (F-A2).
+  hasPhone: boolean;
 };
 
 // The signed-in person. This is the one place pages ask "who is this?" (the Data Access Layer
@@ -33,5 +35,6 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     name: profile.name,
     photoUrl: profile.photo_url,
     isAdmin: profile.is_admin,
+    hasPhone: profile.phone !== null,
   };
 }

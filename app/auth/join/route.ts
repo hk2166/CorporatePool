@@ -37,7 +37,8 @@ export async function GET(request: NextRequest) {
     p_photo_url: photoUrl ?? "",
   });
 
-  const response = go(joined ? "/" : "/no-invite");
+  // New members add their phone number first (F-A2).
+  const response = go(joined ? "/profile?welcome=1" : "/no-invite");
   response.cookies.delete(INVITE_COOKIE);
   return response;
 }

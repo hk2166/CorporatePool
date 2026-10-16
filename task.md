@@ -125,7 +125,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-2.1 Auth.** Google sign-in via Supabase Auth; invite-token gate (Q3): signup requires a
       valid `signup_tokens` row; session middleware. *Done when:* new Google user with token →
       profile row created; without token → friendly rejection.
-- [ ] **T-2.2 Profile + usual stops.** Name/photo/phone form; pick home & office from landmark
+- [x] **T-2.2 Profile + usual stops.** Name/photo/phone form; pick home & office from landmark
       list (F-A6). *Done when:* flow 1 steps 1–2 of user-flows.md work on mobile viewport.
 - [ ] **T-2.3 Car setup (F-A3).** Photos → Supabase Storage, resized client-side to ≤ 200 KB;
       model/colour/plate/seats. One-time; editable. *Done when:* flow 2 steps 1–2 work; photos
