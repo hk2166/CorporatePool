@@ -521,6 +521,11 @@ isOneToOne: false
                            },
 "run_auto_go_live":
 { Args: { "p_day"?: string }; Returns: number
+                           },
+"search_rides":
+{ Args: { "p_date": string,"p_from_lat": number,"p_from_lng": number,"p_seats"?: number,"p_time_from"?: string,"p_time_to"?: string,"p_to_lat": number,"p_to_lng": number }; Returns: {
+              "allocation_at": string,"car_colour": string,"car_model": string,"depart_at": string,"drop_at": string,"drop_label": string,"drop_seq": number,"drop_walk_m": number,"end_label": string,"my_booking_status": Database["public"]['Enums']["booking_status"],"notes": string,"owner_first_name": string,"owner_photo_url": string,"pickup_at": string,"pickup_label": string,"pickup_seq": number,"pickup_walk_m": number,"price_per_seat": number,"ride_id": string,"seats_left": number,"seats_total": number,"start_label": string,"status": Database["public"]['Enums']["ride_status"],"women_only": boolean
+            }[]
                            }
           }
           Enums: {

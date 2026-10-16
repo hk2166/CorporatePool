@@ -152,7 +152,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 
 ## Phase 4 — search (F-C1…C4)
 
-- [ ] **T-4.1 Search API.** lld §1 SQL as an RPC/route: from, to, date, window → matching rides
+- [x] **T-4.1 Search API.** lld §1 SQL as an RPC/route: from, to, date, window → matching rides
       ranked by walk_m + time fit. *Done when:* unit tests cover: match, opposite-direction
       excluded (`d.seq > p.seq`), > 2 km excluded, full rides excluded.
 - [ ] **T-4.2 Search UI (F-C1, F-C2).** From/to/when pickers defaulting to saved route ("my

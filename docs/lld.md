@@ -89,13 +89,22 @@ FROM rides r
 JOIN ride_stops p ON p.ride_id = r.id
 JOIN ride_stops d ON d.ride_id = r.id AND d.seq > p.seq
 WHERE r.status IN ('OPEN','ALLOCATING')          -- can still request during the window
-  AND r.seats_left > 0
-  AND r.depart_at BETWEEN :t_lo AND :t_hi
+  AND r.seats_left >= :seats
+  AND r.depart_at > now()
+  AND r.depart_at + p.eta_offset_min * interval '1 minute'
+      BETWEEN :t_lo AND :t_hi                     -- the car reaches *your* stop in the window
   AND ST_DWithin(p.geo, :from, 2000)
   AND ST_DWithin(d.geo, :to, 2000)
+  -- also left out: your own rides, anyone either of you blocked (F-F8), and women-only rides
+  -- unless you're a woman (F-F10)
 ORDER BY r.id, walk_m;
--- then rank: walking distance + time fit + owner rating; GiST index on ride_stops.geo
+-- GiST index on ride_stops.geo
 ```
+
+Implemented as `search_rides()` (the screen calls it as the signed-in rider), on top of
+`private.match_rides()`, which cross-car matching (§5) reuses. Results are ranked best fit first:
+`walk_m + 50 × minutes after the start of the window`, so a car 20 minutes later counts the same
+as 1 km more walking. Owner rating joins the ranking when reviews arrive (v1.1).
 
 At our scale this runs in milliseconds and costs no API calls.
 
