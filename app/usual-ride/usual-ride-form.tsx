@@ -4,12 +4,20 @@ import { useActionState, useMemo, useState } from "react";
 import { AddStopLink } from "@/components/add-stop-link";
 import { StopOptions } from "@/components/city-stop-select";
 import { suggestedPricePerSeat } from "@/lib/pricing";
-import { MAX_STOPS, WEEKDAYS, type StopInput } from "@/lib/usual-ride";
+import {
+  MAX_STOPS,
+  WEEKDAYS,
+  type Direction,
+  type StopInput,
+} from "@/lib/usual-ride";
 import { saveUsualRide, type UsualRideFormState } from "./actions";
 
 export type Place = { id: string; name: string; lat: number; lng: number };
 
 type Props = {
+  direction: Direction;
+  // 08:00 in the morning, 18:00 in the evening, until saved.
+  defaultTime: string;
   places: Place[];
   car: { id: string; seats: number };
   usualRide: {
@@ -26,7 +34,13 @@ type Props = {
 const fieldClass =
   "h-12 w-full rounded-xl border border-neutral-300 bg-white px-3 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100";
 
-export function UsualRideForm({ places, car, usualRide }: Props) {
+export function UsualRideForm({
+  direction,
+  defaultTime,
+  places,
+  car,
+  usualRide,
+}: Props) {
   const initial: UsualRideFormState = {
     saved: false,
     usualRideId: usualRide?.id,
@@ -41,7 +55,7 @@ export function UsualRideForm({ places, car, usualRide }: Props) {
     ],
   );
   const [departTime, setDepartTime] = useState(
-    usualRide?.departTime ?? "08:00",
+    usualRide?.departTime ?? defaultTime,
   );
   const [seats, setSeats] = useState(
     usualRide?.seats ?? Math.min(3, car.seats),
@@ -83,6 +97,7 @@ export function UsualRideForm({ places, car, usualRide }: Props) {
   return (
     <form action={action} className="space-y-6">
       <input type="hidden" name="carId" value={car.id} />
+      <input type="hidden" name="direction" value={direction} />
       {usualRideId && (
         <input type="hidden" name="usualRideId" value={usualRideId} />
       )}
@@ -91,8 +106,10 @@ export function UsualRideForm({ places, car, usualRide }: Props) {
       <fieldset className="space-y-3">
         <legend className="text-sm font-medium">Route</legend>
         <p className="text-sm text-neutral-500">
-          Stops in order, with roughly how many minutes after setting off you
-          reach each one.
+          Where you pick people up and drop them, in order, with roughly how
+          many minutes after setting off you reach each one. A pickup point that
+          isn&apos;t listed can be requested: add its Google Maps link if you
+          can, so the admin puts it in the right spot.
         </p>
         <AddStopLink next="/usual-ride" empty={places.length === 0} />
         <ol className="space-y-2">
@@ -188,11 +205,14 @@ export function UsualRideForm({ places, car, usualRide }: Props) {
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="price" className="block text-sm font-medium">
+        <label
+          htmlFor={`${direction}-price`}
+          className="block text-sm font-medium"
+        >
           Price per seat (₹)
         </label>
         <input
-          id="price"
+          id={`${direction}-price`}
           name="price"
           type="number"
           inputMode="numeric"
@@ -283,7 +303,9 @@ export function UsualRideForm({ places, car, usualRide }: Props) {
           disabled={pending}
           className="h-12 flex-1 rounded-xl bg-emerald-600 font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
         >
-          {pending ? "Saving…" : "Save my usual ride"}
+          {pending
+            ? "Saving…"
+            : `Save my ${direction === "EVENING" ? "evening" : "morning"} ride`}
         </button>
         {state.saved && !pending && (
           <p

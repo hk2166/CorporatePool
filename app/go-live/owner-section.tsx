@@ -1,17 +1,22 @@
 import Link from "next/link";
 import { addDays, dayLabel, indiaDate, indiaTime } from "@/lib/india-time";
 import { createClient } from "@/lib/supabase/server";
-import { describeWeekdays, weekdayBit } from "@/lib/usual-ride";
+import {
+  describeWeekdays,
+  DIRECTIONS,
+  parseDirection,
+  weekdayBit,
+} from "@/lib/usual-ride";
 import { setDaySkipped } from "./actions";
 import { GoLiveCard } from "./go-live-card";
 
 type StoredStop = { label?: string };
 
-// The owner's part of the home page: their upcoming rides, and the Go live card (F-B2).
-// Shows a nudge instead when the car or usual ride isn't set up yet.
+// The owner's part of the home page: their upcoming rides, and a Go live card for each usual
+// ride, morning and evening (F-B2). Nudges instead when the car or the rides aren't set up.
 export async function OwnerSection({ userId }: { userId: string }) {
   const supabase = await createClient();
-  const [{ data: car }, { data: usual }, { data: upcoming }] =
+  const [{ data: car }, { data: usuals }, { data: upcoming }] =
     await Promise.all([
       supabase
         .from("cars")
@@ -23,15 +28,12 @@ export async function OwnerSection({ userId }: { userId: string }) {
       supabase
         .from("usual_rides")
         .select(
-          "id, depart_time, seats_offered, price_per_seat, stops, auto_golive_days",
+          "id, direction, depart_time, seats_offered, price_per_seat, stops, auto_golive_days",
         )
-        .eq("owner_id", userId)
-        .order("created_at")
-        .limit(1)
-        .maybeSingle(),
+        .eq("owner_id", userId),
       supabase
         .from("rides")
-        .select("id, depart_at, seats_total, seats_left, status")
+        .select("id, usual_ride_id, depart_at, seats_total, seats_left, status")
         .eq("owner_id", userId)
         .not("status", "in", "(CANCELLED,COMPLETED)")
         // A ride that left in the last few hours is still today's: Start, mark, Complete.
@@ -40,7 +42,7 @@ export async function OwnerSection({ userId }: { userId: string }) {
           new Date(new Date().getTime() - 4 * 60 * 60 * 1000).toISOString(),
         )
         .order("depart_at")
-        .limit(5),
+        .limit(6),
     ]);
 
   if (!car) {
@@ -51,46 +53,74 @@ export async function OwnerSection({ userId }: { userId: string }) {
       </Nudge>
     );
   }
-  if (!usual) {
+  // Morning first, then evening.
+  const rides = DIRECTIONS.flatMap((d) => {
+    const usual = (usuals ?? []).find(
+      (u) => parseDirection(u.direction) === d.value,
+    );
+    return usual ? [{ direction: d, usual }] : [];
+  });
+  if (rides.length === 0) {
     return (
-      <Nudge href="/usual-ride" action="Set up your usual ride">
-        Save the ride you usually offer: your stops, time, seats and price.
+      <Nudge href="/usual-ride" action="Set up your rides">
+        Save the rides you usually offer, to the office in the morning and home
+        in the evening: your pickup stops, time, seats and price.
       </Nudge>
     );
   }
 
   const today = indiaDate();
   const tomorrow = addDays(today, 1);
-  const liveDays = new Set(
-    (upcoming ?? []).map((ride) => indiaDate(new Date(ride.depart_at))),
+  const routeOf = (stops: unknown) => {
+    const list = stops as StoredStop[];
+    return `${list[0]?.label ?? "Start"} → ${list.at(-1)?.label ?? "End"}`;
+  };
+  const routeById = new Map(
+    rides.map((r) => [r.usual.id, routeOf(r.usual.stops)]),
   );
-  const days = [
-    { value: today, label: `Today · ${dayLabel(today)}` },
-    { value: tomorrow, label: `Tomorrow · ${dayLabel(tomorrow)}` },
-  ]
-    // Not a day that's already live, and not today once the usual time has passed.
-    .filter((day) => !liveDays.has(day.value))
-    .filter(
-      (day) =>
-        day.value !== today ||
-        indiaTime(new Date()) < usual.depart_time.slice(0, 5),
-    );
 
-  // Automatic go-live (F-B3): is tomorrow one of the owner's days, and did they skip it?
-  const autoTomorrow =
-    (usual.auto_golive_days & weekdayBit(tomorrow)) !== 0 &&
-    !liveDays.has(tomorrow);
-  const { data: skipped } = autoTomorrow
-    ? await supabase
-        .from("usual_ride_skips")
-        .select("day")
-        .eq("usual_ride_id", usual.id)
-        .eq("day", tomorrow)
-        .maybeSingle()
-    : { data: null };
-
-  const stops = usual.stops as StoredStop[];
-  const route = `${stops[0]?.label ?? "Start"} → ${stops.at(-1)?.label ?? "End"}`;
+  const cards = await Promise.all(
+    rides.map(async ({ direction, usual }) => {
+      const liveDays = new Set(
+        (upcoming ?? [])
+          .filter((ride) => ride.usual_ride_id === usual.id)
+          .map((ride) => indiaDate(new Date(ride.depart_at))),
+      );
+      const days = [
+        { value: today, label: `Today · ${dayLabel(today)}` },
+        { value: tomorrow, label: `Tomorrow · ${dayLabel(tomorrow)}` },
+      ]
+        // Not a day that's already live, and not today once the usual time has passed.
+        .filter((day) => !liveDays.has(day.value))
+        .filter(
+          (day) =>
+            day.value !== today ||
+            indiaTime(new Date()) < usual.depart_time.slice(0, 5),
+        );
+      // Automatic go-live (F-B3): is tomorrow one of the owner's days, and did they skip it?
+      const autoTomorrow =
+        (usual.auto_golive_days & weekdayBit(tomorrow)) !== 0 &&
+        !liveDays.has(tomorrow);
+      const { data: skipped } = autoTomorrow
+        ? await supabase
+            .from("usual_ride_skips")
+            .select("day")
+            .eq("usual_ride_id", usual.id)
+            .eq("day", tomorrow)
+            .maybeSingle()
+        : { data: null };
+      return {
+        direction,
+        usual,
+        days,
+        autoTomorrow,
+        skipped: Boolean(skipped),
+      };
+    }),
+  );
+  const missing = DIRECTIONS.find(
+    (d) => !rides.some((r) => r.direction.value === d.value),
+  );
 
   return (
     <section className="space-y-4">
@@ -115,7 +145,11 @@ export async function OwnerSection({ userId }: { userId: string }) {
                             : dayLabel(day)}{" "}
                         · {indiaTime(ride.depart_at)}
                       </p>
-                      <p className="text-sm text-neutral-500">{route}</p>
+                      <p className="text-sm text-neutral-500">
+                        {(ride.usual_ride_id &&
+                          routeById.get(ride.usual_ride_id)) ??
+                          "Your ride"}
+                      </p>
                     </div>
                     <p className="text-sm">
                       {ride.status === "STARTED"
@@ -134,27 +168,41 @@ export async function OwnerSection({ userId }: { userId: string }) {
         </div>
       )}
 
-      {usual.auto_golive_days > 0 && (
-        <AutoGoLive
-          usualRideId={usual.id}
-          tomorrow={tomorrow}
-          weekdays={describeWeekdays(usual.auto_golive_days)}
-          autoTomorrow={autoTomorrow}
-          skipped={Boolean(skipped)}
-        />
-      )}
+      {cards.map(({ direction, usual, days, autoTomorrow, skipped }) => (
+        <div key={usual.id} className="space-y-3">
+          {usual.auto_golive_days > 0 && (
+            <AutoGoLive
+              usualRideId={usual.id}
+              ride={direction.word}
+              tomorrow={tomorrow}
+              weekdays={describeWeekdays(usual.auto_golive_days)}
+              autoTomorrow={autoTomorrow}
+              skipped={skipped}
+            />
+          )}
+          {days.length > 0 && (
+            <GoLiveCard
+              title={`Offer your ${direction.word} ride`}
+              usualRideId={usual.id}
+              days={days}
+              defaultDay={days.at(-1)!.value}
+              departTime={usual.depart_time.slice(0, 5)}
+              seats={usual.seats_offered}
+              carSeats={car.seats_total}
+              price={usual.price_per_seat}
+              route={routeOf(usual.stops)}
+            />
+          )}
+        </div>
+      ))}
 
-      {days.length > 0 && (
-        <GoLiveCard
-          usualRideId={usual.id}
-          days={days}
-          defaultDay={days.at(-1)!.value}
-          departTime={usual.depart_time.slice(0, 5)}
-          seats={usual.seats_offered}
-          carSeats={car.seats_total}
-          price={usual.price_per_seat}
-          route={route}
-        />
+      {missing && (
+        <p className="text-sm text-neutral-500">
+          Offer your {missing.word} ride too?{" "}
+          <Link href={`/usual-ride#${missing.word}`} className="underline">
+            Set it up
+          </Link>
+        </p>
       )}
     </section>
   );
@@ -185,12 +233,14 @@ function Nudge({
 // What automatic go-live will do next, with Skip or Undo for tomorrow.
 function AutoGoLive({
   usualRideId,
+  ride,
   tomorrow,
   weekdays,
   autoTomorrow,
   skipped,
 }: {
   usualRideId: string;
+  ride: string;
   tomorrow: string;
   weekdays: string;
   autoTomorrow: boolean;
@@ -199,7 +249,8 @@ function AutoGoLive({
   return (
     <div className="space-y-2 rounded-xl border border-neutral-200 px-4 py-3 text-sm dark:border-neutral-800">
       <p className="text-neutral-700 dark:text-neutral-300">
-        Goes live automatically on {weekdays}, at 17:00 the day before.
+        Your {ride} ride goes live automatically on {weekdays}, at 17:00 the day
+        before.
       </p>
       {autoTomorrow && (
         <form

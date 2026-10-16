@@ -13,6 +13,8 @@ type Props = {
   carSeats: number;
   price: number;
   route: string;
+  // "Offer your morning ride"
+  title: string;
 };
 
 const initialState: GoLiveState = {};
@@ -34,7 +36,7 @@ export function GoLiveCard(props: Props) {
 
       <div className="space-y-1">
         <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
-          Offer your usual ride
+          {props.title}
         </p>
         <p className="text-lg font-semibold">{props.route}</p>
         {!changing && (

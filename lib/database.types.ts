@@ -551,14 +551,14 @@ isOneToOne: false
                   ]
                 },"usual_rides": {
                   Row: {
-                    "auto_golive_days": number,"car_id": string,"created_at": string,"depart_time": string,"id": string,"notes": string | null,"owner_id": string,"price_per_seat": number,"seats_offered": number,"stops": NonNullable<Json>,"updated_at": string
+                    "auto_golive_days": number,"car_id": string,"created_at": string,"depart_time": string,"direction": string,"id": string,"notes": string | null,"owner_id": string,"price_per_seat": number,"seats_offered": number,"stops": NonNullable<Json>,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "auto_golive_days"?: number,"car_id": string,"created_at"?: string,"depart_time": string,"id"?: string,"notes"?: string | null,"owner_id": string,"price_per_seat": number,"seats_offered": number,"stops": NonNullable<Json>,"updated_at"?: string
+                    "auto_golive_days"?: number,"car_id": string,"created_at"?: string,"depart_time": string,"direction"?: string,"id"?: string,"notes"?: string | null,"owner_id": string,"price_per_seat": number,"seats_offered": number,"stops": NonNullable<Json>,"updated_at"?: string
                   }
                   Update: {
-                    "auto_golive_days"?: number,"car_id"?: string,"created_at"?: string,"depart_time"?: string,"id"?: string,"notes"?: string | null,"owner_id"?: string,"price_per_seat"?: number,"seats_offered"?: number,"stops"?: NonNullable<Json>,"updated_at"?: string
+                    "auto_golive_days"?: number,"car_id"?: string,"created_at"?: string,"depart_time"?: string,"direction"?: string,"id"?: string,"notes"?: string | null,"owner_id"?: string,"price_per_seat"?: number,"seats_offered"?: number,"stops"?: NonNullable<Json>,"updated_at"?: string
                   }
                   Relationships: [
                     {

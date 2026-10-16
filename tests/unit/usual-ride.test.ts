@@ -5,6 +5,8 @@ import {
   parseDepartTime,
   weekdayBit,
   weekdaysToMask,
+  parseDirection,
+  reverseStops,
 } from "@/lib/usual-ride";
 
 describe("weekdaysToMask", () => {
@@ -72,5 +74,29 @@ describe("describeWeekdays", () => {
 
   it("lists anything else", () => {
     expect(describeWeekdays(1 | 4 | 16)).toBe("Mon, Wed, Fri");
+  });
+});
+
+describe("parseDirection", () => {
+  it("is evening only when it says so", () => {
+    expect(parseDirection("EVENING")).toBe("EVENING");
+    expect(parseDirection("MORNING")).toBe("MORNING");
+    expect(parseDirection(null)).toBe("MORNING");
+  });
+});
+
+describe("reverseStops", () => {
+  it("runs the morning route backwards, timed from the evening start", () => {
+    expect(
+      reverseStops([
+        { placeId: "palwal", etaOffsetMin: 0 },
+        { placeId: "rajiv", etaOffsetMin: 45 },
+        { placeId: "cyber", etaOffsetMin: 60 },
+      ]),
+    ).toEqual([
+      { placeId: "cyber", etaOffsetMin: 0 },
+      { placeId: "rajiv", etaOffsetMin: 15 },
+      { placeId: "palwal", etaOffsetMin: 60 },
+    ]);
   });
 });
