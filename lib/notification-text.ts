@@ -113,6 +113,14 @@ export function notificationText(
         url,
       };
     // To the owner.
+    case "owner_reminder": {
+      const riders = typeof payload.riders === "number" ? payload.riders : 0;
+      return {
+        title: "Time to set off soon",
+        body: `Your ride leaves in about 15 minutes with ${riders} ${riders === 1 ? "rider" : "riders"}. Tap Start when you go.`,
+        url,
+      };
+    }
     case "ride_full":
       return {
         title: "Your car is full",
