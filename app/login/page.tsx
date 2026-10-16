@@ -8,6 +8,8 @@ export const metadata: Metadata = { title: "Sign in · CorporatePool" };
 // Messages for ?error=… codes that /auth/callback sends people back with.
 const ERRORS: Record<string, string> = {
   "sign-in-failed": "Sign-in didn't finish. Please try again.",
+  "invite-invalid":
+    "That invite link has expired or has already been used. Ask your group admin for a new one.",
 };
 
 export default function LoginPage({ searchParams }: PageProps<"/login">) {
@@ -42,11 +44,14 @@ async function Options({
   );
   const error =
     typeof params.error === "string" ? ERRORS[params.error] : undefined;
+  // Set by /auth/join when someone opened an invite link before signing in.
+  const invited = params.invited === "1";
 
   return (
     <SignInOptions
       next={next}
       error={error}
+      invited={invited}
       devLogin={process.env.NEXT_PUBLIC_DEV_LOGIN === "true"}
     />
   );

@@ -19,7 +19,9 @@
     "db:reset": "env $(grep -E '^SUPABASE_AUTH_EXTERNAL_GOOGLE_(CLIENT_ID|SECRET)=' .env.local 2>/dev/null | xargs) supabase db reset",
     "db:status": "supabase status",
     "db:types": "supabase gen types typescript --local > lib/database.types.ts",
-    "seed:landmarks": "node scripts/seed-landmarks.mjs"
+    "seed:landmarks": "node scripts/seed-landmarks.mjs",
+    "admin:make": "node --env-file=.env.local scripts/make-admin.mjs",
+    "admin:invite": "node --env-file=.env.local scripts/create-invite.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

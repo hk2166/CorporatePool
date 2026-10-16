@@ -8,13 +8,15 @@ type Props = {
   // Where to go after signing in; already checked by safeNextPath.
   next: string;
   error?: string;
+  // They opened an invite link and now need to sign in to join.
+  invited?: boolean;
   // Email and password sign-in for the local demo people (supabase/seed/20_demo.sql).
   // Only shown when NEXT_PUBLIC_DEV_LOGIN=true, and the live project rejects it anyway
   // because email sign-in is switched off there.
   devLogin: boolean;
 };
 
-export function SignInOptions({ next, error, devLogin }: Props) {
+export function SignInOptions({ next, error, invited, devLogin }: Props) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(error ?? null);
   const [busy, setBusy] = useState(false);
@@ -55,6 +57,12 @@ export function SignInOptions({ next, error, devLogin }: Props) {
 
   return (
     <div className="space-y-6">
+      {invited && (
+        <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+          You&apos;ve been invited. Sign in with Google to join.
+        </p>
+      )}
+
       <button
         type="button"
         onClick={signInWithGoogle}

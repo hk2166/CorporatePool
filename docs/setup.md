@@ -196,3 +196,29 @@ Gurgaon area (usually a sign that lat and lng are swapped). It warns about demo 
 - [ ] H-1 to H-5 are ticked in task.md, and `landmarks.csv` and task.md are committed.
 
 Then agents can start at T-1.1.
+
+## After setup: become the first admin, then invite your group
+
+CorporatePool is invite-only (Q3), and invites are created by admins. The first admin can't join
+through an invite, so you make yourself one with a script. These commands act on whichever
+project `.env.local` points at: the local database while developing, the live one when it
+points there.
+
+1. Open the app and sign in with Google. You'll land on **"You need an invite"**. That's
+   expected: it created your sign-in account.
+2. Make yourself an admin:
+
+   ```bash
+   cd /Users/hemant/Desktop/personal/CorporatePool && npm run admin:make -- you@gmail.com
+   ```
+
+3. Reload the app. You're in.
+4. Create an invite link and share it in the WhatsApp group:
+
+   ```bash
+   cd /Users/hemant/Desktop/personal/CorporatePool && npm run admin:invite -- --uses 50 --days 14
+   ```
+
+   Without options it makes a link for one person, valid for 7 days. Each person who opens the
+   link and signs in with Google joins, until the uses run out or it expires. The admin screen
+   (T-7.3) will replace this script.
