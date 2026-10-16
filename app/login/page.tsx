@@ -38,6 +38,17 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
       >
         <Options searchParams={searchParams} />
       </Suspense>
+      <p className="text-center text-xs text-neutral-500">
+        By signing in you agree to the{" "}
+        <Link href="/terms" className="underline">
+          terms
+        </Link>{" "}
+        and{" "}
+        <Link href="/privacy" className="underline">
+          privacy policy
+        </Link>
+        .
+      </p>
     </main>
   );
 }

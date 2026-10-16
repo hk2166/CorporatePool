@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PublicPage } from "@/components/public-page";
 
 export const metadata: Metadata = {
   title: "CorporatePool · Share the ride to work",
@@ -33,28 +34,7 @@ const PROMISES = [
 // with log in and sign up. Static, open to everyone, and not tied to any one city.
 export default function HomePage() {
   return (
-    <div className="flex flex-1 flex-col">
-      <header className="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 py-4">
-        <Link href="/home" className="flex items-center gap-2 font-semibold">
-          {/* The app icon, drawn by app/icon-192.png/route.tsx. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/icon-192.png"
-            alt=""
-            width={32}
-            height={32}
-            className="h-8 w-8 rounded-lg"
-          />
-          CorporatePool
-        </Link>
-        <Link
-          href="/login"
-          className="rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
-        >
-          Log in
-        </Link>
-      </header>
-
+    <PublicPage>
       <main className="mx-auto w-full max-w-4xl flex-1 space-y-16 px-4 pt-10 pb-16">
         <section className="space-y-6 text-center sm:text-left">
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -122,15 +102,6 @@ export default function HomePage() {
           </ul>
         </section>
       </main>
-
-      <footer className="border-t border-neutral-200 dark:border-neutral-800">
-        <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-sm text-neutral-500">
-          <span>CorporatePool · Free shared rides to work</span>
-          <Link href="/login" className="hover:underline">
-            Log in
-          </Link>
-        </div>
-      </footer>
-    </div>
+    </PublicPage>
   );
 }

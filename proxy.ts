@@ -2,11 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 
-// Pages anyone may open without signing in. /home is the public front page. /api/jobs/ routes
+// Pages anyone may open without signing in. /home is the public front page, with /privacy and
+// /terms. /api/jobs/ routes
 // check their own secret (they're called by the database), and /sw.js is the service worker
 // script.
 const PUBLIC_PATHS = [
   "/home",
+  "/privacy",
+  "/terms",
   "/login",
   "/auth/",
   "/no-invite",
