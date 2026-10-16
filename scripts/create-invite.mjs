@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Prints a new invite link to share in the WhatsApp group, until the admin screen (T-7.3) can
-// do it.
+// Prints a new invite link to share in the WhatsApp group. The admin screen (/admin/invites,
+// T-7.3) does the same; this stays for the very first invite, or from a terminal.
 //
 //   npm run admin:invite                         one person, valid 7 days
 //   npm run admin:invite -- --uses 50 --days 14  a link the whole group can use
