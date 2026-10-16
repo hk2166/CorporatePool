@@ -50,7 +50,7 @@ export async function saveProfile(
   const home = text("home") || null;
   const work = text("work") || null;
   if (home && work && home === work) {
-    errors.work = "Pick a different stop from your pickup.";
+    errors.work = "Your office can't be the same stop as your home.";
   }
 
   // (The name and phone checks repeat the ones above so TypeScript knows they're set.)

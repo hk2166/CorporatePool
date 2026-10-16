@@ -2,6 +2,7 @@
 
 import { useActionState, useMemo, useState } from "react";
 import { AddStopLink } from "@/components/add-stop-link";
+import { StopOptions } from "@/components/city-stop-select";
 import { suggestedPricePerSeat } from "@/lib/pricing";
 import { MAX_STOPS, WEEKDAYS, type StopInput } from "@/lib/usual-ride";
 import { saveUsualRide, type UsualRideFormState } from "./actions";
@@ -107,11 +108,7 @@ export function UsualRideForm({ places, car, usualRide }: Props) {
                 className={`${fieldClass} min-w-0 flex-1`}
               >
                 <option value="">Choose a stop</option>
-                {places.map((place) => (
-                  <option key={place.id} value={place.id}>
-                    {place.name}
-                  </option>
-                ))}
+                <StopOptions places={places} />
               </select>
               {index === 0 ? (
                 <span className="w-24 shrink-0 text-sm text-neutral-500">

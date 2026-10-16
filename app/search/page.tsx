@@ -3,6 +3,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AddStopLink } from "@/components/add-stop-link";
+import { StopOptions } from "@/components/city-stop-select";
 import { AppHeader } from "@/components/app-header";
 import { LiveSeatsProvider } from "@/components/live-seats";
 import { RideResultCard } from "@/components/ride-result-card";
@@ -97,11 +98,7 @@ async function SearchSection({
               <option value="" disabled>
                 Where you get in
               </option>
-              {(places ?? []).map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
+              <StopOptions places={places ?? []} />
             </select>
           </Field>
           <Field label="To" htmlFor="to">
@@ -115,11 +112,7 @@ async function SearchSection({
               <option value="" disabled>
                 Where you get out
               </option>
-              {(places ?? []).map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
+              <StopOptions places={places ?? []} />
             </select>
           </Field>
           <AddStopLink next="/search" empty={(places ?? []).length === 0} />

@@ -58,14 +58,20 @@ async function ProfileSection({
         </h1>
         {isWelcome && (
           <p className="text-neutral-600 dark:text-neutral-400">
-            Add your mobile number so the person you ride with can reach you. It
-            stays hidden until a seat is confirmed.
+            Add your mobile number so the person you ride with can reach you (it
+            stays hidden until a seat is confirmed), and tell us where home and
+            the office are.
           </p>
         )}
       </div>
       <ProfileForm
         welcome={isWelcome}
-        places={(places ?? []).map((p) => ({ id: p.id, name: p.name }))}
+        places={(places ?? []).map((p) => ({
+          id: p.id,
+          name: p.name,
+          lat: p.lat,
+          lng: p.lng,
+        }))}
         profile={{
           name: profile.name,
           phone: profile.phone,
