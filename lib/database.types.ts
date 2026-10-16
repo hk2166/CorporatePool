@@ -460,6 +460,9 @@ isOneToOne: false
             "admin_close_report":
 { Args: { "p_admin_id": string,"p_reason": string,"p_report_id": string,"p_resolved": boolean }; Returns: undefined
                            },
+"admin_merge_places":
+{ Args: { "p_from": string,"p_into": string }; Returns: number
+                           },
 "admin_occupancy":
 { Args: { "p_from": string,"p_to": string }; Returns: {
               "day": string,"rides": number,"route": string,"seats_filled": number,"seats_offered": number
@@ -480,6 +483,9 @@ isOneToOne: false
                            },
 "admin_restore_user":
 { Args: { "p_admin_id": string,"p_reason": string,"p_user_id": string }; Returns: undefined
+                           },
+"admin_save_place":
+{ Args: { "p_id": string,"p_kind": Database["public"]['Enums']["place_kind"],"p_lat": number,"p_lng": number,"p_name": string }; Returns: string
                            },
 "admin_set_ride_hidden":
 { Args: { "p_admin_id": string,"p_hidden": boolean,"p_reason": string,"p_ride_id": string }; Returns: undefined

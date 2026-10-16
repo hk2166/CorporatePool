@@ -210,7 +210,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-7.2 Reports queue + actions.** Review reports, remove user, hide ride — all as
       audit-trail rows. *Done when:* removed user loses access; hidden ride vanishes from
       search but not from history.
-- [ ] **T-7.3 Landmark manager + invite links (F-G6, Q3).** CRUD/merge landmarks; generate
+- [x] **T-7.3 Landmark manager + invite links (F-G6, Q3).** CRUD/merge landmarks; generate
       `signup_tokens`. *Done when:* merge re-points all references; invite flow from T-2.1
       works end-to-end.
 

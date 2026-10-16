@@ -240,5 +240,5 @@ points there.
    ```
 
    Without options it makes a link for one person, valid for 7 days. Each person who opens the
-   link and signs in with Google joins, until the uses run out or it expires. The admin screen
-   (T-7.3) will replace this script.
+   link and signs in with Google joins, until the uses run out or it expires. Once you're an
+   admin, **Admin → Invites** in the app does the same, and lists and ends links.
