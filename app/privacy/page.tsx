@@ -26,8 +26,8 @@ export default function PrivacyPage() {
             CorporatePool helps people who drive to work share their empty seats
             with people going the same way. This page explains what we store
             about you, who can see it, and how to delete it. We don&apos;t sell
-            your data, we don&apos;t show ads, and we don&apos;t use analytics
-            or tracking tools.
+            your data, we don&apos;t show ads, and we don&apos;t use any outside
+            analytics or tracking tools.
           </p>
         </header>
 
@@ -56,9 +56,10 @@ export default function PrivacyPage() {
             <strong>What the app records as you use it:</strong> the rides you
             offer, the seats you request and what happened to them (confirmed,
             waitlisted, cancelled, completed or missed), your reliability score
-            and the events behind it, reports you file, people you block, and,
-            if you turn on notifications, the browser address notifications are
-            sent to.
+            and the events behind it, reports you file, people you block, the
+            days you open the app (just the date, to count daily users; not
+            times or pages), and, if you turn on notifications, the browser
+            address notifications are sent to.
           </p>
           <p>
             <strong>Cookies:</strong> one sign-in cookie that keeps you logged
@@ -91,8 +92,15 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong>Your reliability score and its history</strong> are
-              visible to you and to your group&apos;s admins. Admins also see
-              reports and can remove members.
+              visible to you and to your group&apos;s admins.
+            </li>
+            <li>
+              <strong>Your group&apos;s admins</strong> can also see your email
+              address and phone number, your usual stops, car and usual ride,
+              the rides you offer and seats you ask for, the days you used the
+              app, and reports about you. They use this only to run the group:
+              to see how it&apos;s used, sort out problems, and remove members
+              who break the rules.
             </li>
             <li>
               <strong>Blocks</strong> are visible only to the person who made
@@ -114,7 +122,10 @@ export default function PrivacyPage() {
               to send you notifications you turned on (seat confirmed,
               reminders, ride changes);
             </li>
-            <li>to let admins keep the group safe (reports, removals).</li>
+            <li>
+              to let admins run the group and keep it safe (usage numbers,
+              reports, removals).
+            </li>
           </ul>
           <p>
             CorporatePool never handles money. &ldquo;Pay by UPI&rdquo; only

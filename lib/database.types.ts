@@ -145,6 +145,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"member_activity": {
+                  Row: {
+                    "day": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "day": string,"user_id": string
+                  }
+                  Update: {
+                    "day"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "member_activity_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"notifications_outbox": {
                   Row: {
                     "attempts": number,"claimed_until": string | null,"created_at": string,"id": string,"kind": string,"payload": NonNullable<Json>,"sent_at": string | null,"status": Database["public"]['Enums']["outbox_status"],"user_id": string
@@ -471,6 +491,21 @@ isOneToOne: false
 "admin_close_report":
 { Args: { "p_admin_id": string,"p_reason": string,"p_report_id": string,"p_resolved": boolean }; Returns: undefined
                            },
+"admin_daily_stats":
+{ Args: { "p_from": string,"p_to": string }; Returns: {
+              "active_members": number,"day": string,"new_members": number,"requests": number,"rides": number,"seats_filled": number,"seats_offered": number
+            }[]
+                           },
+"admin_member":
+{ Args: { "p_user_id": string }; Returns: {
+              "active_days_30": number,"car": string,"email": string,"gender": string,"home": string,"is_admin": boolean,"joined_at": string,"last_active": string,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string,"plate": string,"reliability_score": number,"removed_at": string,"rides_completed": number,"upi_vpa": string,"user_id": string,"usual_days": number,"usual_route": string,"usual_time": string,"work": string
+            }[]
+                           },
+"admin_members":
+{ Args: { "p_query"?: string }; Returns: {
+              "active_days_30": number,"email": string,"home": string,"is_admin": boolean,"joined_at": string,"last_active": string,"name": string,"phone": string,"reliability_score": number,"removed_at": string,"rides_offered": number,"rides_taken": number,"user_id": string,"work": string
+            }[]
+                           },
 "admin_merge_places":
 { Args: { "p_from": string,"p_into": string }; Returns: number
                            },
@@ -500,6 +535,16 @@ isOneToOne: false
                            },
 "admin_set_ride_hidden":
 { Args: { "p_admin_id": string,"p_hidden": boolean,"p_reason": string,"p_ride_id": string }; Returns: undefined
+                           },
+"admin_summary":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "active_7d": number,"active_today": number,"members": number,"new_members_7d": number,"open_reports": number,"requests_7d": number,"rides_today": number,"rides_upcoming": number,"seats_filled_today": number,"stops": number
+            }[]
+                           },
+"admin_top_trips":
+{ Args: { "p_from": string,"p_limit"?: number,"p_to": string }; Returns: {
+              "dropoff": string,"pickup": string,"riders": number,"trips": number
+            }[]
                            },
 "anonymise_account":
 { Args: { "p_user_id": string }; Returns: (string)[]
@@ -580,6 +625,9 @@ isOneToOne: false
                            },
 "recompute_scores":
 { Args: Record<PropertyKey, never>; Returns: number
+                           },
+"record_visit":
+{ Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "redeem_invite":
 { Args: { "p_name": string,"p_photo_url": string,"p_token": string,"p_user_id": string }; Returns: boolean
