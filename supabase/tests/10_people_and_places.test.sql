@@ -2,7 +2,7 @@
 -- Each rule gets a test that tries to break it. Everything is rolled back at the end.
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(46);
+select plan(48);
 
 -- Tables exist, with Row-Level Security on (deny-all until T-1.3) -------------------------- 10
 
@@ -157,7 +157,7 @@ select throws_ok($$
     ('00000000-0000-0000-0000-0000000000ff', 'Demo Sedan', 'Grey', 'HR26DM0006', 4)
 $$, '23503', null, 'cars: owner must be a user');
 
--- signup_tokens ------------------------------------------------------------------------------ 5
+-- signup_tokens ------------------------------------------------------------------------------ 7
 
 select lives_ok($$
   insert into signup_tokens (token, created_by, max_uses, expires_at) values
@@ -167,8 +167,18 @@ $$, 'signup_tokens: a valid invite is accepted');
 
 select throws_ok($$
   insert into signup_tokens (token, created_by, expires_at) values
-    ('short', '00000000-0000-0000-0000-000000000003', now() + interval '7 days')
-$$, '23514', null, 'signup_tokens: tokens are long enough not to be guessed');
+    ('ab', '00000000-0000-0000-0000-000000000003', now() + interval '7 days')
+$$, '23514', null, 'signup_tokens: random tokens are long enough not to be guessed');
+
+select lives_ok($$
+  insert into signup_tokens (token, created_by, max_uses, expires_at) values
+    ('palwal-gurgaon', '00000000-0000-0000-0000-000000000003', 10000, now() + interval '7 days')
+$$, 'signup_tokens: an admin can name a link, with no limit on people');
+
+select throws_ok($$
+  insert into signup_tokens (token, created_by, expires_at) values
+    ('Palwal Gurgaon', '00000000-0000-0000-0000-000000000003', now() + interval '7 days')
+$$, '23514', null, 'signup_tokens: names are lowercase letters, digits and hyphens');
 
 select throws_ok($$
   update signup_tokens set used_count = 6 where token = 'demo-token-aaaaaaaaaaaaaaaa'
