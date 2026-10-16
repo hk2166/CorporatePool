@@ -177,7 +177,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
 - [x] **T-5.3 Waitlist promotion (F-D4).** On cancel: seat back, FULL→OPEN, promote lowest rank
       in-request; 5-min sweep as safety net (lld §5). *Done when:* flow 5 passes end-to-end in a
       test; sweep catches an artificially missed promotion.
-- [ ] **T-5.4 Cross-car matching (F-D6).** `rematch()` per lld §5 for `any_car_ok` waitlisted +
+- [x] **T-5.4 Cross-car matching (F-D6).** `rematch()` per lld §5 for `any_car_ok` waitlisted +
       cancelled-ride riders. *Done when:* flow 4 step 3 and flow 7 step 2 pass as tests.
 - [ ] **T-5.5 Confirmed view (F-D8).** Contact + WhatsApp (`wa.me`) buttons, car photos/plate,
       UPI deep link `upi://pay?pa=…&am=…` with amount prefilled. *Done when:* flow 1 step 7
