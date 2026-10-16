@@ -1,5 +1,9 @@
 import "server-only";
 import { notFound, redirect } from "next/navigation";
+import {
+  parseRidePreference,
+  type RidePreference,
+} from "@/lib/ride-preference";
 import { createClient } from "@/lib/supabase/server";
 
 export type CurrentUser = {
@@ -9,6 +13,8 @@ export type CurrentUser = {
   isAdmin: boolean;
   // A phone number is needed before booking or offering a ride (F-A2).
   hasPhone: boolean;
+  // Riding, driving or both; null until they answer on /welcome.
+  ridePreference: RidePreference | null;
 };
 
 // The signed-in person. This is the one place pages ask "who is this?" (the Data Access Layer
@@ -46,6 +52,7 @@ export async function getCurrentUser(): Promise<CurrentUser> {
     photoUrl: profile.photo_url,
     isAdmin: profile.is_admin,
     hasPhone: profile.phone !== null,
+    ridePreference: parseRidePreference(profile.ride_preference),
   };
 }
 

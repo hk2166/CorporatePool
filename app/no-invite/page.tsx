@@ -53,7 +53,7 @@ async function JoinStatus() {
           accepted, come back here and you&apos;re in.
         </p>
         <Link
-          href="/profile?welcome=1"
+          href="/welcome"
           className="flex h-12 items-center justify-center rounded-xl border border-neutral-300 font-semibold dark:border-neutral-700"
         >
           Check again

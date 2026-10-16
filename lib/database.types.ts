@@ -473,14 +473,14 @@ isOneToOne: false
                   ]
                 },"users": {
                   Row: {
-                    "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"removed_at": string | null,"rides_completed": number,"upi_vpa": string | null,"work_place_id": string | null
+                    "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"removed_at": string | null,"ride_preference": string | null,"rides_completed": number,"upi_vpa": string | null,"work_place_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id": string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name": string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
+                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id": string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name": string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_preference"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id"?: string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name"?: string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
+                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id"?: string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name"?: string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_preference"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -662,6 +662,7 @@ isOneToOne: false
 "photo_url": string | null,
 "reliability_score": number,
 "removed_at": string | null,
+"ride_preference": string | null,
 "rides_completed": number,
 "upi_vpa": string | null,
 "work_place_id": string | null

@@ -46,10 +46,10 @@ select u.id::text, u.id,
  );
 
 -- Profiles.
-insert into public.users (id, name, phone, upi_vpa, is_admin) values
-  ('5eed0000-0000-0000-0000-000000000001', 'Demo Owner', '+919999900001', 'demo.owner@okdemo', false),
-  ('5eed0000-0000-0000-0000-000000000002', 'Demo Rider', '+919999900002', null, false),
-  ('5eed0000-0000-0000-0000-000000000003', 'Demo Admin', '+919999900003', null, true);
+insert into public.users (id, name, phone, upi_vpa, is_admin, ride_preference) values
+  ('5eed0000-0000-0000-0000-000000000001', 'Demo Owner', '+919999900001', 'demo.owner@okdemo', false, 'DRIVER'),
+  ('5eed0000-0000-0000-0000-000000000002', 'Demo Rider', '+919999900002', null, false, 'RIDER'),
+  ('5eed0000-0000-0000-0000-000000000003', 'Demo Admin', '+919999900003', null, true, 'BOTH');
 
 -- The car, the usual ride and tomorrow's ride, on a route picked by position, not name.
 do $$

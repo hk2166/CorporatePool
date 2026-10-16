@@ -91,8 +91,13 @@ test("someone without an invite asks to join and an admin accepts", async ({
     ).toBeVisible();
 
     // In: the new member lands on their profile to add a phone number.
+    // In: first they say how they'll use the app, then add a phone number.
     await page.getByRole("link", { name: "Check again" }).click();
-    await expect(page).toHaveURL(/\/profile/);
+    await expect(
+      page.getByRole("heading", { name: "Welcome, Demo!" }),
+    ).toBeVisible();
+    await page.getByRole("button", { name: /I'm looking for a ride/ }).click();
+    await expect(page).toHaveURL(/\/profile\?welcome=1/);
   } finally {
     await d.from("users").delete().eq("id", id);
     await d.auth.admin.deleteUser(id);
