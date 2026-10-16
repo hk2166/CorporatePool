@@ -1,0 +1,63 @@
+name: End-to-end
+
+# User flows 1–5 and 9 in a real browser (T-8.3), against the local Supabase stack with its
+# demo data. Nightly at 02:00 IST, by hand from the Actions tab, and on pull requests that
+# change the tests themselves. Takes about 10 minutes, so it isn't run on every pull request
+# (the repo is private: 2,000 free Actions minutes a month).
+on:
+  schedule:
+    - cron: "30 20 * * *"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "e2e/**"
+      - "playwright.config.ts"
+      - ".github/workflows/e2e.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    name: User flows in a browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # The services the app talks to: database, sign-in, API, Realtime, Storage.
+      - name: Start Supabase
+        run: npx supabase start -x studio,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor,postgres-meta
+      # The app's settings for this local stack, with the demo sign-in switched on.
+      - name: Write .env.local
+        run: |
+          npx supabase status -o env | sed 's/"//g' > supabase.env
+          value() { grep "^$1=" supabase.env | cut -d= -f2-; }
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=$(value API_URL)"
+            echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$(value PUBLISHABLE_KEY)"
+            echo "SUPABASE_SECRET_KEY=$(value SECRET_KEY)"
+            echo "NEXT_PUBLIC_DEV_LOGIN=true"
+            echo "NEXT_PUBLIC_SITE_URL=http://localhost:3000"
+          } > .env.local
+          rm supabase.env
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run test:e2e
+      - name: Keep the report when something fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

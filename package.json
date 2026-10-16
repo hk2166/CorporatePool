@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:db": "supabase test db",
     "test:race": "bash scripts/race-last-seat.sh",
+    "test:e2e": "playwright test",
     "jobs:local": "bash scripts/local-job-secrets.sh",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -35,6 +36,7 @@
     "web-push": "3.6.7"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@tailwindcss/turbopack": "^4",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",

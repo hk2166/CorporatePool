@@ -225,7 +225,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
       sweep, reminders, expiry, score, keep-warm per hld "Scheduled jobs"); `.env.example`
       complete. *Done when:* the production URL passes T-8.3 and
       `node scripts/check-landmarks.mjs --strict` passes (no demo stops left).
-- [ ] **T-8.3 E2E smoke (Playwright).** One scripted run of flows 1–5 + 9 of user-flows.md
+- [x] **T-8.3 E2E smoke (Playwright).** One scripted run of flows 1–5 + 9 of user-flows.md
       against a seeded instance. *Done when:* green in CI nightly.
 
 ---
