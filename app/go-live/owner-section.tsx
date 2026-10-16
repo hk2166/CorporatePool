@@ -126,7 +126,15 @@ export async function OwnerSection({ userId }: { userId: string }) {
     <section className="space-y-4">
       {upcoming && upcoming.length > 0 && (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium text-neutral-500">Your rides</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-medium text-neutral-500">Your rides</h2>
+            <Link
+              href="/my-riders"
+              className="inline-flex min-h-10 items-center text-sm font-medium underline"
+            >
+              See who&apos;s booked
+            </Link>
+          </div>
           <ul className="space-y-2">
             {upcoming.map((ride) => {
               const day = indiaDate(new Date(ride.depart_at));

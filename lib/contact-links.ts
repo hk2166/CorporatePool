@@ -1,6 +1,12 @@
 // Links for the confirmed view (F-D8): call, WhatsApp and pay by UPI. Phones are stored in
 // E.164 form ("+919876543210", F-A2).
 
+// "+91 98765 43210" for an Indian mobile number; anything else as it is.
+export function displayPhone(phone: string): string {
+  const india = /^\+91(\d{5})(\d{5})$/.exec(phone);
+  return india ? `+91 ${india[1]} ${india[2]}` : phone;
+}
+
 // tel:+919876543210
 export function callLink(phone: string): string {
   return `tel:${phone}`;
