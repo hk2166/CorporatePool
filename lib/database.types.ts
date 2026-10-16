@@ -483,6 +483,11 @@ isOneToOne: false
               "late_cancels_90d": number,"no_shows_90d": number,"reliability_score": number,"rides_completed": number
             }[]
                            },
+"go_live":
+{ Args: { "p_date": string,"p_depart_time"?: string,"p_owner_id": string,"p_seats"?: number,"p_usual_ride_id": string }; Returns: {
+              "created": boolean,"ride_id": string
+            }[]
+                           },
 "list_places":
 { Args: Record<PropertyKey, never>; Returns: {
               "id": string,"kind": Database["public"]['Enums']["place_kind"],"lat": number,"lng": number,"name": string

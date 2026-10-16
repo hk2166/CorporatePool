@@ -26,7 +26,8 @@ rides(id, owner_id, car_id, usual_ride_id?, depart_at timestamptz,
       seats_total, seats_left, price_per_seat, notes, women_only bool,
       status: OPEN|ALLOCATING|FULL|STARTED|COMPLETED|CANCELLED,
       allocation_at timestamptz)                       -- when ranked allocation runs (Q4)
-   UNIQUE(usual_ride_id, depart_at)                    -- auto go-live can never duplicate a day
+   UNIQUE(usual_ride_id, depart_at) WHERE status <> 'CANCELLED'  -- auto go-live can never duplicate
+                                                       -- a day; a cancelled day can go live again
 
 ride_stops(ride_id, seq, place_id?, geo geography(Point), label, eta_offset_min)
    PRIMARY KEY(ride_id, seq)

@@ -222,7 +222,7 @@ Rules that live in the schema but not in boxes and arrows:
 
 | Rule | Where | Why |
 |---|---|---|
-| `UNIQUE(usual_ride_id, depart_at)` | Ride | Auto go-live run twice still creates one ride per day |
+| `UNIQUE(usual_ride_id, depart_at)` for rides that aren't cancelled | Ride | Auto go-live run twice still creates one ride per day; a cancelled day can go live again |
 | `UNIQUE(ride_id, rider_id)` where status in REQUESTED / CONFIRMED / WAITLISTED | Booking | One active booking per rider per ride |
 | `PRIMARY KEY(ride_id, seq)` | RideStop | Stops are ordered; `d.seq > p.seq` in search needs this |
 | `seats_left >= 0`, changed only by the conditional UPDATE | Ride | The last-seat guarantee ([lld.md §2](lld.md#2-the-last-seat)) |
