@@ -525,6 +525,9 @@ isOneToOne: false
 "mark_rider":
 { Args: { "p_booking_id": string,"p_outcome": string,"p_owner_id": string }; Returns: Database["public"]['Enums']["booking_status"]
                            },
+"recompute_scores":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "redeem_invite":
 { Args: { "p_name": string,"p_photo_url": string,"p_token": string,"p_user_id": string }; Returns: boolean
                            },
