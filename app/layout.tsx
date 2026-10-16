@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SiteCredit } from "@/components/site-credit";
 import { GOOGLE_SITE_VERIFICATION } from "@/lib/site";
 import "./globals.css";
 
@@ -41,7 +42,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <SiteCredit />
+      </body>
     </html>
   );
 }
