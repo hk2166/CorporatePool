@@ -44,7 +44,8 @@ reports(id, by_user, about_user, ride_id?, reason, status)
 push_subscriptions(user_id, endpoint, p256dh, auth)
 signup_tokens(token, created_by → users, max_uses, used_count, expires_at)  -- invite links (Q3)
 blocks(blocker_id, blocked_id)   PRIMARY KEY(blocker_id, blocked_id)          -- F-F8
-admin_actions(id, admin_id, action, target_user?, target_ride?, reason, created_at)  -- F-G4 audit
+admin_actions(id, admin_id, action, target_user?, target_ride?, target_report?, reason,
+              created_at)                         -- F-G4 audit; append-only
 notifications_outbox(id, user_id, kind, payload jsonb, status, created_at)  -- written in the same
                                                    -- transaction, drained by the push sender (§6)
 ```
