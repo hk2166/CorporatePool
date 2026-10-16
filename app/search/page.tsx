@@ -3,6 +3,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
+import { LiveSeatsProvider } from "@/components/live-seats";
 import { RideResultCard } from "@/components/ride-result-card";
 import { getCurrentUser } from "@/lib/auth";
 import { dayLabel, indiaDate } from "@/lib/india-time";
@@ -286,13 +287,15 @@ async function Results({
           )}
         </p>
       ) : (
-        <ul className="space-y-3">
-          {rides.map((ride) => (
-            <li key={ride.ride_id}>
-              <RideResultCard ride={ride} />
-            </li>
-          ))}
-        </ul>
+        <LiveSeatsProvider rideIds={rides.map((r) => r.ride_id)}>
+          <ul className="space-y-3">
+            {rides.map((ride) => (
+              <li key={ride.ride_id}>
+                <RideResultCard ride={ride} />
+              </li>
+            ))}
+          </ul>
+        </LiveSeatsProvider>
       )}
     </section>
   );
