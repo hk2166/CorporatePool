@@ -171,7 +171,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
       requests for the last seat and gets exactly one CONFIRMED, one WAITLISTED, and
       `seats_left = 0`, never negative. A pre-window request stays REQUESTED even with free
       seats.
-- [ ] **T-5.2 Allocation job (F-D2, Q4).** pg_cron 5-min job: rides past `allocation_at` →
+- [x] **T-5.2 Allocation job (F-D2, Q4).** pg_cron 5-min job: rides past `allocation_at` →
       rank REQUESTED by `(score DESC, created_at ASC)`, confirm top, waitlist rest (lld §4).
       *Done when:* fixture of 5 requests / 3 seats allocates exactly per lld §4; job idempotent.
 - [ ] **T-5.3 Waitlist promotion (F-D4).** On cancel: seat back, FULL→OPEN, promote lowest rank
