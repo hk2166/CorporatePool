@@ -21,6 +21,17 @@ test("an owner sets up the evening ride home", async ({ page }) => {
     await expect(
       evening.getByLabel("Drop spot 1").locator("option:checked"),
     ).toHaveText("Demo Palwal Start");
+    // A spot picked once in the ride isn't offered again in its other lists.
+    await expect(
+      evening
+        .getByLabel("Drop spot 1")
+        .locator("option", { hasText: "Demo Cyber City" }),
+    ).toHaveCount(0);
+    await expect(
+      evening
+        .getByLabel("Pickup spot 1")
+        .locator("option", { hasText: "Demo Palwal Start" }),
+    ).toHaveCount(0);
     await evening.getByRole("button", { name: /Save/ }).click();
     await expect(evening.getByText("Saved")).toBeVisible();
 

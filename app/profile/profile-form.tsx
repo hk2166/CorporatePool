@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { AddStopLink } from "@/components/add-stop-link";
 import { CityStopSelect } from "@/components/city-stop-select";
+import { pickedByOthers } from "@/lib/stop-choices";
 import {
   saveProfile,
   type ProfileField,
@@ -37,6 +38,9 @@ export function ProfileForm({ profile, places, welcome, isOwner }: Props) {
   // After a failed save, show what was typed; otherwise what's saved.
   const value = (field: ProfileField, saved: string | null) =>
     state.values?.[field] ?? saved ?? "";
+  // Home and office leave each other's stop out of their lists.
+  const [home, setHome] = useState(value("home", profile.homePlaceId));
+  const [work, setWork] = useState(value("work", profile.workPlaceId));
 
   return (
     <form action={action} className="space-y-5" noValidate>
@@ -96,6 +100,8 @@ export function ProfileForm({ profile, places, welcome, isOwner }: Props) {
             label="Home"
             places={places}
             defaultValue={value("home", profile.homePlaceId)}
+            exclude={pickedByOthers([home, work], 0)}
+            onChange={setHome}
             invalid={Boolean(error("home"))}
             describedBy={error("home") ? "home-error" : undefined}
           />
@@ -107,6 +113,8 @@ export function ProfileForm({ profile, places, welcome, isOwner }: Props) {
             label="Office"
             places={places}
             defaultValue={value("work", profile.workPlaceId)}
+            exclude={pickedByOthers([home, work], 1)}
+            onChange={setWork}
             invalid={Boolean(error("work"))}
             describedBy={error("work") ? "work-error" : undefined}
           />
