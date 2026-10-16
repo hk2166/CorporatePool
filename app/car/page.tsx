@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
+import { OwnersOnly } from "@/components/owners-only";
+import { isCarOwner } from "@/lib/ride-preference";
 import { createClient } from "@/lib/supabase/server";
 import { CarForm, type CarPhoto } from "./car-form";
 
@@ -40,6 +42,7 @@ async function CarSection({
     getCurrentUser(),
   ]);
   const isWelcome = welcome === "1";
+  if (!isCarOwner(user.ridePreference)) return <OwnersOnly what="Your car" />;
   const supabase = await createClient();
 
   const { data: car } = await supabase

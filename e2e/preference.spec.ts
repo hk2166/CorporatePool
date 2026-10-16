@@ -7,6 +7,12 @@ test("a rider who starts driving too changes it on their profile", async ({
 }) => {
   try {
     await signIn(page, RIDER.email);
+    // Riders get Find and Profile in the menu, and no car pages.
+    const menu = page.getByRole("navigation", { name: "Main" });
+    await expect(menu.getByRole("link")).toHaveText(["Find", "Profile"]);
+    await page.goto("/car");
+    await expect(page.getByText("This is for car owners.")).toBeVisible();
+    await page.goto("/");
     // Riders see riding only.
     await expect(
       page.getByRole("link", { name: /My usual commute, tomorrow/ }),
@@ -27,6 +33,13 @@ test("a rider who starts driving too changes it on their profile", async ({
     await expect(
       page.getByRole("link", { name: "Add your car" }),
     ).toBeVisible();
+    // Car owners get Offer and Car in the menu too.
+    await expect(menu.getByRole("link")).toHaveText([
+      "Find",
+      "Offer",
+      "Car",
+      "Profile",
+    ]);
   } finally {
     await db()
       .from("users")

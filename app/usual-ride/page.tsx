@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
+import { OwnersOnly } from "@/components/owners-only";
+import { isCarOwner } from "@/lib/ride-preference";
 import { createClient } from "@/lib/supabase/server";
 import {
   DIRECTIONS,
@@ -58,6 +60,7 @@ async function UsualRideSection({
     getCurrentUser(),
   ]);
   const isWelcome = welcome === "1";
+  if (!isCarOwner(user.ridePreference)) return <OwnersOnly what="Your rides" />;
   const supabase = await createClient();
 
   const [{ data: car }, { data: places }, { data: usuals }, { data: me }] =
@@ -179,8 +182,11 @@ async function UsualRideSection({
                         usual?.seats_offered ??
                         morning?.seats_offered ??
                         Math.min(3, car.seats_total),
+                      // Empty until the owner names their price (or copies the morning's).
                       price:
-                        usual?.price_per_seat ?? morning?.price_per_seat ?? 0,
+                        usual?.price_per_seat ??
+                        morning?.price_per_seat ??
+                        null,
                       notes: usual?.notes ?? "",
                       autoDays: usual?.auto_golive_days ?? 0,
                       stops: stops ?? [],

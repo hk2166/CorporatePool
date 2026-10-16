@@ -22,6 +22,8 @@ type Props = {
   places: Place[];
   // Finishing sign-up: saving moves on to the home page.
   welcome: boolean;
+  // Only car owners are asked for a UPI ID (riders pay them with it).
+  isOwner: boolean;
 };
 
 const initialState: ProfileFormState = { errors: {}, saved: false };
@@ -29,7 +31,7 @@ const initialState: ProfileFormState = { errors: {}, saved: false };
 const inputClass =
   "h-12 w-full rounded-xl border border-neutral-300 bg-white px-3 text-base text-neutral-900 aria-invalid:border-red-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100";
 
-export function ProfileForm({ profile, places, welcome }: Props) {
+export function ProfileForm({ profile, places, welcome, isOwner }: Props) {
   const [state, action, pending] = useActionState(saveProfile, initialState);
   const error = (field: ProfileField) => state.errors[field];
   // After a failed save, show what was typed; otherwise what's saved.
@@ -112,25 +114,27 @@ export function ProfileForm({ profile, places, welcome }: Props) {
         <AddStopLink next="/profile" empty={places.length === 0} />
       </fieldset>
 
-      <Field
-        label="UPI ID (car owners)"
-        field="upi"
-        hint="Riders pay you directly with it. Leave empty if you only ride."
-        error={error("upi")}
-      >
-        <input
-          id="upi"
-          name="upi"
-          defaultValue={value("upi", profile.upiId)}
-          placeholder="name@okaxis"
-          autoCapitalize="none"
-          autoCorrect="off"
-          spellCheck={false}
-          aria-invalid={Boolean(error("upi"))}
-          aria-describedby={error("upi") ? "upi-error" : "upi-hint"}
-          className={inputClass}
-        />
-      </Field>
+      {isOwner && (
+        <Field
+          label="UPI ID"
+          field="upi"
+          hint="Riders pay you directly with it, by UPI."
+          error={error("upi")}
+        >
+          <input
+            id="upi"
+            name="upi"
+            defaultValue={value("upi", profile.upiId)}
+            placeholder="name@okaxis"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
+            aria-invalid={Boolean(error("upi"))}
+            aria-describedby={error("upi") ? "upi-error" : "upi-hint"}
+            className={inputClass}
+          />
+        </Field>
+      )}
 
       {state.errors.form && (
         <p

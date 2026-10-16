@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { homeSections, parseRidePreference } from "@/lib/ride-preference";
+import {
+  homeSections,
+  isCarOwner,
+  parseRidePreference,
+} from "@/lib/ride-preference";
 
 describe("parseRidePreference", () => {
   it("accepts the three answers and nothing else", () => {
@@ -23,5 +27,14 @@ describe("homeSections", () => {
   it("shows both, riding first, for both and for members who haven't answered", () => {
     expect(homeSections("BOTH")).toEqual(["riding", "driving"]);
     expect(homeSections(null)).toEqual(["riding", "driving"]);
+  });
+});
+
+describe("isCarOwner", () => {
+  it("is true for drivers and both, false for riders and the undecided", () => {
+    expect(isCarOwner("DRIVER")).toBe(true);
+    expect(isCarOwner("BOTH")).toBe(true);
+    expect(isCarOwner("RIDER")).toBe(false);
+    expect(isCarOwner(null)).toBe(false);
   });
 });

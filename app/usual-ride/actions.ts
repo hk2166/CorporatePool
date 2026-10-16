@@ -53,7 +53,9 @@ export async function saveUsualRide(
     return fail(`Offer between 1 and ${car.seats_total} seats.`);
   }
 
-  const price = Number(formData.get("price"));
+  const priceText = String(formData.get("price") ?? "").trim();
+  if (!priceText) return fail("Enter your price per seat for this route.");
+  const price = Number(priceText);
   if (!Number.isInteger(price) || price < 0 || price > 5000) {
     return fail("Enter a price per seat in whole rupees.");
   }

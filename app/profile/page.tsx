@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
@@ -8,8 +9,9 @@ import { PushToggle } from "@/components/push-toggle";
 import { SignOutButton } from "@/components/sign-out-button";
 import { DeleteAccount } from "./delete-account";
 import { RidePreferencePicker } from "@/app/welcome/ride-preference-picker";
-import { parseRidePreference } from "@/lib/ride-preference";
+import { isCarOwner, parseRidePreference } from "@/lib/ride-preference";
 import { parseRideAlerts } from "@/lib/ride-alerts";
+import { DIRECTIONS, parseDirection } from "@/lib/usual-ride";
 import { ProfileForm } from "./profile-form";
 import { RideAlertsPicker } from "./ride-alerts-picker";
 
@@ -42,15 +44,22 @@ async function ProfileSection({
 }) {
   const { welcome } = await searchParams;
   const isWelcome = welcome === "1";
-  await getCurrentUser();
+  const user = await getCurrentUser();
 
   const supabase = await createClient();
-  const [{ data: profile }, { data: places }] = await Promise.all([
-    supabase.rpc("get_my_profile").single(),
-    // In route order (south to north), like the corridor itself.
-    supabase.rpc("list_places"),
-  ]);
+  const [{ data: profile }, { data: places }, { data: usuals }] =
+    await Promise.all([
+      supabase.rpc("get_my_profile").single(),
+      // In route order (south to north), like the corridor itself.
+      supabase.rpc("list_places"),
+      // A car owner's rides, with what they charge (shown under "Do you have a car to share?").
+      supabase
+        .from("usual_rides")
+        .select("id, direction, depart_time, price_per_seat, stops")
+        .eq("owner_id", user.id),
+    ]);
   if (!profile) return null;
+  const owner = isCarOwner(parseRidePreference(profile.ride_preference));
 
   return (
     <div className="space-y-6">
@@ -68,6 +77,7 @@ async function ProfileSection({
       </div>
       <ProfileForm
         welcome={isWelcome}
+        isOwner={owner}
         places={(places ?? []).map((p) => ({
           id: p.id,
           name: p.name,
@@ -87,16 +97,64 @@ async function ProfileSection({
           <section id="preference" className="space-y-3">
             <div className="space-y-1">
               <h2 className="text-lg font-semibold">
-                How you use CorporatePool
+                Do you have a car to share?
               </h2>
               <p className="text-sm text-neutral-500">
-                It decides what your home page shows first. It doesn&apos;t stop
-                you riding or driving.
+                Car owners get Offer and Car in the menu: list your car, then
+                your morning and evening rides with your price. Riders just find
+                seats.
               </p>
             </div>
             <RidePreferencePicker
               current={parseRidePreference(profile.ride_preference)}
             />
+            {owner && (
+              <div className="space-y-2 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
+                <h3 className="text-sm font-medium">Your rides and prices</h3>
+                <ul className="space-y-1 text-sm">
+                  {DIRECTIONS.map((d) => {
+                    const usual = (usuals ?? []).find(
+                      (u) => parseDirection(u.direction) === d.value,
+                    );
+                    const stops = (usual?.stops ?? []) as { label?: string }[];
+                    return (
+                      <li
+                        key={d.value}
+                        className="flex items-baseline justify-between gap-3"
+                      >
+                        <span className="min-w-0">
+                          <span className="font-medium capitalize">
+                            {d.word}
+                          </span>{" "}
+                          <span className="text-neutral-600 dark:text-neutral-400">
+                            {usual
+                              ? `${stops[0]?.label ?? "Start"} → ${stops.at(-1)?.label ?? "End"}, ${usual.depart_time.slice(0, 5)}`
+                              : "not set up yet"}
+                          </span>
+                        </span>
+                        <span className="shrink-0 font-semibold tabular-nums">
+                          {usual ? `₹${usual.price_per_seat} a seat` : ""}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div className="flex flex-wrap gap-x-4 text-sm">
+                  <Link
+                    href="/usual-ride"
+                    className="inline-flex min-h-10 items-center underline"
+                  >
+                    Change routes or prices
+                  </Link>
+                  <Link
+                    href="/car"
+                    className="inline-flex min-h-10 items-center underline"
+                  >
+                    Your car
+                  </Link>
+                </div>
+              </div>
+            )}
           </section>
           <section id="alerts" className="space-y-3">
             <div className="space-y-1">
