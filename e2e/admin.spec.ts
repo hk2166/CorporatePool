@@ -24,6 +24,14 @@ test("an admin sees who uses the app, where they go, and the rides", async ({
 
   await page.getByRole("link", { name: "Admin", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Overview" })).toBeVisible();
+
+  // The day's rides as a message for the WhatsApp group, ready to share.
+  const message = page.getByLabel("Message for the WhatsApp group");
+  await expect(message).toHaveValue(/^🚗 Rides tomorrow, .* on CorporatePool/);
+  await expect(message).toHaveValue(/Ask for a seat in the app: /);
+  await expect(
+    page.getByRole("link", { name: "Share on WhatsApp" }),
+  ).toHaveAttribute("href", /^https:\/\/wa\.me\/\?text=/);
   // Signing in just now counts as being in the app today.
   await expect(
     page.getByRole("link", { name: /Active today\s*[1-9]/ }),

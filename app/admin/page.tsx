@@ -3,11 +3,13 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { AdminNav } from "@/app/admin/admin-nav";
 import { AppHeader } from "@/components/app-header";
-import { percent, sortMembers } from "@/lib/admin";
+import { percent, sortMembers, splitByDeparture } from "@/lib/admin";
 import { arrangeFeedback } from "@/lib/feedback";
 import { getCurrentAdmin } from "@/lib/auth";
 import { addDays, dayLabel, indiaDate } from "@/lib/india-time";
 import { createClient } from "@/lib/supabase/server";
+import { whatsappSummary } from "@/lib/whatsapp-summary";
+import { WhatsAppSummary } from "./whatsapp-summary";
 
 export const metadata: Metadata = { title: "Overview · Admin · CorporatePool" };
 
@@ -37,33 +39,78 @@ async function Overview() {
   await getCurrentAdmin();
   const supabase = await createClient();
   const today = indiaDate();
-  const [summary, daily, trips, members, waiting, feedback, stopRequests] =
-    await Promise.all([
-      supabase.rpc("admin_summary").single(),
-      supabase.rpc("admin_daily_stats", {
-        p_from: addDays(today, -(DAYS - 1)),
-        p_to: today,
-      }),
-      supabase.rpc("admin_top_trips", {
-        p_from: addDays(today, -29),
-        p_to: addDays(today, 1),
-        p_limit: 8,
-      }),
-      supabase.rpc("admin_members"),
-      supabase
-        .from("join_requests")
-        .select("user_id", { count: "exact", head: true })
-        .eq("status", "PENDING"),
-      supabase.rpc("list_feedback"),
-      supabase
-        .from("stop_requests")
-        .select("id", { count: "exact", head: true })
-        .eq("status", "PENDING"),
-    ]);
+  const [
+    summary,
+    daily,
+    trips,
+    members,
+    waiting,
+    feedback,
+    stopRequests,
+    shareable,
+  ] = await Promise.all([
+    supabase.rpc("admin_summary").single(),
+    supabase.rpc("admin_daily_stats", {
+      p_from: addDays(today, -(DAYS - 1)),
+      p_to: today,
+    }),
+    supabase.rpc("admin_top_trips", {
+      p_from: addDays(today, -29),
+      p_to: addDays(today, 1),
+      p_limit: 8,
+    }),
+    supabase.rpc("admin_members"),
+    supabase
+      .from("join_requests")
+      .select("user_id", { count: "exact", head: true })
+      .eq("status", "PENDING"),
+    supabase.rpc("list_feedback"),
+    supabase
+      .from("stop_requests")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "PENDING"),
+    // Today's and tomorrow's cars with seats, for the WhatsApp group.
+    supabase
+      .from("rides")
+      .select(
+        "id, depart_at, seats_left, price_per_seat, owner:users!rides_owner_id_fkey(name), ride_stops(seq, label)",
+      )
+      .in("status", ["OPEN", "ALLOCATING"])
+      .is("hidden_at", null)
+      .gt("seats_left", 0)
+      .gte("depart_at", `${today}T00:00:00+05:30`)
+      .lt("depart_at", `${addDays(today, 2)}T00:00:00+05:30`)
+      .order("depart_at", { ascending: false }),
+  ]);
   if (summary.error || daily.error || trips.error || members.error) {
     return <p role="alert">Couldn&apos;t load the overview.</p>;
   }
   const s = summary.data;
+  // The WhatsApp message for tomorrow and for the rest of today.
+  const site =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://corporatepool.vercel.app";
+  const coming = splitByDeparture(shareable.data ?? []).upcoming.map((r) => ({
+    id: r.id,
+    departAt: r.depart_at,
+    stops: [...r.ride_stops].sort((a, b) => a.seq - b.seq).map((x) => x.label),
+    seatsLeft: r.seats_left,
+    price: r.price_per_seat,
+    driver: r.owner?.name ?? "A member",
+  }));
+  const shareDays = [
+    { key: "tomorrow", label: "Tomorrow", day: addDays(today, 1) },
+    { key: "today", label: "Today", day: today },
+  ].map((d) => {
+    const rides = coming.filter(
+      (r) => indiaDate(new Date(r.departAt)) === d.day,
+    );
+    return {
+      key: d.key,
+      label: d.label,
+      count: rides.length,
+      text: whatsappSummary({ day: d.day, label: d.label, rides, site }),
+    };
+  });
   const days = [...daily.data].reverse(); // oldest first, for the chart
   const peak = Math.max(1, ...days.map((d) => d.active_members));
   const tripPeak = Math.max(1, ...trips.data.map((t) => t.trips));
@@ -144,6 +191,17 @@ async function Overview() {
             warn={s.open_reports > 0}
           />
         </div>
+      </section>
+
+      <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Rides for the WhatsApp group</h2>
+        <p className="text-sm text-neutral-500">
+          Post this in the group each evening, so everyone still on WhatsApp
+          hears about every car and asks for a seat in the app. Each ride links
+          to its page, which shows the route, time, seats, price and the
+          driver&apos;s first name.
+        </p>
+        <WhatsAppSummary options={shareDays} />
       </section>
 
       <section className="space-y-3">
