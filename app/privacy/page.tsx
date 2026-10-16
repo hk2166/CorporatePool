@@ -138,7 +138,9 @@ export default function PrivacyPage() {
             </li>
             <li>
               to send you notifications you turned on (seat confirmed,
-              reminders, ride changes);
+              reminders, ride changes), and ride alerts: cars going past your
+              home and office stops, matched in the app (you choose right away,
+              once a day, or off);
             </li>
             <li>
               to let admins run the group and keep it safe (usage numbers,

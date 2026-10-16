@@ -109,7 +109,8 @@ export function PushToggle({ compact = false }: { compact?: boolean }) {
       >
         <span className="font-medium">Turn on notifications</span>
         <span className="block text-neutral-500">
-          Know the moment your seat is confirmed, or your car is full.
+          Hear when a car on your route goes live, and when your seat is
+          confirmed.
         </span>
       </button>
     );

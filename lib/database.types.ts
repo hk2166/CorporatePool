@@ -421,14 +421,14 @@ isOneToOne: false
                   ]
                 },"rides": {
                   Row: {
-                    "allocation_at": string,"car_id": string,"created_at": string,"depart_at": string,"hidden_at": string | null,"id": string,"notes": string | null,"owner_id": string,"price_per_seat": number,"reminded_at": string | null,"seats_left": number,"seats_total": number,"status": Database["public"]['Enums']["ride_status"],"usual_ride_id": string | null,"women_only": boolean
+                    "alerted_at": string | null,"allocation_at": string,"car_id": string,"created_at": string,"depart_at": string,"hidden_at": string | null,"id": string,"notes": string | null,"owner_id": string,"price_per_seat": number,"reminded_at": string | null,"seats_left": number,"seats_total": number,"status": Database["public"]['Enums']["ride_status"],"usual_ride_id": string | null,"women_only": boolean
                   }
                   ComputedFields: never
                   Insert: {
-                    "allocation_at": string,"car_id": string,"created_at"?: string,"depart_at": string,"hidden_at"?: string | null,"id"?: string,"notes"?: string | null,"owner_id": string,"price_per_seat": number,"reminded_at"?: string | null,"seats_left": number,"seats_total": number,"status"?: Database["public"]['Enums']["ride_status"],"usual_ride_id"?: string | null,"women_only"?: boolean
+                    "alerted_at"?: string | null,"allocation_at": string,"car_id": string,"created_at"?: string,"depart_at": string,"hidden_at"?: string | null,"id"?: string,"notes"?: string | null,"owner_id": string,"price_per_seat": number,"reminded_at"?: string | null,"seats_left": number,"seats_total": number,"status"?: Database["public"]['Enums']["ride_status"],"usual_ride_id"?: string | null,"women_only"?: boolean
                   }
                   Update: {
-                    "allocation_at"?: string,"car_id"?: string,"created_at"?: string,"depart_at"?: string,"hidden_at"?: string | null,"id"?: string,"notes"?: string | null,"owner_id"?: string,"price_per_seat"?: number,"reminded_at"?: string | null,"seats_left"?: number,"seats_total"?: number,"status"?: Database["public"]['Enums']["ride_status"],"usual_ride_id"?: string | null,"women_only"?: boolean
+                    "alerted_at"?: string | null,"allocation_at"?: string,"car_id"?: string,"created_at"?: string,"depart_at"?: string,"hidden_at"?: string | null,"id"?: string,"notes"?: string | null,"owner_id"?: string,"price_per_seat"?: number,"reminded_at"?: string | null,"seats_left"?: number,"seats_total"?: number,"status"?: Database["public"]['Enums']["ride_status"],"usual_ride_id"?: string | null,"women_only"?: boolean
                   }
                   Relationships: [
                     {
@@ -505,14 +505,14 @@ isOneToOne: false
                   ]
                 },"users": {
                   Row: {
-                    "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"removed_at": string | null,"ride_preference": string | null,"rides_completed": number,"upi_vpa": string | null,"work_place_id": string | null
+                    "created_at": string,"gender": string | null,"home_place_id": string | null,"id": string,"is_admin": boolean,"late_cancels_90d": number,"name": string,"no_shows_90d": number,"phone": string | null,"photo_url": string | null,"reliability_score": number,"removed_at": string | null,"ride_alerts": string,"ride_preference": string | null,"rides_completed": number,"upi_vpa": string | null,"work_place_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id": string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name": string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_preference"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
+                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id": string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name": string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_alerts"?: string,"ride_preference"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
                   }
                   Update: {
-                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id"?: string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name"?: string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_preference"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
+                    "created_at"?: string,"gender"?: string | null,"home_place_id"?: string | null,"id"?: string,"is_admin"?: boolean,"late_cancels_90d"?: number,"name"?: string,"no_shows_90d"?: number,"phone"?: string | null,"photo_url"?: string | null,"reliability_score"?: number,"removed_at"?: string | null,"ride_alerts"?: string,"ride_preference"?: string | null,"rides_completed"?: number,"upi_vpa"?: string | null,"work_place_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -695,6 +695,7 @@ isOneToOne: false
 "photo_url": string | null,
 "reliability_score": number,
 "removed_at": string | null,
+"ride_alerts": string,
 "ride_preference": string | null,
 "rides_completed": number,
 "upi_vpa": string | null,
@@ -770,6 +771,12 @@ isOneToOne: false
 { Args: Record<PropertyKey, never>; Returns: number
                            },
 "run_ride_expiry":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"run_route_alerts":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"run_route_digest":
 { Args: Record<PropertyKey, never>; Returns: number
                            },
 "search_rides":

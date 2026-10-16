@@ -9,7 +9,9 @@ import { SignOutButton } from "@/components/sign-out-button";
 import { DeleteAccount } from "./delete-account";
 import { RidePreferencePicker } from "@/app/welcome/ride-preference-picker";
 import { parseRidePreference } from "@/lib/ride-preference";
+import { parseRideAlerts } from "@/lib/ride-alerts";
 import { ProfileForm } from "./profile-form";
+import { RideAlertsPicker } from "./ride-alerts-picker";
 
 export const metadata: Metadata = { title: "Profile · CorporatePool" };
 
@@ -96,7 +98,24 @@ async function ProfileSection({
               current={parseRidePreference(profile.ride_preference)}
             />
           </section>
-          <PushToggle />
+          <section id="alerts" className="space-y-3">
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold">Ride alerts</h2>
+              <p className="text-sm text-neutral-500">
+                Hear about cars going your way, like in the WhatsApp group: to
+                the office in the morning and home in the evening, matched to
+                your home and office stops above.
+              </p>
+            </div>
+            {!(profile.home_place_id && profile.work_place_id) && (
+              <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+                Set your home and office above first: alerts are matched to
+                them.
+              </p>
+            )}
+            <RideAlertsPicker current={parseRideAlerts(profile.ride_alerts)} />
+            <PushToggle />
+          </section>
           <BlockedList />
           <SignOutButton />
           <DeleteAccount />

@@ -2,6 +2,7 @@
 // a few ids; the push sender turns them into words here. Kept free of I/O so it's easy to test.
 
 import { dayLabel, indiaDate, indiaTime } from "@/lib/india-time";
+import { searchHref } from "@/lib/search-query";
 
 export type Notification = { title: string; body: string; url: string };
 
@@ -147,6 +148,55 @@ export function notificationText(
         body: `Your usual ride for ${at} is up. Skip it if you're not driving.`,
         url,
       };
+    // Route alerts: a car going the member's way (right away, or tomorrow's in a summary).
+    case "ride_on_route": {
+      const seats =
+        typeof payload.seats_left === "number" ? payload.seats_left : null;
+      const price = typeof payload.price === "number" ? payload.price : null;
+      const details = [
+        at,
+        seats !== null && `${seats} ${seats === 1 ? "seat" : "seats"} left`,
+        price !== null && `₹${price}`,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      return {
+        title:
+          payload.direction === "EVENING"
+            ? "A car home on your route"
+            : "A car to the office on your route",
+        body: `${str(payload.from) ?? "Your stop"} → ${str(payload.to) ?? "your stop"}, ${details}. Tap to ask for a seat.`,
+        url,
+      };
+    }
+    case "route_digest": {
+      const morning = typeof payload.morning === "number" ? payload.morning : 0;
+      const evening = typeof payload.evening === "number" ? payload.evening : 0;
+      const total = morning + evening;
+      const home = str(payload.home);
+      const work = str(payload.work);
+      const date = str(payload.date) ?? indiaDate();
+      const parts = [
+        morning > 0 && `${morning} to the office`,
+        evening > 0 && `${evening} home`,
+      ].filter(Boolean);
+      return {
+        title: `${total} ${total === 1 ? "car" : "cars"} tomorrow on your route`,
+        body: `${parts.join(", ")}. Tap to see them.`,
+        // The morning ones if there are any, otherwise the evening ones.
+        url:
+          home && work
+            ? searchHref({
+                from: morning > 0 ? home : work,
+                to: morning > 0 ? work : home,
+                date,
+                after: null,
+                before: null,
+                seats: 1,
+              })
+            : "/search",
+      };
+    }
     default:
       return {
         title: "CorporatePool",
