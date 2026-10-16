@@ -179,7 +179,7 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
       test; sweep catches an artificially missed promotion.
 - [x] **T-5.4 Cross-car matching (F-D6).** `rematch()` per lld §5 for `any_car_ok` waitlisted +
       cancelled-ride riders. *Done when:* flow 4 step 3 and flow 7 step 2 pass as tests.
-- [ ] **T-5.5 Confirmed view (F-D8).** Contact + WhatsApp (`wa.me`) buttons, car photos/plate,
+- [x] **T-5.5 Confirmed view (F-D8).** Contact + WhatsApp (`wa.me`) buttons, car photos/plate,
       UPI deep link `upi://pay?pa=…&am=…` with amount prefilled. *Done when:* flow 1 step 7
       works; fields invisible to non-parties (RLS test from T-1.3 extended).
 - [x] **T-5.6 Owner ride-day flow (F-B8).** Start → per-rider picked-up / no-show → complete;
