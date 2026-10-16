@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import { AddStopLink } from "@/components/add-stop-link";
 import { suggestedPricePerSeat } from "@/lib/pricing";
 import { MAX_STOPS, WEEKDAYS, type StopInput } from "@/lib/usual-ride";
 import { saveUsualRide, type UsualRideFormState } from "./actions";
@@ -92,6 +93,7 @@ export function UsualRideForm({ places, car, usualRide }: Props) {
           Stops in order, with roughly how many minutes after setting off you
           reach each one.
         </p>
+        <AddStopLink next="/usual-ride" empty={places.length === 0} />
         <ol className="space-y-2">
           {stops.map((stop, index) => (
             <li key={index} className="flex items-center gap-2">

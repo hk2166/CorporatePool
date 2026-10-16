@@ -167,17 +167,23 @@ isOneToOne: false
                   ]
                 },"places": {
                   Row: {
-                    "created_at": string,"geo": unknown,"id": string,"kind": Database["public"]['Enums']["place_kind"],"name": string,"use_count": number
+                    "created_at": string,"created_by": string | null,"geo": unknown,"id": string,"kind": Database["public"]['Enums']["place_kind"],"name": string,"use_count": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"geo": unknown,"id"?: string,"kind"?: Database["public"]['Enums']["place_kind"],"name": string,"use_count"?: number
+                    "created_at"?: string,"created_by"?: string | null,"geo": unknown,"id"?: string,"kind"?: Database["public"]['Enums']["place_kind"],"name": string,"use_count"?: number
                   }
                   Update: {
-                    "created_at"?: string,"geo"?: unknown,"id"?: string,"kind"?: Database["public"]['Enums']["place_kind"],"name"?: string,"use_count"?: number
+                    "created_at"?: string,"created_by"?: string | null,"geo"?: unknown,"id"?: string,"kind"?: Database["public"]['Enums']["place_kind"],"name"?: string,"use_count"?: number
                   }
                   Relationships: [
-                    
+                    {
+      foreignKeyName: "places_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "users"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"push_subscriptions": {
                   Row: {
@@ -457,7 +463,12 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "admin_close_report":
+            "add_place":
+{ Args: { "p_lat": number,"p_lng": number,"p_name": string }; Returns: {
+              "created": boolean,"place_id": string
+            }[]
+                           },
+"admin_close_report":
 { Args: { "p_admin_id": string,"p_reason": string,"p_report_id": string,"p_resolved": boolean }; Returns: undefined
                            },
 "admin_merge_places":

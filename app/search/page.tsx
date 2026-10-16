@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Form from "next/form";
 import Link from "next/link";
 import { Suspense } from "react";
+import { AddStopLink } from "@/components/add-stop-link";
 import { AppHeader } from "@/components/app-header";
 import { LiveSeatsProvider } from "@/components/live-seats";
 import { RideResultCard } from "@/components/ride-result-card";
@@ -119,6 +120,7 @@ async function SearchSection({
             ))}
           </select>
         </Field>
+        <AddStopLink next="/search" empty={(places ?? []).length === 0} />
 
         <div className="grid grid-cols-[1fr_auto] gap-3">
           <Field label="Day" htmlFor="date">
