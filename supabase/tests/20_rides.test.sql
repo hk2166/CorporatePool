@@ -44,10 +44,11 @@ select lives_ok($$
      '[{"label": "Demo Start"}, {"label": "Demo End", "eta_offset_min": 70}]')
 $$, 'usual_rides: a valid template is accepted (auto go-live Mon–Fri)');
 
+-- (An evening ride, so it's only the car that's wrong: the owner already has a morning one.)
 select throws_ok($$
-  insert into usual_rides (owner_id, car_id, depart_time, seats_offered, price_per_seat, stops)
+  insert into usual_rides (owner_id, car_id, depart_time, seats_offered, price_per_seat, stops, direction)
   values ('00000000-0000-0000-0000-00000000000a', '20000000-0000-0000-0000-00000000000b',
-          '08:00', 3, 150, '[{"label": "a"}, {"label": "b"}]')
+          '18:00', 3, 150, '[{"label": "a"}, {"label": "b"}]', 'EVENING')
 $$, '23503', null, 'usual_rides: the car must belong to the owner');
 
 select throws_ok($$

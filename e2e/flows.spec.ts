@@ -47,10 +47,13 @@ test("flow 2: an owner's one-time setup is there to use", async ({ page }) => {
   await page.goto("/car");
   await expect(page.locator('input[value="XX01DM0001"]')).toBeVisible();
   await page.goto("/usual-ride");
-  // The saved route: its first stop is picked in the first stop list.
+  // The saved morning route: its first stop is picked in the first stop list.
   await expect(
-    page.locator("option:checked", { hasText: "Demo Palwal Start" }),
-  ).toHaveCount(1);
+    page
+      .getByRole("region", { name: "Morning: home → office" })
+      .getByLabel("Stop 1")
+      .locator("option:checked"),
+  ).toHaveText("Demo Palwal Start");
 });
 
 test("flow 4: more requests than seats, and the most reliable rider gets it", async ({

@@ -4,7 +4,9 @@ import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import {
   checkStops,
+  DIRECTIONS,
   parseDepartTime,
+  parseDirection,
   weekdaysToMask,
   type StopInput,
 } from "@/lib/usual-ride";
@@ -15,8 +17,8 @@ export type UsualRideFormState = {
   usualRideId?: string;
 };
 
-// Saves the owner's usual ride (F-B1, F-B3): the template that "Go live" copies into a ride.
-// v1 keeps one usual ride per owner.
+// Saves one of the owner's usual rides (F-B1, F-B3), the template that "Go live" copies into a
+// ride: the morning one (home → office) or the evening one (office → home).
 export async function saveUsualRide(
   _previous: UsualRideFormState,
   formData: FormData,
@@ -60,6 +62,7 @@ export async function saveUsualRide(
   if (notes.length > 280) return fail("Notes can be at most 280 characters.");
 
   const autoDays = weekdaysToMask(formData.getAll("days").map(Number));
+  const direction = parseDirection(formData.get("direction"));
 
   // Stop names and coordinates come from the stop list, not from the browser.
   const { data: places } = await supabase.rpc("list_places");
@@ -86,6 +89,7 @@ export async function saveUsualRide(
     notes: notes || null,
     auto_golive_days: autoDays,
     stops: stopsJson,
+    direction,
   };
 
   // As the owner: the access rules (T-1.3) only let owners manage their own usual rides.
@@ -104,6 +108,13 @@ export async function saveUsualRide(
         .select("id")
         .single();
 
-  if (result.error) return fail("Couldn't save your ride. Please try again.");
+  if (result.error) {
+    const word = DIRECTIONS.find((d) => d.value === direction)?.word;
+    return fail(
+      result.error.code === "23505"
+        ? `You already have a ${word} ride: reload the page to change it.`
+        : "Couldn't save your ride. Please try again.",
+    );
+  }
   return { saved: true, usualRideId: result.data.id };
 }

@@ -97,6 +97,13 @@ export async function saveProfile(
   }
 
   // New members finishing sign-up go on to the app.
-  if (formData.get("welcome") === "1") redirect("/");
+  // Drivers go on to their car and rides; everyone else to the app.
+  if (formData.get("welcome") === "1") {
+    redirect(
+      user.ridePreference === "DRIVER" || user.ridePreference === "BOTH"
+        ? "/car?welcome=1"
+        : "/",
+    );
+  }
   return { errors: {}, saved: true };
 }

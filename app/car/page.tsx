@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
@@ -7,7 +8,7 @@ import { CarForm, type CarPhoto } from "./car-form";
 
 export const metadata: Metadata = { title: "Your car · CorporatePool" };
 
-export default function CarPage() {
+export default function CarPage({ searchParams }: PageProps<"/car">) {
   return (
     <>
       <AppHeader />
@@ -20,16 +21,25 @@ export default function CarPage() {
             </div>
           }
         >
-          <CarSection />
+          <CarSection searchParams={searchParams} />
         </Suspense>
       </main>
     </>
   );
 }
 
-// The car's one-time setup (F-A3, user flow 2). v1 handles one car per owner.
-async function CarSection() {
-  const user = await getCurrentUser();
+// The car's one-time setup (F-A3, user flow 2). v1 handles one car per owner. Part of sign-up
+// for drivers (?welcome=1): after it come their morning and evening rides.
+async function CarSection({
+  searchParams,
+}: {
+  searchParams: PageProps<"/car">["searchParams"];
+}) {
+  const [{ welcome }, user] = await Promise.all([
+    searchParams,
+    getCurrentUser(),
+  ]);
+  const isWelcome = welcome === "1";
   const supabase = await createClient();
 
   const { data: car } = await supabase
@@ -85,6 +95,24 @@ async function CarSection() {
         </p>
       </div>
       <CarForm userId={user.id} car={details} />
+      {isWelcome && (
+        <div className="space-y-2">
+          {details && (
+            <Link
+              href="/usual-ride?welcome=1"
+              className="flex h-12 items-center justify-center rounded-xl bg-emerald-600 font-semibold text-white"
+            >
+              Next: your morning and evening rides
+            </Link>
+          )}
+          <Link
+            href="/"
+            className="flex min-h-10 items-center justify-center text-sm text-neutral-500 underline"
+          >
+            Skip for now
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

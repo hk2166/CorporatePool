@@ -70,3 +70,35 @@ export function describeWeekdays(mask: number): string {
     .map((day) => day.short)
     .join(", ");
 }
+
+// An owner's usual rides go both ways: home to office in the morning, back in the evening.
+export const DIRECTIONS = [
+  {
+    value: "MORNING",
+    title: "Morning: home → office",
+    word: "morning",
+    defaultTime: "08:00",
+  },
+  {
+    value: "EVENING",
+    title: "Evening: office → home",
+    word: "evening",
+    defaultTime: "18:00",
+  },
+] as const;
+export type Direction = (typeof DIRECTIONS)[number]["value"];
+
+export function parseDirection(value: unknown): Direction {
+  return value === "EVENING" ? "EVENING" : "MORNING";
+}
+
+// The way back: the same stops in reverse order, each reached as long after setting off as
+// it was before arriving. A morning Palwal (0) → Rajiv Chowk (45) → Cyber City (60) becomes an
+// evening Cyber City (0) → Rajiv Chowk (15) → Palwal (60).
+export function reverseStops(stops: readonly StopInput[]): StopInput[] {
+  const total = stops.at(-1)?.etaOffsetMin ?? 0;
+  return [...stops].reverse().map((stop) => ({
+    placeId: stop.placeId,
+    etaOffsetMin: total - stop.etaOffsetMin,
+  }));
+}
