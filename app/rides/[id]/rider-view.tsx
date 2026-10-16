@@ -167,8 +167,8 @@ export async function RiderView({
         )}
         {booking?.status === "NO_SHOW" && (
           <Status title="Marked as a no-show" tone="bad">
-            {ownerFirstName} marked you as not turning up. If that&apos;s wrong,
-            you can dispute it from your reliability page.
+            {ownerFirstName} marked you as not turning up, which costs 15
+            reliability points. If that&apos;s wrong, tell your group admin.
           </Status>
         )}
 
