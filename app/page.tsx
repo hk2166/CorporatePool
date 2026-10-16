@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 py-6">
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 py-6 lg:max-w-5xl">
         {/* Who's signed in is only known per request, so that part streams in. */}
         <Suspense
           fallback={
@@ -51,26 +51,33 @@ async function SignedInHome() {
           <span className="font-medium underline">Go to your profile</span>
         </Link>
       )}
-      <MySeats userId={user.id} />
-      <PushToggle compact />
-      <InstallPrompt />
-      <FindSeatCard />
-      <Link
-        href="/feedback"
-        className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm dark:border-neutral-700"
-      >
-        <span className="font-medium">Ideas or problems?</span> Send feedback
-        and upvote what you want next.
-      </Link>
-      {user.isAdmin && (
-        <Link
-          href="/admin/dashboard"
-          className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium dark:border-neutral-700"
-        >
-          Admin dashboard: users, rides, join requests, feedback and more
-        </Link>
-      )}
-      <OwnerSection userId={user.id} />
+      {/* On a laptop: riding on the left, driving on the right. */}
+      <div className="space-y-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8 lg:space-y-0">
+        <div className="space-y-6">
+          <MySeats userId={user.id} />
+          <PushToggle compact />
+          <InstallPrompt />
+          <FindSeatCard />
+          <Link
+            href="/feedback"
+            className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm dark:border-neutral-700"
+          >
+            <span className="font-medium">Ideas or problems?</span> Send
+            feedback and upvote what you want next.
+          </Link>
+          {user.isAdmin && (
+            <Link
+              href="/admin/dashboard"
+              className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm font-medium dark:border-neutral-700"
+            >
+              Admin dashboard: users, rides, join requests, feedback and more
+            </Link>
+          )}
+        </div>
+        <div className="space-y-6">
+          <OwnerSection userId={user.id} />
+        </div>
+      </div>
     </div>
   );
 }

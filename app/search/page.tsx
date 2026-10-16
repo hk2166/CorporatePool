@@ -24,7 +24,7 @@ export default function SearchPage({ searchParams }: PageProps<"/search">) {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 lg:max-w-5xl">
         <Suspense
           fallback={
             <div className="space-y-4">
@@ -78,142 +78,147 @@ async function SearchSection({
   const href = searchHref(query);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Find a seat</h1>
+    // On a laptop the form sits on the left and the cars on the right.
+    <div className="space-y-6 lg:grid lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:items-start lg:gap-10 lg:space-y-0">
+      <div className="space-y-6 lg:sticky lg:top-20">
+        <h1 className="text-2xl font-semibold tracking-tight">Find a seat</h1>
 
-      {/* A plain GET form: works before the page's JavaScript loads, and every search has a
+        {/* A plain GET form: works before the page's JavaScript loads, and every search has a
           URL. The key resets the fields when the URL changes (say, after "Going back"). */}
-      <Form key={`form:${href}`} action="/search" className="space-y-4">
-        <Field label="From" htmlFor="from">
-          <select
-            id="from"
-            name="from"
-            required
-            defaultValue={from?.id ?? ""}
-            className={selectClass}
-          >
-            <option value="" disabled>
-              Where you get in
-            </option>
-            {(places ?? []).map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="To" htmlFor="to">
-          <select
-            id="to"
-            name="to"
-            required
-            defaultValue={to?.id ?? ""}
-            className={selectClass}
-          >
-            <option value="" disabled>
-              Where you get out
-            </option>
-            {(places ?? []).map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <AddStopLink next="/search" empty={(places ?? []).length === 0} />
-
-        <div className="grid grid-cols-[1fr_auto] gap-3">
-          <Field label="Day" htmlFor="date">
+        <Form key={`form:${href}`} action="/search" className="space-y-4">
+          <Field label="From" htmlFor="from">
             <select
-              id="date"
-              name="date"
-              defaultValue={query.date}
+              id="from"
+              name="from"
+              required
+              defaultValue={from?.id ?? ""}
               className={selectClass}
             >
-              {dayChoices(today).map((d) => (
-                <option key={d.value} value={d.value}>
-                  {d.label}
+              <option value="" disabled>
+                Where you get in
+              </option>
+              {(places ?? []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
                 </option>
               ))}
             </select>
           </Field>
-          <Field label="Seats" htmlFor="seats">
+          <Field label="To" htmlFor="to">
             <select
-              id="seats"
-              name="seats"
-              defaultValue={String(query.seats)}
+              id="to"
+              name="to"
+              required
+              defaultValue={to?.id ?? ""}
               className={selectClass}
             >
-              {Array.from({ length: MAX_SEATS }, (_, i) => (
-                <option key={i} value={i + 1}>
-                  {i + 1}
+              <option value="" disabled>
+                Where you get out
+              </option>
+              {(places ?? []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
                 </option>
               ))}
             </select>
           </Field>
-        </div>
+          <AddStopLink next="/search" empty={(places ?? []).length === 0} />
 
-        <fieldset className="space-y-1.5">
-          <legend className="text-sm font-medium">Pickup time</legend>
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-            <select
-              name="after"
-              aria-label="From"
-              defaultValue={query.after ?? ""}
-              className={selectClass}
-            >
-              <option value="">Any time</option>
-              {HOURS.map((h) => (
-                <option key={h} value={h}>
-                  {h}
-                </option>
-              ))}
-            </select>
-            <span className="text-sm text-neutral-500">to</span>
-            <select
-              name="before"
-              aria-label="Until"
-              defaultValue={query.before ?? ""}
-              className={selectClass}
-            >
-              <option value="">Any time</option>
-              {HOURS.map((h) => (
-                <option key={h} value={h}>
-                  {h}
-                </option>
-              ))}
-            </select>
+          <div className="grid grid-cols-[1fr_auto] gap-3">
+            <Field label="Day" htmlFor="date">
+              <select
+                id="date"
+                name="date"
+                defaultValue={query.date}
+                className={selectClass}
+              >
+                {dayChoices(today).map((d) => (
+                  <option key={d.value} value={d.value}>
+                    {d.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Seats" htmlFor="seats">
+              <select
+                id="seats"
+                name="seats"
+                defaultValue={String(query.seats)}
+                className={selectClass}
+              >
+                {Array.from({ length: MAX_SEATS }, (_, i) => (
+                  <option key={i} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
+              </select>
+            </Field>
           </div>
-        </fieldset>
 
-        <button
-          type="submit"
-          className="h-12 w-full rounded-xl bg-emerald-600 font-semibold text-white transition hover:bg-emerald-700"
-        >
-          Search
-        </button>
-      </Form>
+          <fieldset className="space-y-1.5">
+            <legend className="text-sm font-medium">Pickup time</legend>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <select
+                name="after"
+                aria-label="From"
+                defaultValue={query.after ?? ""}
+                className={selectClass}
+              >
+                <option value="">Any time</option>
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+              <span className="text-sm text-neutral-500">to</span>
+              <select
+                name="before"
+                aria-label="Until"
+                defaultValue={query.before ?? ""}
+                className={selectClass}
+              >
+                <option value="">Any time</option>
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {h}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </fieldset>
 
-      {from && to && from.id !== to.id ? (
-        <Suspense key={`results:${href}`} fallback={<ResultsSkeleton />}>
-          <Results query={query} from={from} to={to} today={today} />
-        </Suspense>
-      ) : (
-        <p className="text-sm text-neutral-500">
-          {from && to
-            ? "Pick two different stops."
-            : "Pick where you get in and where you get out."}{" "}
-          {!me?.home_place_id && (
-            <>
-              Save your usual stops on your{" "}
-              <Link href="/profile" className="underline">
-                profile
-              </Link>{" "}
-              and this fills itself in.
-            </>
-          )}
-        </p>
-      )}
+          <button
+            type="submit"
+            className="h-12 w-full rounded-xl bg-emerald-600 font-semibold text-white transition hover:bg-emerald-700"
+          >
+            Search
+          </button>
+        </Form>
+      </div>
+
+      <div className="lg:pt-14">
+        {from && to && from.id !== to.id ? (
+          <Suspense key={`results:${href}`} fallback={<ResultsSkeleton />}>
+            <Results query={query} from={from} to={to} today={today} />
+          </Suspense>
+        ) : (
+          <p className="text-sm text-neutral-500">
+            {from && to
+              ? "Pick two different stops."
+              : "Pick where you get in and where you get out."}{" "}
+            {!me?.home_place_id && (
+              <>
+                Save your usual stops on your{" "}
+                <Link href="/profile" className="underline">
+                  profile
+                </Link>{" "}
+                and this fills itself in.
+              </>
+            )}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

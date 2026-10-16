@@ -21,16 +21,19 @@ export default function FeedbackPage({ searchParams }: PageProps<"/feedback">) {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-6">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold tracking-tight">Feedback</h1>
-          <p className="text-neutral-600 dark:text-neutral-400">
-            Tell us what isn&apos;t working or what you&apos;d like next, and
-            upvote the ideas you want most. The most wanted get looked at first.
-            Other members see what you write, but not that it was you.
-          </p>
+      <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-6 lg:grid lg:max-w-5xl lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start lg:gap-10 lg:space-y-0">
+        {/* On a laptop: sending on the left, the list on the right. */}
+        <div className="space-y-6 lg:sticky lg:top-20">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-semibold tracking-tight">Feedback</h1>
+            <p className="text-neutral-600 dark:text-neutral-400">
+              Tell us what isn&apos;t working or what you&apos;d like next, and
+              upvote the ideas you want most. The most wanted get looked at
+              first. Other members see what you write, but not that it was you.
+            </p>
+          </div>
+          <FeedbackForm />
         </div>
-        <FeedbackForm />
         <Suspense
           fallback={
             <div className="h-64 animate-pulse rounded-2xl bg-neutral-100 dark:bg-neutral-800" />

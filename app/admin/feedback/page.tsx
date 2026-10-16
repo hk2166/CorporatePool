@@ -17,7 +17,7 @@ export default function AdminFeedbackPage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-3xl flex-1 lg:max-w-5xl space-y-6 px-4 py-6">
         <AdminNav current="/admin/feedback" />
         <Suspense
           fallback={
@@ -61,7 +61,7 @@ async function Feedback() {
           group.list.length > 0 && (
             <section key={group.title} className="space-y-3">
               <h2 className="text-lg font-semibold">{group.title}</h2>
-              <ol className="space-y-3">
+              <ol className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                 {group.list.map((f) => (
                   <li
                     key={f.id}

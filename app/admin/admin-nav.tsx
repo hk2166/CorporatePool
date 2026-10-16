@@ -21,7 +21,7 @@ export function AdminNav({
   current: (typeof TABS)[number]["href"];
 }) {
   return (
-    <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1">
+    <nav className="-mx-4 flex gap-1 overflow-x-auto px-4 pb-1 md:flex-wrap md:overflow-visible">
       {TABS.map((t) => (
         <Link
           key={t.href}

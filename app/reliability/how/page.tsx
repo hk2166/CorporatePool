@@ -29,7 +29,7 @@ export default function HowTheScoreWorksPage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-md flex-1 lg:max-w-2xl space-y-6 px-4 py-6">
         <h1 className="text-2xl font-semibold tracking-tight">
           How the reliability score works
         </h1>

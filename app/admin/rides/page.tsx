@@ -14,7 +14,7 @@ export default function RidesPage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-3xl flex-1 lg:max-w-5xl space-y-6 px-4 py-6">
         <AdminNav current="/admin/rides" />
         <Suspense
           fallback={
@@ -96,7 +96,7 @@ function RideList({
       {rides.length === 0 ? (
         <p className="text-sm text-neutral-500">{empty}</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
           {rides.map((r) => {
             const stops = [...r.ride_stops].sort((a, b) => a.seq - b.seq);
             const filled = r.bookings
