@@ -48,6 +48,10 @@ export default function PrivacyPage() {
             </li>
             <li>your usual home and work stops;</li>
             <li>
+              whether you mostly look for a ride, offer your seats, or both
+              (only you see it; it decides what your home page shows first);
+            </li>
+            <li>
               if you drive: your car&apos;s model, colour, number plate, seats
               and photos, and your usual route, departure time and price.
             </li>

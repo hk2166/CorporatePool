@@ -37,8 +37,8 @@ export async function GET(request: NextRequest) {
     p_photo_url: photoUrl ?? "",
   });
 
-  // New members add their phone number first (F-A2).
-  const response = go(joined ? "/profile?welcome=1" : "/no-invite");
+  // New members first say how they will use the app, then add their phone number (F-A2).
+  const response = go(joined ? "/welcome" : "/no-invite");
   response.cookies.delete(INVITE_COOKIE);
   return response;
 }

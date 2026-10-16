@@ -7,6 +7,8 @@ import { BlockedList } from "@/app/report/blocked-list";
 import { PushToggle } from "@/components/push-toggle";
 import { SignOutButton } from "@/components/sign-out-button";
 import { DeleteAccount } from "./delete-account";
+import { RidePreferencePicker } from "@/app/welcome/ride-preference-picker";
+import { parseRidePreference } from "@/lib/ride-preference";
 import { ProfileForm } from "./profile-form";
 
 export const metadata: Metadata = { title: "Profile · CorporatePool" };
@@ -74,6 +76,20 @@ async function ProfileSection({
       />
       {!isWelcome && (
         <>
+          <section id="preference" className="space-y-3">
+            <div className="space-y-1">
+              <h2 className="text-lg font-semibold">
+                How you use CorporatePool
+              </h2>
+              <p className="text-sm text-neutral-500">
+                It decides what your home page shows first. It doesn&apos;t stop
+                you riding or driving.
+              </p>
+            </div>
+            <RidePreferencePicker
+              current={parseRidePreference(profile.ride_preference)}
+            />
+          </section>
           <PushToggle />
           <BlockedList />
           <SignOutButton />

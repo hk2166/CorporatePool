@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { OwnerSection } from "@/app/go-live/owner-section";
 import { ScoreChip } from "@/app/reliability/score-chip";
@@ -8,6 +9,7 @@ import { AppHeader } from "@/components/app-header";
 import { InstallPrompt } from "@/components/install-prompt";
 import { PushToggle } from "@/components/push-toggle";
 import { getCurrentUser } from "@/lib/auth";
+import { homeSections } from "@/lib/ride-preference";
 
 export default function Home() {
   return (
@@ -32,7 +34,19 @@ export default function Home() {
 
 async function SignedInHome() {
   const user = await getCurrentUser();
+  // Asked once, before anything else: riding, driving or both (/welcome).
+  if (user.ridePreference === null) redirect("/welcome");
   const firstName = user.name.split(" ")[0];
+  const [first, second] = homeSections(user.ridePreference);
+  const sections = {
+    riding: (
+      <>
+        <MySeats userId={user.id} />
+        <FindSeatCard />
+      </>
+    ),
+    driving: <OwnerSection userId={user.id} />,
+  };
 
   return (
     <div className="space-y-6">
@@ -51,13 +65,19 @@ async function SignedInHome() {
           <span className="font-medium underline">Go to your profile</span>
         </Link>
       )}
-      {/* On a laptop: riding on the left, driving on the right. */}
-      <div className="space-y-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8 lg:space-y-0">
+      {/* What they said they use the app for comes first: on a phone at the top, on a laptop
+          in the left column. Riders don't get the driving section at all. */}
+      <div
+        className={
+          second
+            ? "space-y-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-8 lg:space-y-0"
+            : "space-y-6 lg:mx-auto lg:max-w-2xl"
+        }
+      >
         <div className="space-y-6">
-          <MySeats userId={user.id} />
+          {sections[first]}
           <PushToggle compact />
           <InstallPrompt />
-          <FindSeatCard />
           <Link
             href="/feedback"
             className="block rounded-xl border border-neutral-300 px-4 py-3 text-sm dark:border-neutral-700"
@@ -73,10 +93,16 @@ async function SignedInHome() {
               Admin dashboard: users, rides, join requests, feedback and more
             </Link>
           )}
+          {user.ridePreference === "RIDER" && (
+            <p className="text-sm text-neutral-500">
+              Drive to work too?{" "}
+              <Link href="/profile#preference" className="underline">
+                Offer your seats as well
+              </Link>
+            </p>
+          )}
         </div>
-        <div className="space-y-6">
-          <OwnerSection userId={user.id} />
-        </div>
+        {second && <div className="space-y-6">{sections[second]}</div>}
       </div>
     </div>
   );
