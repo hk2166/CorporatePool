@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { SignOutButton } from "@/components/sign-out-button";
 import { DeleteAccount } from "./delete-account";
 import { ProfileForm } from "./profile-form";
 
@@ -69,7 +70,12 @@ async function ProfileSection({
           workPlaceId: profile.work_place_id,
         }}
       />
-      {!isWelcome && <DeleteAccount />}
+      {!isWelcome && (
+        <>
+          <SignOutButton />
+          <DeleteAccount />
+        </>
+      )}
     </div>
   );
 }

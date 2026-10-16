@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { OwnerSection } from "@/app/go-live/owner-section";
+import { FindSeatCard } from "@/app/search/find-seat-card";
 import { AppHeader } from "@/components/app-header";
 import { getCurrentUser } from "@/lib/auth";
 
@@ -41,8 +42,8 @@ async function SignedInHome() {
           <span className="font-medium underline">Go to your profile</span>
         </Link>
       )}
+      <FindSeatCard />
       <OwnerSection userId={user.id} />
-      <p className="text-sm text-neutral-500">Finding a seat is coming next.</p>
     </div>
   );
 }
