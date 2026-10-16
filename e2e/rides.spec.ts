@@ -11,13 +11,15 @@ test("an owner sets up the evening ride home", async ({ page }) => {
       name: "Evening: office → home",
     });
     await expect(
-      evening.getByLabel("Stop 1").locator("option:checked"),
+      evening.getByLabel("Pickup spot 1").locator("option:checked"),
     ).toHaveText("Demo Cyber City");
+    // Where the morning ride dropped people, the evening one picks them up, and the other
+    // way round.
     await expect(
-      evening
-        .getByLabel(/Stop \d/)
-        .last()
-        .locator("option:checked"),
+      evening.getByLabel("Pickup spot 2").locator("option:checked"),
+    ).toHaveText("Demo Stop 09");
+    await expect(
+      evening.getByLabel("Drop spot 1").locator("option:checked"),
     ).toHaveText("Demo Palwal Start");
     await evening.getByRole("button", { name: /Save/ }).click();
     await expect(evening.getByText("Saved")).toBeVisible();

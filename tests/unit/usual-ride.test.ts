@@ -7,6 +7,7 @@ import {
   weekdaysToMask,
   parseDirection,
   reverseStops,
+  withRoles,
 } from "@/lib/usual-ride";
 
 describe("weekdaysToMask", () => {
@@ -21,20 +22,30 @@ describe("weekdaysToMask", () => {
 });
 
 describe("checkStops", () => {
-  const stop = (placeId: string, etaOffsetMin: number) => ({
-    placeId,
-    etaOffsetMin,
-  });
+  // Pickup first, the rest drops, unless the test says otherwise.
+  const stop = (
+    placeId: string,
+    etaOffsetMin: number,
+    role: "pickup" | "drop" = etaOffsetMin === 0 ? "pickup" : "drop",
+  ) => ({ placeId, etaOffsetMin, role });
 
-  it("accepts a start, a middle and an end in time order", () => {
+  it("accepts pickups then drops in time order", () => {
     expect(checkStops([stop("a", 0), stop("b", 30), stop("c", 70)])).toBeNull();
+    expect(
+      checkStops([stop("a", 0), stop("b", 15, "pickup"), stop("c", 70)]),
+    ).toBeNull();
   });
 
   it.each([
-    [[stop("a", 0)], "at least a start and an end"],
+    [[stop("a", 0)], "at least one pickup spot and one drop spot"],
+    [[stop("a", 0, "drop"), stop("b", 30)], "at least one pickup spot"],
+    [
+      [stop("a", 0), stop("b", 30), stop("c", 40, "pickup")],
+      "Pickup spots come before drop spots",
+    ],
     [[stop("a", 0), stop("", 30)], "Pick a place"],
     [[stop("a", 0), stop("a", 30)], "only once"],
-    [[stop("a", 5), stop("b", 30)], "where you set off"],
+    [[stop("a", 5, "pickup"), stop("b", 30)], "where you set off"],
     [[stop("a", 0), stop("b", 30), stop("c", 30)], "later than the one before"],
     [[stop("a", 0), stop("b", 601)], "at most 600"],
     [[stop("a", 0), stop("b", 12.5)], "whole minutes"],
@@ -89,14 +100,26 @@ describe("reverseStops", () => {
   it("runs the morning route backwards, timed from the evening start", () => {
     expect(
       reverseStops([
-        { placeId: "palwal", etaOffsetMin: 0 },
-        { placeId: "rajiv", etaOffsetMin: 45 },
-        { placeId: "cyber", etaOffsetMin: 60 },
+        { placeId: "palwal", etaOffsetMin: 0, role: "pickup" },
+        { placeId: "rajiv", etaOffsetMin: 45, role: "drop" },
+        { placeId: "cyber", etaOffsetMin: 60, role: "drop" },
       ]),
     ).toEqual([
-      { placeId: "cyber", etaOffsetMin: 0 },
-      { placeId: "rajiv", etaOffsetMin: 15 },
-      { placeId: "palwal", etaOffsetMin: 60 },
+      { placeId: "cyber", etaOffsetMin: 0, role: "pickup" },
+      { placeId: "rajiv", etaOffsetMin: 15, role: "pickup" },
+      { placeId: "palwal", etaOffsetMin: 60, role: "drop" },
     ]);
+  });
+});
+
+describe("withRoles", () => {
+  it("keeps saved roles and gives old rides a pickup start and drops after", () => {
+    expect(
+      withRoles([
+        { placeId: "a", etaOffsetMin: 0 },
+        { placeId: "b", etaOffsetMin: 30 },
+        { placeId: "c", etaOffsetMin: 60, role: "pickup" },
+      ]).map((s) => s.role),
+    ).toEqual(["pickup", "drop", "pickup"]);
   });
 });

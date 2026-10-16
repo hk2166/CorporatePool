@@ -9,6 +9,7 @@ import {
   WEEKDAYS,
   type Direction,
   type StopInput,
+  type StopRole,
 } from "@/lib/usual-ride";
 import { saveUsualRide, type UsualRideFormState } from "./actions";
 
@@ -50,8 +51,8 @@ export function UsualRideForm({
   // The form is controlled: stops and the price suggestion change as the owner edits.
   const [stops, setStops] = useState<StopInput[]>(
     usualRide?.stops ?? [
-      { placeId: "", etaOffsetMin: 0 },
-      { placeId: "", etaOffsetMin: 60 },
+      { placeId: "", etaOffsetMin: 0, role: "pickup" },
+      { placeId: "", etaOffsetMin: 60, role: "drop" },
     ],
   );
   const [departTime, setDepartTime] = useState(
@@ -83,14 +84,34 @@ export function UsualRideForm({
     );
   const removeStop = (index: number) =>
     setStops((current) => current.filter((_, i) => i !== index));
-  const addStop = () =>
-    setStops((current) => [
-      ...current,
-      {
-        placeId: "",
-        etaOffsetMin: (current.at(-1)?.etaOffsetMin ?? 0) + 15,
-      },
-    ]);
+  // A new drop spot goes at the end; a new pickup spot after the last pickup, timed between
+  // it and the first drop.
+  const addStop = (role: StopRole) =>
+    setStops((current) => {
+      if (role === "drop") {
+        return [
+          ...current,
+          {
+            placeId: "",
+            etaOffsetMin: (current.at(-1)?.etaOffsetMin ?? 0) + 15,
+            role,
+          },
+        ];
+      }
+      const lastPickup = current.reduce(
+        (last, stop, i) => (stop.role === "pickup" ? i : last),
+        -1,
+      );
+      const before = current[lastPickup]?.etaOffsetMin ?? 0;
+      const firstDrop = current[lastPickup + 1]?.etaOffsetMin;
+      const etaOffsetMin =
+        firstDrop === undefined
+          ? before + 10
+          : Math.max(before + 1, Math.min(before + 10, firstDrop - 1));
+      const next = [...current];
+      next.splice(lastPickup + 1, 0, { placeId: "", etaOffsetMin, role });
+      return next;
+    });
 
   const usualRideId = state.usualRideId ?? usualRide?.id;
 
@@ -103,76 +124,97 @@ export function UsualRideForm({
       )}
       <input type="hidden" name="stops" value={JSON.stringify(stops)} />
 
-      <fieldset className="space-y-3">
-        <legend className="text-sm font-medium">Route</legend>
+      <fieldset className="space-y-4">
+        <legend className="text-base font-semibold">
+          What are your pickup spots, and what are your drop spots?
+        </legend>
         <p className="text-sm text-neutral-500">
-          Where you pick people up and drop them, in order, with roughly how
-          many minutes after setting off you reach each one. A pickup point that
-          isn&apos;t listed can be requested: add its Google Maps link if you
-          can, so the admin puts it in the right spot.
+          In order, with roughly how many minutes after setting off you reach
+          each one. A spot that isn&apos;t listed can be requested: add its
+          Google Maps link if you can, so the admin puts it in the right place.
         </p>
         <AddStopLink next="/usual-ride" empty={places.length === 0} />
-        <ol className="space-y-2">
-          {stops.map((stop, index) => (
-            <li key={index} className="flex items-center gap-2">
-              <span className="w-5 shrink-0 text-center text-sm text-neutral-500">
-                {index + 1}
-              </span>
-              <select
-                aria-label={`Stop ${index + 1}`}
-                value={stop.placeId}
-                onChange={(e) => updateStop(index, { placeId: e.target.value })}
-                className={`${fieldClass} min-w-0 flex-1`}
-              >
-                <option value="">Choose a stop</option>
-                <StopOptions places={places} />
-              </select>
-              {index === 0 ? (
-                <span className="w-24 shrink-0 text-sm text-neutral-500">
-                  sets off
-                </span>
-              ) : (
-                <label className="flex w-24 shrink-0 items-center gap-1 text-sm text-neutral-500">
-                  +
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    min={1}
-                    max={600}
-                    aria-label={`Minutes to stop ${index + 1}`}
-                    value={stop.etaOffsetMin}
-                    onChange={(e) =>
-                      updateStop(index, {
-                        etaOffsetMin: Number(e.target.value),
-                      })
-                    }
-                    className="h-12 w-14 rounded-xl border border-neutral-300 bg-white px-2 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
-                  />
-                  min
-                </label>
-              )}
-              {stops.length > 2 && index > 0 && (
+        {(["pickup", "drop"] as const).map((role) => {
+          const group = stops
+            .map((stop, index) => ({ stop, index }))
+            .filter((x) => x.stop.role === role);
+          const noun = role === "pickup" ? "Pickup spot" : "Drop spot";
+          return (
+            <div key={role} className="space-y-2">
+              <div>
+                <h3 className="text-sm font-medium">{noun}s</h3>
+                <p className="text-sm text-neutral-500">
+                  {role === "pickup"
+                    ? "Where people get in. The first is where you set off."
+                    : "Where people get out."}
+                </p>
+              </div>
+              <ol className="space-y-2">
+                {group.map(({ stop, index }, n) => (
+                  <li key={index} className="flex items-center gap-2">
+                    <span className="w-5 shrink-0 text-center text-sm text-neutral-500">
+                      {n + 1}
+                    </span>
+                    <select
+                      aria-label={`${noun} ${n + 1}`}
+                      value={stop.placeId}
+                      onChange={(e) =>
+                        updateStop(index, { placeId: e.target.value })
+                      }
+                      className={`${fieldClass} min-w-0 flex-1`}
+                    >
+                      <option value="">Choose a spot</option>
+                      <StopOptions places={places} />
+                    </select>
+                    {index === 0 ? (
+                      <span className="w-24 shrink-0 text-sm text-neutral-500">
+                        sets off
+                      </span>
+                    ) : (
+                      <label className="flex w-24 shrink-0 items-center gap-1 text-sm text-neutral-500">
+                        +
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          min={1}
+                          max={600}
+                          aria-label={`Minutes to ${noun.toLowerCase()} ${n + 1}`}
+                          value={stop.etaOffsetMin}
+                          onChange={(e) =>
+                            updateStop(index, {
+                              etaOffsetMin: Number(e.target.value),
+                            })
+                          }
+                          className="h-12 w-14 rounded-xl border border-neutral-300 bg-white px-2 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
+                        />
+                        min
+                      </label>
+                    )}
+                    {group.length > 1 && index > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => removeStop(index)}
+                        aria-label={`Remove ${noun.toLowerCase()} ${n + 1}`}
+                        className="h-12 shrink-0 rounded-xl px-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ol>
+              {stops.length < MAX_STOPS && (
                 <button
                   type="button"
-                  onClick={() => removeStop(index)}
-                  aria-label={`Remove stop ${index + 1}`}
-                  className="h-12 shrink-0 rounded-xl px-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  onClick={() => addStop(role)}
+                  className="min-h-10 text-sm font-medium text-emerald-700 dark:text-emerald-400"
                 >
-                  ✕
+                  + Add a {noun.toLowerCase()}
                 </button>
               )}
-            </li>
-          ))}
-        </ol>
-        {stops.length < MAX_STOPS && (
-          <button
-            type="button"
-            onClick={addStop}
-            className="min-h-10 text-sm font-medium text-emerald-700 dark:text-emerald-400"
-          >
-            + Add a stop
-          </button>
-        )}
+            </div>
+          );
+        })}
       </fieldset>
 
       <div className="grid grid-cols-2 gap-3">

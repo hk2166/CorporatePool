@@ -20,7 +20,31 @@ export function weekdaysToMask(bits: number[]): number {
   );
 }
 
-export type StopInput = { placeId: string; etaOffsetMin: number };
+// Owners name where they pick people up and where they drop them: pickup spots first (the
+// first is where they set off), then drop spots, all in the order they're reached.
+export type StopRole = "pickup" | "drop";
+export type StopInput = {
+  placeId: string;
+  etaOffsetMin: number;
+  role: StopRole;
+};
+
+// Stops as saved: rides saved before pickups and drops were asked for have no role, so the
+// first stop is taken as the pickup and the rest as drops.
+export function withRoles(
+  stops: readonly { placeId: string; etaOffsetMin: number; role?: unknown }[],
+): StopInput[] {
+  return stops.map((stop, i) => ({
+    placeId: stop.placeId,
+    etaOffsetMin: stop.etaOffsetMin,
+    role:
+      stop.role === "pickup" || stop.role === "drop"
+        ? stop.role
+        : i === 0
+          ? "pickup"
+          : "drop",
+  }));
+}
 
 export const MAX_STOPS = 12;
 // A stop can be at most 10 hours after departure (ride_stops.eta_offset_min).
@@ -28,8 +52,15 @@ export const MAX_ETA_MIN = 600;
 
 // Returns what's wrong with the stops, or null if they're fine.
 export function checkStops(stops: StopInput[]): string | null {
-  if (stops.length < 2) return "Add at least a start and an end stop.";
+  const pickups = stops.filter((s) => s.role === "pickup").length;
+  const drops = stops.filter((s) => s.role === "drop").length;
+  if (pickups < 1 || drops < 1 || pickups + drops !== stops.length) {
+    return "Add at least one pickup spot and one drop spot.";
+  }
   if (stops.length > MAX_STOPS) return `At most ${MAX_STOPS} stops.`;
+  if (stops.slice(0, pickups).some((s) => s.role !== "pickup")) {
+    return "Pickup spots come before drop spots.";
+  }
   if (stops.some((s) => !s.placeId)) return "Pick a place for every stop.";
   if (new Set(stops.map((s) => s.placeId)).size !== stops.length) {
     return "Each stop can appear only once.";
@@ -93,12 +124,15 @@ export function parseDirection(value: unknown): Direction {
 }
 
 // The way back: the same stops in reverse order, each reached as long after setting off as
-// it was before arriving. A morning Palwal (0) → Rajiv Chowk (45) → Cyber City (60) becomes an
-// evening Cyber City (0) → Rajiv Chowk (15) → Palwal (60).
+// it was before arriving, with pickups and drops swapped. A morning pickup at Palwal (0), drops
+// at Rajiv Chowk (45) and Cyber City (60) becomes an evening pickup at Cyber City (0), drops at
+// Rajiv Chowk (15) and Palwal (60).
 export function reverseStops(stops: readonly StopInput[]): StopInput[] {
   const total = stops.at(-1)?.etaOffsetMin ?? 0;
   return [...stops].reverse().map((stop) => ({
     placeId: stop.placeId,
     etaOffsetMin: total - stop.etaOffsetMin,
+    // Where they dropped people in the morning, they pick them up in the evening.
+    role: stop.role === "pickup" ? "drop" : "pickup",
   }));
 }

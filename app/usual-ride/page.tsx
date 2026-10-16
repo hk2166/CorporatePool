@@ -10,6 +10,7 @@ import {
   DIRECTIONS,
   parseDirection,
   reverseStops,
+  withRoles,
   type Direction,
   type StopInput,
 } from "@/lib/usual-ride";
@@ -39,13 +40,16 @@ export default function UsualRidePage({
   );
 }
 
-type StoredStop = { place_id?: string; eta_offset_min?: number };
+type StoredStop = { place_id?: string; eta_offset_min?: number; role?: string };
 
 const toInputs = (stops: unknown): StopInput[] =>
-  (stops as StoredStop[]).map((stop) => ({
-    placeId: stop.place_id ?? "",
-    etaOffsetMin: stop.eta_offset_min ?? 0,
-  }));
+  withRoles(
+    (stops as StoredStop[]).map((stop) => ({
+      placeId: stop.place_id ?? "",
+      etaOffsetMin: stop.eta_offset_min ?? 0,
+      role: stop.role,
+    })),
+  );
 
 // The owner's usual rides, saved once (F-B1, user flow 2 step 3): the morning one from home to
 // the office and the evening one back, each with the stops where they pick people up. Part of
@@ -111,16 +115,16 @@ async function UsualRideSection({
     MORNING:
       home && work
         ? [
-            { placeId: home, etaOffsetMin: 0 },
-            { placeId: work, etaOffsetMin: 60 },
+            { placeId: home, etaOffsetMin: 0, role: "pickup" },
+            { placeId: work, etaOffsetMin: 60, role: "drop" },
           ]
         : undefined,
     EVENING: morning
       ? reverseStops(toInputs(morning.stops))
       : home && work
         ? [
-            { placeId: work, etaOffsetMin: 0 },
-            { placeId: home, etaOffsetMin: 60 },
+            { placeId: work, etaOffsetMin: 0, role: "pickup" },
+            { placeId: home, etaOffsetMin: 60, role: "drop" },
           ]
         : undefined,
   };

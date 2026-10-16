@@ -8,6 +8,7 @@ import {
   parseDepartTime,
   parseDirection,
   weekdaysToMask,
+  withRoles,
   type StopInput,
 } from "@/lib/usual-ride";
 
@@ -38,7 +39,7 @@ export async function saveUsualRide(
 
   let stops: StopInput[];
   try {
-    stops = JSON.parse(String(formData.get("stops") ?? "[]"));
+    stops = withRoles(JSON.parse(String(formData.get("stops") ?? "[]")));
   } catch {
     return fail("Please pick your stops again.");
   }
@@ -80,6 +81,7 @@ export async function saveUsualRide(
       lat: place.lat,
       lng: place.lng,
       eta_offset_min: stop.etaOffsetMin,
+      role: stop.role,
     });
   }
 
