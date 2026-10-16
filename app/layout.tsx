@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   ),
   title: "CorporatePool",
   description:
-    "Free shared rides for the daily office commute, Palwal to Gurgaon.",
+    "Free shared rides to work: drivers fill their empty seats, riders find a seat.",
   // Installed on an iPhone's home screen, it opens full screen like an app (T-8.1).
   appleWebApp: {
     capable: true,
