@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { checkStops, parseDepartTime, weekdaysToMask } from "@/lib/usual-ride";
+import {
+  checkStops,
+  describeWeekdays,
+  parseDepartTime,
+  weekdayBit,
+  weekdaysToMask,
+} from "@/lib/usual-ride";
 
 describe("weekdaysToMask", () => {
   it("adds up the chosen days", () => {
@@ -47,4 +53,24 @@ describe("parseDepartTime", () => {
       expect(parseDepartTime(value)).toBeNull();
     },
   );
+});
+
+describe("weekdayBit", () => {
+  it("numbers days Monday first", () => {
+    expect(weekdayBit("2026-10-19")).toBe(1); // Monday
+    expect(weekdayBit("2026-10-23")).toBe(16); // Friday
+    expect(weekdayBit("2026-10-25")).toBe(64); // Sunday
+  });
+});
+
+describe("describeWeekdays", () => {
+  it("names common patterns", () => {
+    expect(describeWeekdays(127)).toBe("every day");
+    expect(describeWeekdays(31)).toBe("Mon–Fri");
+    expect(describeWeekdays(96)).toBe("weekends");
+  });
+
+  it("lists anything else", () => {
+    expect(describeWeekdays(1 | 4 | 16)).toBe("Mon, Wed, Fri");
+  });
 });

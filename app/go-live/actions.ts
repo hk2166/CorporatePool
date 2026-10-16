@@ -4,6 +4,7 @@ import { refresh } from "next/cache";
 import { getCurrentUser } from "@/lib/auth";
 import { addDays, indiaDate } from "@/lib/india-time";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { parseDepartTime } from "@/lib/usual-ride";
 
 export type GoLiveState = { error?: string; rideId?: string };
@@ -58,4 +59,36 @@ export async function goLive(
 
   refresh();
   return { rideId: data.ride_id };
+}
+
+// "Skip tomorrow" for owners with automatic go-live (F-B3), before the 17:00 job has run.
+// After it has run, skipping is cancelling the ride (app/rides/[id]), which tells riders.
+export async function setDaySkipped(formData: FormData): Promise<void> {
+  const user = await getCurrentUser();
+  const usualRideId = String(formData.get("usualRideId") ?? "");
+  const day = String(formData.get("day") ?? "");
+  const skip = formData.get("skip") === "1";
+  if (day <= indiaDate()) return;
+
+  // As the owner: the usual ride is only visible to them (T-1.3), so this is the owner check.
+  const supabase = await createClient();
+  const { data: usual } = await supabase
+    .from("usual_rides")
+    .select("id")
+    .eq("id", usualRideId)
+    .eq("owner_id", user.id)
+    .maybeSingle();
+  if (!usual) return;
+
+  // Skips are written by the server only.
+  const skips = createAdminClient().from("usual_ride_skips");
+  if (skip) {
+    await skips.upsert(
+      { usual_ride_id: usual.id, day },
+      { onConflict: "usual_ride_id,day", ignoreDuplicates: true },
+    );
+  } else {
+    await skips.delete().eq("usual_ride_id", usual.id).eq("day", day);
+  }
+  refresh();
 }

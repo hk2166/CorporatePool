@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { addDays, dayLabel, indiaDate, indiaTime } from "@/lib/india-time";
 import { createClient } from "@/lib/supabase/server";
+import { describeWeekdays, weekdayBit } from "@/lib/usual-ride";
+import { setDaySkipped } from "./actions";
 import { GoLiveCard } from "./go-live-card";
 
 type StoredStop = { label?: string };
@@ -20,7 +22,9 @@ export async function OwnerSection({ userId }: { userId: string }) {
         .maybeSingle(),
       supabase
         .from("usual_rides")
-        .select("id, depart_time, seats_offered, price_per_seat, stops")
+        .select(
+          "id, depart_time, seats_offered, price_per_seat, stops, auto_golive_days",
+        )
         .eq("owner_id", userId)
         .order("created_at")
         .limit(1)
@@ -68,6 +72,19 @@ export async function OwnerSection({ userId }: { userId: string }) {
         indiaTime(new Date()) < usual.depart_time.slice(0, 5),
     );
 
+  // Automatic go-live (F-B3): is tomorrow one of the owner's days, and did they skip it?
+  const autoTomorrow =
+    (usual.auto_golive_days & weekdayBit(tomorrow)) !== 0 &&
+    !liveDays.has(tomorrow);
+  const { data: skipped } = autoTomorrow
+    ? await supabase
+        .from("usual_ride_skips")
+        .select("day")
+        .eq("usual_ride_id", usual.id)
+        .eq("day", tomorrow)
+        .maybeSingle()
+    : { data: null };
+
   const stops = usual.stops as StoredStop[];
   const route = `${stops[0]?.label ?? "Start"} → ${stops.at(-1)?.label ?? "End"}`;
 
@@ -109,6 +126,16 @@ export async function OwnerSection({ userId }: { userId: string }) {
         </div>
       )}
 
+      {usual.auto_golive_days > 0 && (
+        <AutoGoLive
+          usualRideId={usual.id}
+          tomorrow={tomorrow}
+          weekdays={describeWeekdays(usual.auto_golive_days)}
+          autoTomorrow={autoTomorrow}
+          skipped={Boolean(skipped)}
+        />
+      )}
+
       {days.length > 0 && (
         <GoLiveCard
           usualRideId={usual.id}
@@ -144,5 +171,47 @@ function Nudge({
         {action}
       </Link>
     </section>
+  );
+}
+
+// What automatic go-live will do next, with Skip or Undo for tomorrow.
+function AutoGoLive({
+  usualRideId,
+  tomorrow,
+  weekdays,
+  autoTomorrow,
+  skipped,
+}: {
+  usualRideId: string;
+  tomorrow: string;
+  weekdays: string;
+  autoTomorrow: boolean;
+  skipped: boolean;
+}) {
+  return (
+    <div className="space-y-2 rounded-xl border border-neutral-200 px-4 py-3 text-sm dark:border-neutral-800">
+      <p className="text-neutral-700 dark:text-neutral-300">
+        Goes live automatically on {weekdays}, at 17:00 the day before.
+      </p>
+      {autoTomorrow && (
+        <form
+          action={setDaySkipped}
+          className="flex items-center justify-between gap-3"
+        >
+          <input type="hidden" name="usualRideId" value={usualRideId} />
+          <input type="hidden" name="day" value={tomorrow} />
+          <input type="hidden" name="skip" value={skipped ? "0" : "1"} />
+          <span className="text-neutral-500">
+            {skipped ? "Tomorrow is skipped." : "Not driving tomorrow?"}
+          </span>
+          <button
+            type="submit"
+            className="rounded-lg border border-neutral-300 px-3 py-1.5 font-medium dark:border-neutral-700"
+          >
+            {skipped ? "Undo" : "Skip tomorrow"}
+          </button>
+        </form>
+      )}
+    </div>
   );
 }

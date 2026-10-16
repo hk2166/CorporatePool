@@ -405,6 +405,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"usual_ride_skips": {
+                  Row: {
+                    "created_at": string,"day": string,"usual_ride_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"day": string,"usual_ride_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"day"?: string,"usual_ride_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "usual_ride_skips_usual_ride_id_fkey"
+      columns: ["usual_ride_id"]
+isOneToOne: false
+      referencedRelation: "usual_rides"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"usual_rides": {
                   Row: {
                     "auto_golive_days": number,"car_id": string,"created_at": string,"depart_time": string,"id": string,"notes": string | null,"owner_id": string,"price_per_seat": number,"seats_offered": number,"stops": NonNullable<Json>,"updated_at": string
@@ -498,6 +518,9 @@ isOneToOne: false
                            },
 "redeem_invite":
 { Args: { "p_name": string,"p_photo_url": string,"p_token": string,"p_user_id": string }; Returns: boolean
+                           },
+"run_auto_go_live":
+{ Args: { "p_day"?: string }; Returns: number
                            }
           }
           Enums: {

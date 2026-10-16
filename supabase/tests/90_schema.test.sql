@@ -8,11 +8,11 @@ select tables_are(
   'public',
   array[
     'places', 'users', 'cars', 'signup_tokens', 'blocks',
-    'usual_rides', 'rides', 'ride_stops',
+    'usual_rides', 'usual_ride_skips', 'rides', 'ride_stops',
     'bookings', 'reliability_events', 'reviews',
     'reports', 'admin_actions', 'push_subscriptions', 'notifications_outbox'
   ],
-  'public has exactly the 15 tables of the data model'
+  'public has exactly the tables of the data model'
 );
 
 -- A table without RLS is readable and writable by anyone through the public API, so no table

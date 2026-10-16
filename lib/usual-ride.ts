@@ -53,3 +53,20 @@ export function parseDepartTime(value: string): string | null {
   const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(value.trim());
   return match ? `${match[1]}:${match[2]}` : null;
 }
+
+// The weekday bit for a YYYY-MM-DD date (Mon = 1 … Sun = 64).
+export function weekdayBit(day: string): number {
+  const [y, m, d] = day.split("-").map(Number);
+  const sundayFirst = new Date(Date.UTC(y, m - 1, d)).getUTCDay(); // 0 = Sunday
+  return 1 << ((sundayFirst + 6) % 7);
+}
+
+// "every day", "Mon–Fri", "weekends", or a list like "Mon, Wed, Fri".
+export function describeWeekdays(mask: number): string {
+  if (mask === 127) return "every day";
+  if (mask === 31) return "Mon–Fri";
+  if (mask === 96) return "weekends";
+  return WEEKDAYS.filter((day) => mask & day.bit)
+    .map((day) => day.short)
+    .join(", ");
+}
