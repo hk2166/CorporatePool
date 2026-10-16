@@ -101,9 +101,13 @@ select is(pg_temp.ask('4', 'soon'), 'WAITLISTED #2', 'R4 is second on the waitli
 
 -- Allocation not run yet ----------------------------------------------------------------------- 2
 
-select is(pg_temp.ask('1', 'pending'), 'REQUESTED',
-  'past allocation time but not yet allocated: queue behind those who asked in time');
-select is(pg_temp.seats('pending'), '3 OPEN', 'no seat jumped the queue');
+select is(pg_temp.ask('2', 'pending'), 'CONFIRMED',
+  'past allocation time but not yet allocated: the ride is allocated first, then this request');
+select is(
+  (select status::text from bookings where ride_id = pg_temp.id('pending') and rider_id = pg_temp.rider('4')),
+  'CONFIRMED',
+  'so R4, who asked in time, got their seat first'
+);
 
 -- Who can't ------------------------------------------------------------------------------------ 13
 

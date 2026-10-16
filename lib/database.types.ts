@@ -524,6 +524,9 @@ isOneToOne: false
               "booking_id": string,"status": Database["public"]['Enums']["booking_status"],"waitlist_rank": number
             }[]
                            },
+"run_allocation":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
 "run_auto_go_live":
 { Args: { "p_day"?: string }; Returns: number
                            },
