@@ -98,6 +98,22 @@ test("someone without an invite asks to join and an admin accepts", async ({
     ).toBeVisible();
     await page.getByRole("button", { name: /I'm looking for a ride/ }).click();
     await expect(page).toHaveURL(/\/profile\?welcome=1/);
+
+    // Then home and office, each picked as a town and a stop in it.
+    await page
+      .getByLabel("Mobile number")
+      .fill(`9${String(Date.now()).slice(-9)}`);
+    await page.getByLabel("Home: town").selectOption("Palwal");
+    await page.getByLabel("Home: stop").selectOption({ label: "Agra Chowk" });
+    await page.getByLabel("Office: town").selectOption("Gurugram");
+    await page
+      .getByLabel("Office: stop")
+      .selectOption({ label: "Shankar Chowk (Shyam Chowk)" });
+    await page.getByRole("button", { name: "Save and continue" }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(
+      page.getByRole("link", { name: /My usual commute, tomorrow/ }),
+    ).toBeVisible();
   } finally {
     await d.from("users").delete().eq("id", id);
     await d.auth.admin.deleteUser(id);

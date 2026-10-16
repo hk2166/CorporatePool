@@ -2,13 +2,14 @@
 
 import { useActionState } from "react";
 import { AddStopLink } from "@/components/add-stop-link";
+import { CityStopSelect } from "@/components/city-stop-select";
 import {
   saveProfile,
   type ProfileField,
   type ProfileFormState,
 } from "./actions";
 
-type Place = { id: string; name: string };
+type Place = { id: string; name: string; lat: number; lng: number };
 
 type Props = {
   profile: {
@@ -77,29 +78,39 @@ export function ProfileForm({ profile, places, welcome }: Props) {
         />
       </Field>
 
-      <Field
-        label="Usual pickup stop"
-        field="home"
-        hint="Used for one-tap search. A landmark, not your address."
-        error={error("home")}
-      >
-        <PlaceSelect
-          name="home"
-          places={places}
-          defaultValue={value("home", profile.homePlaceId)}
-          invalid={Boolean(error("home"))}
-        />
-      </Field>
-
-      <Field label="Usual office stop" field="work" error={error("work")}>
-        <PlaceSelect
-          name="work"
-          places={places}
-          defaultValue={value("work", profile.workPlaceId)}
-          invalid={Boolean(error("work"))}
-        />
-      </Field>
-      <AddStopLink next="/profile" empty={places.length === 0} />
+      {/* The commute goes both ways, so it's asked as two places: home and office. */}
+      <fieldset className="space-y-4">
+        <legend className="text-base font-semibold">
+          What is your home location, and what is your office location?
+        </legend>
+        <p className="-mt-2 text-sm text-neutral-500">
+          Pick your town, then the stop nearest to you. Rides go both ways: home
+          to office in the morning, and back home in the evening.
+        </p>
+        <Field label="Home" field="home" error={error("home")}>
+          <CityStopSelect
+            key={value("home", profile.homePlaceId)}
+            name="home"
+            label="Home"
+            places={places}
+            defaultValue={value("home", profile.homePlaceId)}
+            invalid={Boolean(error("home"))}
+            describedBy={error("home") ? "home-error" : undefined}
+          />
+        </Field>
+        <Field label="Office" field="work" error={error("work")}>
+          <CityStopSelect
+            key={value("work", profile.workPlaceId)}
+            name="work"
+            label="Office"
+            places={places}
+            defaultValue={value("work", profile.workPlaceId)}
+            invalid={Boolean(error("work"))}
+            describedBy={error("work") ? "work-error" : undefined}
+          />
+        </Field>
+        <AddStopLink next="/profile" empty={places.length === 0} />
+      </fieldset>
 
       <Field
         label="UPI ID (car owners)"
@@ -185,38 +196,5 @@ function Field({
         )
       )}
     </div>
-  );
-}
-
-function PlaceSelect({
-  name,
-  places,
-  defaultValue,
-  invalid,
-}: {
-  name: "home" | "work";
-  places: Place[];
-  defaultValue: string;
-  invalid: boolean;
-}) {
-  return (
-    <select
-      // React only applies a select's defaultValue when it's created, so a new key recreates
-      // it when the value to show changes (after a failed save).
-      key={defaultValue}
-      id={name}
-      name={name}
-      defaultValue={defaultValue}
-      aria-invalid={invalid}
-      aria-describedby={invalid ? `${name}-error` : undefined}
-      className={inputClass}
-    >
-      <option value="">Not set</option>
-      {places.map((place) => (
-        <option key={place.id} value={place.id}>
-          {place.name}
-        </option>
-      ))}
-    </select>
   );
 }
