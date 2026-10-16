@@ -2,8 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 
-// Pages anyone may open without signing in.
-const PUBLIC_PATHS = ["/login", "/auth/", "/no-invite", "/invite/", "/r/"];
+// Pages anyone may open without signing in. /api/jobs/ routes check their own secret (they're
+// called by the database), and /sw.js is the service worker script.
+const PUBLIC_PATHS = [
+  "/login",
+  "/auth/",
+  "/no-invite",
+  "/invite/",
+  "/r/",
+  "/api/jobs/",
+  "/sw.js",
+];
 
 function isPublic(pathname: string): boolean {
   return PUBLIC_PATHS.some((path) =>

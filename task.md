@@ -193,9 +193,10 @@ Step-by-step guide: [docs/setup.md](docs/setup.md).
       tests: new user 50; +2/ride capped +40; −15 no-show; −5 late cancel; clamp 0–100; decay.
 - [x] **T-6.2 My reliability (F-F4, F-I2).** Score, event history with reasons, and a public
       "how the score works" page. *Done when:* a rider can trace every point change to an event.
-- [ ] **T-6.3 Web push (F-E1, F-E2).** VAPID subscribe + outbox drainer (edge function via
-      pg_net); events: confirmed, waitlisted, promoted, ride cancelled/edited, car full. *Done
-      when:* outbox rows are written in the same transaction as the change (lld §6) and a crash
+- [x] **T-6.3 Web push (F-E1, F-E2).** VAPID subscribe + outbox drainer (app route
+      `/api/jobs/send-pushes`, woken via pg_net); events: confirmed, waitlisted, promoted, ride
+      cancelled/edited, car full. *Done when:* outbox rows are written in the same transaction
+      as the change (lld §6) and a crash
       between write and send loses nothing (retry test).
 - [ ] **T-6.4 Reminders (F-E3).** 5-min pg_cron: pickup-in-15-min to riders + owner. *Done
       when:* idempotent — a rider never gets the same reminder twice.

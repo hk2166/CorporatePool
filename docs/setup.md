@@ -48,8 +48,8 @@ dashboard.
 2. **Don't import the project yet.** There's no app until task T-1.1 is merged, so a build now
    would fail. After T-1.1:
    1. **Add New → Project**, import CorporatePool, framework Next.js.
-   2. Add the environment variables: the three Supabase values from H-1 and the VAPID values
-      from H-3. Set `NEXT_PUBLIC_SITE_URL` to the Vercel URL.
+   2. Add the environment variables: the three Supabase values from H-1, the VAPID values and
+      `CRON_SECRET` from H-3. Set `NEXT_PUBLIC_SITE_URL` to the Vercel URL.
    3. If Vercel offers a function region, choose Mumbai (`bom1`) so the app runs close to the
       database.
 
@@ -196,6 +196,26 @@ Gurgaon area (usually a sign that lat and lng are swapped). It warns about demo 
 - [ ] H-1 to H-5 are ticked in task.md, and `landmarks.csv` and task.md are committed.
 
 Then agents can start at T-1.1.
+
+## After setup: let the database send notifications
+
+Notifications are written by the database and sent by the app (`/api/jobs/send-pushes`), which
+the database wakes up itself (T-6.3). It needs to know where the app is and the `CRON_SECRET`
+the app expects. Until then, notifications just wait, and nothing breaks.
+
+- **Locally**, after every `npm run db:start` or `npm run db:reset`:
+
+  ```bash
+  cd /Users/hemant/Desktop/personal/CorporatePool && npm run jobs:local
+  ```
+
+- **The live project**, once, in Supabase **SQL Editor** (use your Vercel URL and the same
+  `CRON_SECRET` as in Vercel):
+
+  ```sql
+  select vault.create_secret('https://your-app.vercel.app', 'app_url');
+  select vault.create_secret('the CRON_SECRET value', 'cron_secret');
+  ```
 
 ## After setup: become the first admin, then invite your group
 

@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:db": "supabase test db",
     "test:race": "bash scripts/race-last-seat.sh",
+    "jobs:local": "bash scripts/local-job-secrets.sh",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:start": "env $(grep -E '^SUPABASE_AUTH_EXTERNAL_GOOGLE_(CLIENT_ID|SECRET)=' .env.local 2>/dev/null | xargs) supabase start",
@@ -30,7 +31,8 @@
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "web-push": "3.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -39,6 +41,7 @@
     "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/web-push": "3.6.4",
     "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
