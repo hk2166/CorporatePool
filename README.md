@@ -29,6 +29,8 @@ name.)
 | [docs/hld.md](docs/hld.md) | High-level design: architecture, free-tier stack, scheduled jobs |
 | [docs/lld.md](docs/lld.md) | Low-level design: data model, booking statuses, search, seat allocation, reliability score, API |
 | [docs/db-diagram.md](docs/db-diagram.md) | The whole data model as one class diagram |
+| [docs/setup.md](docs/setup.md) | One-time setup: accounts, keys, local tools, first admin |
+| [docs/deploy.md](docs/deploy.md) | Going live: database, Vercel, connecting them, the phone check |
 
 ## How we discuss
 

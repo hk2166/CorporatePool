@@ -41,8 +41,11 @@ const values = rows.map(([name, kind, lat, lng], index) => {
 
 const sql = `-- GENERATED from supabase/seed/landmarks.csv by \`npm run seed:landmarks\`. Don't edit this
 -- file: change the CSV and run the command again. CI fails if this file is out of date.
+-- Safe to run again (stops that already exist are skipped), so it can also be pasted into the
+-- live project's SQL editor (docs/deploy.md).
 insert into public.places (name, kind, geo) values
-${values.join(",\n")};
+${values.join(",\n")}
+on conflict (name) do nothing;
 `;
 
 if (process.argv.includes("--check")) {

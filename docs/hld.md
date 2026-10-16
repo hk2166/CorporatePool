@@ -81,7 +81,7 @@ Supabase Vault). That keeps one codebase and one deploy instead of a separate Ed
 | Push sender | right after notifications are written, and every minute while any wait | Wakes `/api/jobs/send-pushes`, which sends the outbox with Web Push; retried up to 10 times (lld.md §6) |
 | Expiry | every 5 min | Expires unanswered requests at departure; completes rides 3 hours after departure |
 | Score refresh | daily | Recomputes reliability scores with the 90-day decay (F-F3) |
-| Keep-warm | daily | Touches the DB so the free project never pauses |
+| Keep-warm | daily (Vercel cron, `vercel.json`) | Calls `/api/jobs/keep-warm`, which touches the DB so the free project never pauses (a paused DB can't run its own jobs) |
 
 Promotion on cancellation also fires immediately in the API call itself; the sweep is the safety
 net, so a missed event never strands an empty seat.

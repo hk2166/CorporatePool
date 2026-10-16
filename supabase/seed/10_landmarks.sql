@@ -1,5 +1,7 @@
 -- GENERATED from supabase/seed/landmarks.csv by `npm run seed:landmarks`. Don't edit this
 -- file: change the CSV and run the command again. CI fails if this file is out of date.
+-- Safe to run again (stops that already exist are skipped), so it can also be pasted into the
+-- live project's SQL editor (docs/deploy.md).
 insert into public.places (name, kind, geo) values
   ('Demo Palwal Start', 'town', extensions.st_setsrid(extensions.st_makepoint(77.32900, 28.14400), 4326)::extensions.geography),
   ('Demo Stop 01', 'landmark', extensions.st_setsrid(extensions.st_makepoint(77.31626, 28.16284), 4326)::extensions.geography),
@@ -20,4 +22,5 @@ insert into public.places (name, kind, geo) values
   ('Demo Metro Stop', 'metro', extensions.st_setsrid(extensions.st_makepoint(77.12521, 28.44547), 4326)::extensions.geography),
   ('Demo Office Park', 'office', extensions.st_setsrid(extensions.st_makepoint(77.11247, 28.46432), 4326)::extensions.geography),
   ('Demo Shankar Chowk', 'office', extensions.st_setsrid(extensions.st_makepoint(77.09974, 28.48316), 4326)::extensions.geography),
-  ('Demo Cyber City', 'office', extensions.st_setsrid(extensions.st_makepoint(77.08700, 28.50200), 4326)::extensions.geography);
+  ('Demo Cyber City', 'office', extensions.st_setsrid(extensions.st_makepoint(77.08700, 28.50200), 4326)::extensions.geography)
+on conflict (name) do nothing;
