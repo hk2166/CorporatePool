@@ -51,7 +51,7 @@ test("flow 2: an owner's one-time setup is there to use", async ({ page }) => {
   await expect(
     page
       .getByRole("region", { name: "Morning: home → office" })
-      .getByLabel("Stop 1")
+      .getByLabel("Pickup spot 1")
       .locator("option:checked"),
   ).toHaveText("Demo Palwal Start");
 });
