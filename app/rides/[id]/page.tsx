@@ -2,14 +2,20 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AppHeader } from "@/components/app-header";
+import { ShareRideButton } from "@/components/share-ride-button";
 import { getCurrentUser } from "@/lib/auth";
 import { dayLabel, indiaDate, indiaTime } from "@/lib/india-time";
+import { getPublicRide } from "@/lib/public-ride";
+import { shareMessage } from "@/lib/ride-card";
 import { createClient } from "@/lib/supabase/server";
 import { CancelRide, RideNotes } from "./ride-controls";
 
 export const metadata: Metadata = { title: "Your ride · CorporatePool" };
 
-export default function RidePage({ params }: PageProps<"/rides/[id]">) {
+export default function RidePage({
+  params,
+  searchParams,
+}: PageProps<"/rides/[id]">) {
   return (
     <>
       <AppHeader />
@@ -19,7 +25,7 @@ export default function RidePage({ params }: PageProps<"/rides/[id]">) {
             <div className="h-80 animate-pulse rounded-xl bg-neutral-100 dark:bg-neutral-800" />
           }
         >
-          <RideDetails params={params} />
+          <RideDetails params={params} searchParams={searchParams} />
         </Suspense>
       </main>
     </>
@@ -35,10 +41,12 @@ const STATUS_LABEL: Record<string, string> = {
 // The owner's view of one of their rides: route, seats, who has booked, notes and cancel.
 async function RideDetails({
   params,
+  searchParams,
 }: {
   params: PageProps<"/rides/[id]">["params"];
+  searchParams: PageProps<"/rides/[id]">["searchParams"];
 }) {
-  const { id } = await params;
+  const [{ id }, { live }] = await Promise.all([params, searchParams]);
   const user = await getCurrentUser();
   const supabase = await createClient();
 
@@ -68,9 +76,20 @@ async function RideDetails({
 
   const day = indiaDate(new Date(ride.depart_at));
   const open = ["OPEN", "ALLOCATING", "FULL"].includes(ride.status);
+  // The same card the WhatsApp link shows, for the share message.
+  const publicRide = open ? await getPublicRide(ride.id) : null;
+  const url = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/r/${ride.id}`;
 
   return (
     <div className="space-y-6">
+      {live === "1" && open && (
+        <p
+          role="status"
+          className="rounded-xl bg-emerald-50 px-4 py-3 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
+        >
+          You&apos;re live. Share it in your WhatsApp group so riders can book.
+        </p>
+      )}
       <div className="space-y-1">
         <p className="text-sm text-neutral-500">{dayLabel(day)}</p>
         <h1 className="text-2xl font-semibold tracking-tight">
@@ -115,6 +134,10 @@ async function RideDetails({
           <p className="text-sm text-neutral-500">No bookings yet.</p>
         )}
       </section>
+
+      {publicRide && (
+        <ShareRideButton message={shareMessage(publicRide, url)} url={url} />
+      )}
 
       {open && (
         <>

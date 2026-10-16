@@ -12,7 +12,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Absolute links in shared previews (WhatsApp needs a full URL for the preview image).
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
   title: "CorporatePool",
   description:
     "Free shared rides for the daily office commute, Palwal to Gurgaon.",
