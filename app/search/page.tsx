@@ -25,7 +25,7 @@ export default function SearchPage({ searchParams }: PageProps<"/search">) {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 lg:max-w-5xl">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 lg:max-w-7xl lg:px-8">
         <Suspense
           fallback={
             <div className="space-y-4">
@@ -269,7 +269,7 @@ async function Results({
         </p>
       ) : (
         <LiveSeatsProvider rideIds={rides.map((r) => r.ride_id)}>
-          <ul className="space-y-3">
+          <ul className="space-y-3 xl:grid xl:grid-cols-2 xl:gap-3 xl:space-y-0">
             {rides.map((ride) => (
               <li key={ride.ride_id}>
                 <RideResultCard ride={ride} />

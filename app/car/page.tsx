@@ -14,7 +14,7 @@ export default function CarPage({ searchParams }: PageProps<"/car">) {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 md:max-w-xl px-4 py-6">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 md:max-w-xl lg:max-w-7xl lg:px-8">
         <Suspense
           fallback={
             <div className="space-y-4">

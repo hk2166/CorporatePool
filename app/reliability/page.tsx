@@ -18,7 +18,7 @@ export default function ReliabilityPage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 lg:max-w-2xl px-4 py-6">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 lg:max-w-7xl lg:px-8">
         <Suspense
           fallback={
             <div className="space-y-4">
@@ -75,7 +75,7 @@ async function Reliability() {
   const fromRides = Math.min(r.perRide * rides, r.maxFromRides);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-10 lg:space-y-0">
       <section className="space-y-4">
         <div className="flex items-baseline justify-between">
           <h1 className="text-2xl font-semibold tracking-tight">

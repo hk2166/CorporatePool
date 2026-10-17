@@ -31,7 +31,7 @@ export default function MyRidersPage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 lg:max-w-5xl">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 lg:max-w-7xl lg:px-8">
         <Suspense
           fallback={
             <div className="space-y-4">
@@ -129,7 +129,7 @@ async function MyRiders() {
       ) : (
         // Seats and riders update by themselves while the owner watches.
         <LiveSeatsProvider rideIds={rides.map((r) => r.id)} refresh>
-          <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
+          <div className="grid gap-4 lg:grid-cols-2 lg:items-start 2xl:grid-cols-3">
             {rides.map((ride) => (
               <RideRiders
                 key={ride.id}

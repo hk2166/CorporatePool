@@ -35,7 +35,7 @@ const PROMISES = [
 export default function HomePage() {
   return (
     <PublicPage>
-      <main className="mx-auto w-full max-w-4xl flex-1 space-y-16 px-4 pt-10 pb-16">
+      <main className="mx-auto w-full max-w-4xl flex-1 space-y-16 px-4 pt-10 pb-16 lg:max-w-6xl lg:px-8">
         <section className="space-y-6 text-center sm:text-left">
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
             Share the ride to work.

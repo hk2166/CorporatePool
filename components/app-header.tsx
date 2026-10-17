@@ -8,11 +8,11 @@ import { isCarOwner } from "@/lib/ride-preference";
 // up once, is linked from the profile. The logo and the two common links are
 // part of the static shell; who's signed in (and so the owner links) streams in. Signing out
 // lives on the profile page, to keep this bar to one line on a phone. It stays at the top
-// while the page scrolls, and lines up with the widest pages on a laptop.
+// while the page scrolls, and spans the same width as the pages on a laptop.
 export function AppHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-neutral-200 bg-background/90 backdrop-blur dark:border-neutral-800">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-2">
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-2 lg:max-w-7xl lg:px-8">
         <Link
           href="/"
           className="inline-flex min-h-10 items-center font-semibold tracking-tight"

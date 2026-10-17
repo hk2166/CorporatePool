@@ -92,138 +92,143 @@ export async function RiderView({
 
   return (
     <LiveSeatsProvider rideIds={[ride.id]}>
-      <div className="space-y-6">
-        <header className="space-y-1">
-          <p className="text-sm text-neutral-500">
-            {dayLabel(indiaDate(new Date(ride.depart_at)))} · with{" "}
-            {ownerFirstName} · {car ? `${car.colour} ${car.model}` : "car"}
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {route[0]?.label} → {route[last]?.label}
-          </h1>
-          <p className="text-lg">
-            <LiveSeatsLeft
+      {/* On a laptop: the ride on the left; your seat and what to do on the right. */}
+      <div className="space-y-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-10 lg:space-y-0">
+        <div className="space-y-6">
+          <header className="space-y-1">
+            <p className="text-sm text-neutral-500">
+              {dayLabel(indiaDate(new Date(ride.depart_at)))} · with{" "}
+              {ownerFirstName} · {car ? `${car.colour} ${car.model}` : "car"}
+            </p>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              {route[0]?.label} → {route[last]?.label}
+            </h1>
+            <p className="text-lg">
+              <LiveSeatsLeft
+                rideId={ride.id}
+                seatsLeft={ride.seats_left}
+                status={ride.status}
+              />{" "}
+              · ₹{ride.price_per_seat} a seat
+            </p>
+            {ride.women_only && (
+              <p className="inline-block rounded-full bg-pink-100 px-3 py-1 text-sm text-pink-800 dark:bg-pink-950 dark:text-pink-300">
+                Women only
+              </p>
+            )}
+            {ride.notes && (
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                {ride.notes}
+              </p>
+            )}
+          </header>
+
+          <ol className="space-y-2 border-l-2 border-neutral-200 pl-4 dark:border-neutral-800">
+            {route.map((s) => (
+              <li key={s.seq} className="flex justify-between gap-3">
+                <span>{s.label}</span>
+                <span className="text-sm text-neutral-500">{s.time}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="space-y-6">
+          {active?.status === "REQUESTED" && (
+            <Status title="Seat requested" tone="neutral">
+              Seats for this ride are handed out at{" "}
+              {indiaTime(ride.allocation_at)}{" "}
+              {indiaDate(new Date(ride.allocation_at)) === indiaDate()
+                ? "today"
+                : dayLabel(indiaDate(new Date(ride.allocation_at)))}
+              , most reliable riders first. We&apos;ll let you know.
+            </Status>
+          )}
+          {active?.status === "WAITLISTED" && (
+            <Status
+              title={`You're #${active.waitlist_rank} on the waitlist`}
+              tone="neutral"
+            >
+              If a seat comes free, it&apos;s yours automatically.
+              {active.any_car_ok &&
+                " If another car on your route has room, we'll move you there."}
+            </Status>
+          )}
+          {active?.status === "CONFIRMED" && (
+            <Confirmed
+              ride={ride}
+              seats={active.seats}
+              pickup={stopLabel(active.pickup_seq)}
+              drop={stopLabel(active.drop_seq)}
+            />
+          )}
+          {booking?.status === "COMPLETED" && (
+            <Completed
+              ride={ride}
+              seats={booking.seats}
+              ownerFirstName={ownerFirstName}
+            />
+          )}
+          {booking?.status === "NO_SHOW" && (
+            <Status title="Marked as a no-show" tone="bad">
+              {ownerFirstName} marked you as not turning up, which costs 15
+              reliability points. If that&apos;s wrong, tell your group admin.
+            </Status>
+          )}
+
+          {active && open && (
+            <CancelBookingForm
+              bookingId={active.id}
+              label={
+                active.status === "CONFIRMED"
+                  ? "Cancel my seat"
+                  : active.status === "WAITLISTED"
+                    ? "Leave the waitlist"
+                    : "Withdraw my request"
+              }
+              warning={
+                active.status === "CONFIRMED"
+                  ? allocated
+                    ? "Seats were handed out at 22:00, so cancelling now counts as a late cancel and costs you 5 reliability points. Your seat goes straight to the next rider waiting."
+                    : "Your seat goes straight to the next rider waiting."
+                  : undefined
+              }
+            />
+          )}
+
+          {!active && !finished && open && (
+            <RequestSeatForm
               rideId={ride.id}
-              seatsLeft={ride.seats_left}
-              status={ride.status}
-            />{" "}
-            · ₹{ride.price_per_seat} a seat
-          </p>
-          {ride.women_only && (
-            <p className="inline-block rounded-full bg-pink-100 px-3 py-1 text-sm text-pink-800 dark:bg-pink-950 dark:text-pink-300">
-              Women only
-            </p>
+              stops={route}
+              pickup={defaultPickup}
+              drop={defaultDrop}
+              maxSeats={Math.min(MAX_SEATS, ride.seats_total)}
+              note={
+                allocated
+                  ? "Free seats go first come. If the car is full, you join the waitlist."
+                  : `Requests are collected until ${indiaTime(ride.allocation_at)} the evening before, then seats go to the most reliable riders. Being quick doesn't matter.`
+              }
+            />
           )}
-          {ride.notes && (
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">
-              {ride.notes}
-            </p>
-          )}
-        </header>
 
-        <ol className="space-y-2 border-l-2 border-neutral-200 pl-4 dark:border-neutral-800">
-          {route.map((s) => (
-            <li key={s.seq} className="flex justify-between gap-3">
-              <span>{s.label}</span>
-              <span className="text-sm text-neutral-500">{s.time}</span>
-            </li>
-          ))}
-        </ol>
-
-        {active?.status === "REQUESTED" && (
-          <Status title="Seat requested" tone="neutral">
-            Seats for this ride are handed out at{" "}
-            {indiaTime(ride.allocation_at)}{" "}
-            {indiaDate(new Date(ride.allocation_at)) === indiaDate()
-              ? "today"
-              : dayLabel(indiaDate(new Date(ride.allocation_at)))}
-            , most reliable riders first. We&apos;ll let you know.
-          </Status>
-        )}
-        {active?.status === "WAITLISTED" && (
-          <Status
-            title={`You're #${active.waitlist_rank} on the waitlist`}
-            tone="neutral"
-          >
-            If a seat comes free, it&apos;s yours automatically.
-            {active.any_car_ok &&
-              " If another car on your route has room, we'll move you there."}
-          </Status>
-        )}
-        {active?.status === "CONFIRMED" && (
-          <Confirmed
-            ride={ride}
-            seats={active.seats}
-            pickup={stopLabel(active.pickup_seq)}
-            drop={stopLabel(active.drop_seq)}
-          />
-        )}
-        {booking?.status === "COMPLETED" && (
-          <Completed
-            ride={ride}
-            seats={booking.seats}
-            ownerFirstName={ownerFirstName}
-          />
-        )}
-        {booking?.status === "NO_SHOW" && (
-          <Status title="Marked as a no-show" tone="bad">
-            {ownerFirstName} marked you as not turning up, which costs 15
-            reliability points. If that&apos;s wrong, tell your group admin.
-          </Status>
-        )}
-
-        {active && open && (
-          <CancelBookingForm
-            bookingId={active.id}
-            label={
-              active.status === "CONFIRMED"
-                ? "Cancel my seat"
-                : active.status === "WAITLISTED"
-                  ? "Leave the waitlist"
-                  : "Withdraw my request"
-            }
-            warning={
-              active.status === "CONFIRMED"
-                ? allocated
-                  ? "Seats were handed out at 22:00, so cancelling now counts as a late cancel and costs you 5 reliability points. Your seat goes straight to the next rider waiting."
-                  : "Your seat goes straight to the next rider waiting."
-                : undefined
-            }
-          />
-        )}
-
-        {!active && !finished && open && (
-          <RequestSeatForm
-            rideId={ride.id}
-            stops={route}
-            pickup={defaultPickup}
-            drop={defaultDrop}
-            maxSeats={Math.min(MAX_SEATS, ride.seats_total)}
-            note={
-              allocated
-                ? "Free seats go first come. If the car is full, you join the waitlist."
-                : `Requests are collected until ${indiaTime(ride.allocation_at)} the evening before, then seats go to the most reliable riders. Being quick doesn't matter.`
-            }
-          />
-        )}
-
-        {booking && (
-          <Link
-            href={`/report/${ride.owner_id}?ride=${ride.id}`}
-            className="block text-sm text-neutral-500 underline"
-          >
-            Report or block {ownerFirstName}
-          </Link>
-        )}
-
-        {!active && !open && !booking && (
-          <p className="text-sm text-neutral-500">
-            This ride isn&apos;t taking requests any more.{" "}
-            <Link href="/search" className="underline">
-              Find another seat
+          {booking && (
+            <Link
+              href={`/report/${ride.owner_id}?ride=${ride.id}`}
+              className="block text-sm text-neutral-500 underline"
+            >
+              Report or block {ownerFirstName}
             </Link>
-          </p>
-        )}
+          )}
+
+          {!active && !open && !booking && (
+            <p className="text-sm text-neutral-500">
+              This ride isn&apos;t taking requests any more.{" "}
+              <Link href="/search" className="underline">
+                Find another seat
+              </Link>
+            </p>
+          )}
+        </div>
       </div>
     </LiveSeatsProvider>
   );
