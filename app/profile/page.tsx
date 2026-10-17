@@ -106,9 +106,9 @@ async function ProfileSection({
                 Do you have a car to share?
               </h2>
               <p className="text-sm text-neutral-500">
-                Car owners get Offer and Car in the menu: list your car, then
-                your morning and evening rides with your price. Riders just find
-                seats.
+                Car owners get Offer and Riders in the menu: set up your car and
+                your morning and evening rides with your price, then see who has
+                booked. Riders just find seats.
               </p>
             </div>
             <RidePreferencePicker
