@@ -68,8 +68,8 @@ const RIDE_DAY_ERRORS: Record<string, string> = {
   NOT_STARTABLE: "This ride can't be started.",
   NOT_STARTED: "Start the ride first.",
   NOT_ON_RIDE: "This rider isn't on the ride.",
-  PICKED_UP: "This rider was picked up. Undo that first.",
-  IS_NO_SHOW: "Undo the no-show first.",
+  PICKED_UP: "You marked this rider as came. Undo that first.",
+  IS_NO_SHOW: 'Undo "Didn\'t come" first.',
 };
 
 async function rideDay(

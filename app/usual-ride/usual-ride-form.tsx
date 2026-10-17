@@ -304,11 +304,11 @@ export function UsualRideForm({
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium">
-          Go live automatically on (optional)
+          Post automatically on (optional)
         </legend>
         <p className="text-sm text-neutral-500">
-          On these days the ride goes up by itself the evening before. Leave
-          them all off to tap &ldquo;Go live&rdquo; yourself.
+          On these days your ride is posted by itself the evening before. Leave
+          them all off to post it yourself each time.
         </p>
         <div className="flex flex-wrap gap-2">
           {WEEKDAYS.map((day) => {

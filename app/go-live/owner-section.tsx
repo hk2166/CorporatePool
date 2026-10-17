@@ -257,7 +257,7 @@ function AutoGoLive({
   return (
     <div className="space-y-2 rounded-xl border border-neutral-200 px-4 py-3 text-sm dark:border-neutral-800">
       <p className="text-neutral-700 dark:text-neutral-300">
-        Your {ride} ride goes live automatically on {weekdays}, at 17:00 the day
+        Your {ride} ride is posted automatically on {weekdays}, at 5 pm the day
         before.
       </p>
       {autoTomorrow && (

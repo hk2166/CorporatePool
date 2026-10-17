@@ -22,7 +22,7 @@ export async function goLive(
   const today = indiaDate();
   const day = String(formData.get("day") ?? "");
   if (day !== today && day !== addDays(today, 1)) {
-    return { error: "You can go live for today or tomorrow." };
+    return { error: "You can post a ride for today or tomorrow." };
   }
 
   const timeInput = String(formData.get("departTime") ?? "");
@@ -54,7 +54,7 @@ export async function goLive(
     return {
       error:
         (error.hint && messages[error.hint]) ??
-        "Couldn't go live. Please try again.",
+        "Couldn't post your ride. Please try again.",
     };
   }
 

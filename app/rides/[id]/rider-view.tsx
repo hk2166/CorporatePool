@@ -135,18 +135,18 @@ export async function RiderView({
 
         <div className="space-y-6">
           {active?.status === "REQUESTED" && (
-            <Status title="Seat requested" tone="neutral">
-              Seats for this ride are handed out at{" "}
-              {indiaTime(ride.allocation_at)}{" "}
+            <Status title="You've asked for a seat" tone="neutral">
+              Seats are given out at {indiaTime(ride.allocation_at)}{" "}
               {indiaDate(new Date(ride.allocation_at)) === indiaDate()
                 ? "today"
                 : dayLabel(indiaDate(new Date(ride.allocation_at)))}
-              , most reliable riders first. We&apos;ll let you know.
+              . Riders who always turn up get seats first. We&apos;ll tell you
+              if you get one.
             </Status>
           )}
           {active?.status === "WAITLISTED" && (
             <Status
-              title={`You're #${active.waitlist_rank} on the waitlist`}
+              title={`You're #${active.waitlist_rank} in line for a seat`}
               tone="neutral"
             >
               If a seat comes free, it&apos;s yours automatically.
@@ -170,9 +170,9 @@ export async function RiderView({
             />
           )}
           {booking?.status === "NO_SHOW" && (
-            <Status title="Marked as a no-show" tone="bad">
-              {ownerFirstName} marked you as not turning up, which costs 15
-              reliability points. If that&apos;s wrong, tell your group admin.
+            <Status title="Marked as not coming" tone="bad">
+              {ownerFirstName} says you didn&apos;t come, so your score went
+              down by 15. If that&apos;s wrong, tell your group admin.
             </Status>
           )}
 
@@ -183,14 +183,14 @@ export async function RiderView({
                 active.status === "CONFIRMED"
                   ? "Cancel my seat"
                   : active.status === "WAITLISTED"
-                    ? "Leave the waitlist"
-                    : "Withdraw my request"
+                    ? "Leave the waiting list"
+                    : "Cancel my request"
               }
               warning={
                 active.status === "CONFIRMED"
                   ? allocated
-                    ? "Seats were handed out at 22:00, so cancelling now counts as a late cancel and costs you 5 reliability points. Your seat goes straight to the next rider waiting."
-                    : "Your seat goes straight to the next rider waiting."
+                    ? "Seats were given out at 10 pm, so cancelling now lowers your score by 5. Your seat goes straight to the next person in line."
+                    : "Your seat goes straight to the next person in line."
                   : undefined
               }
             />
@@ -205,8 +205,8 @@ export async function RiderView({
               maxSeats={Math.min(MAX_SEATS, ride.seats_total)}
               note={
                 allocated
-                  ? "Free seats go first come. If the car is full, you join the waitlist."
-                  : `Requests are collected until ${indiaTime(ride.allocation_at)} the evening before, then seats go to the most reliable riders. Being quick doesn't matter.`
+                  ? "Free seats go to whoever asks first. If the car is full, you join the waiting list."
+                  : `Ask any time until ${indiaTime(ride.allocation_at)} the night before. Then seats go to riders who always turn up, so there's no need to rush.`
               }
             />
           )}
@@ -352,8 +352,8 @@ async function Completed({
   return (
     <>
       <Status title={`You rode with ${ownerFirstName}`} tone="good">
-        +2 reliability points. Settle the ₹{amount} with {ownerFirstName}{" "}
-        directly, or pay below.
+        Your score went up by 2. Pay {ownerFirstName} the ₹{amount} directly, or
+        below.
       </Status>
       <PayOwner
         ownerId={ride.owner_id}

@@ -8,9 +8,9 @@ export type RideResult =
   Database["public"]["Functions"]["search_rides"]["Returns"][number];
 
 const BOOKING_LABEL: Record<string, string> = {
-  REQUESTED: "You've requested a seat",
+  REQUESTED: "You've asked for a seat",
   CONFIRMED: "Your seat is confirmed",
-  WAITLISTED: "You're on the waitlist",
+  WAITLISTED: "You're in line for a seat",
 };
 
 // One car in the search results (user flow 1 step 4): when it reaches the rider's stop, the

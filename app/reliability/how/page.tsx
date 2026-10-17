@@ -34,9 +34,11 @@ export default function HowTheScoreWorksPage() {
           How the reliability score works
         </h1>
         <p>
-          Every member has a score from {r.min} to {r.max}. When a car has more
-          requests than seats, seats go to the highest scores first, at 22:00
-          the evening before. After that, free seats go first come.
+          Every member has a score from {r.min} to {r.max}. It goes up when you
+          turn up for your rides and down when you don&apos;t. When more people
+          ask for seats than a car has, the seats go to the highest scores
+          first, at 10 pm the night before. After that, free seats go to whoever
+          asks first.
         </p>
 
         <section className="space-y-2">
@@ -44,20 +46,21 @@ export default function HowTheScoreWorksPage() {
           <ul className="space-y-1 rounded-2xl border border-neutral-200 p-4 text-sm dark:border-neutral-800">
             <Rule label="Everyone starts at" value={`${r.start}`} />
             <Rule
-              label={`Each completed ride (up to +${r.maxFromRides})`}
+              label={`Each ride you turn up for (up to +${r.maxFromRides})`}
               value={`+${r.perRide}`}
             />
-            <Rule label="Not turning up (a no-show)" value={`${r.noShow}`} />
+            <Rule label="Not turning up" value={`${r.noShow}`} />
             <Rule
-              label="Cancelling a confirmed seat after 22:00 the evening before"
+              label="Cancelling your seat after 10 pm the night before"
               value={`${r.lateCancel}`}
             />
           </ul>
           <p className="text-sm text-neutral-500">
-            No-shows and late cancels count for {r.windowDays} days, then drop
-            off. Completed rides always count. Owners who cancel a ride after
-            seats were handed out lose {Math.abs(r.lateCancel)} points too.
-            Cancelling a request, or leaving a waitlist, never costs anything.
+            Not turning up and cancelling late count for {r.windowDays} days,
+            then drop off. Rides you turned up for always count. Owners who
+            cancel a ride after seats were given out lose{" "}
+            {Math.abs(r.lateCancel)} points too. Cancelling a request, or
+            leaving the waiting list, never costs anything.
           </p>
         </section>
 
@@ -77,16 +80,16 @@ export default function HowTheScoreWorksPage() {
             ))}
           </ul>
           <p className="text-sm text-neutral-500">
-            One no-show costs about a week of commuting to earn back: painful,
-            but you can recover.
+            Not turning up once takes about a week of rides to earn back: it
+            hurts, but you can recover.
           </p>
         </section>
 
         <section className="space-y-2">
           <h2 className="font-semibold">Fair to riders</h2>
           <p className="text-sm">
-            If an owner forgets to mark the ride, everyone counts as having
-            ridden. Only the owner of your car can mark you as a no-show, and
+            If an owner forgets to tick who came, everyone counts as having
+            come. Only the owner of your car can mark you as not coming, and
             you&apos;re told straight away. If it&apos;s wrong, tell your group
             admin.
           </p>

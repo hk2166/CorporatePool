@@ -32,12 +32,12 @@ test("flow 1: a commuter finds a seat", async ({ page }) => {
   await expect(page.getByText("3 seats left")).toBeVisible();
 
   await page.locator(`a[href^="/rides/${RIDE}"]`).click();
-  await expect(page.getByLabel("Any car that fits is fine")).toBeChecked();
-  await page.getByRole("button", { name: "Request seat" }).click();
+  await expect(page.getByLabel("Put me in any car going my way")).toBeChecked();
+  await page.getByRole("button", { name: "Ask for a seat" }).click();
 
   // Before 22:00 the evening before, a request only queues (Q4).
   await expect(
-    page.getByRole("heading", { name: "Seat requested" }),
+    page.getByRole("heading", { name: "You've asked for a seat" }),
   ).toBeVisible();
   expect(await bookingStatuses()).toEqual(["REQUESTED"]);
 });
@@ -63,9 +63,9 @@ test("flow 4: more requests than seats, and the most reliable rider gets it", as
   // has the better record.
   const second = await signedIn(browser, SECOND.email);
   await second.goto(`/rides/${RIDE}`);
-  await second.getByRole("button", { name: "Request seat" }).click();
+  await second.getByRole("button", { name: "Ask for a seat" }).click();
   await expect(
-    second.getByRole("heading", { name: "Seat requested" }),
+    second.getByRole("heading", { name: "You've asked for a seat" }),
   ).toBeVisible();
 
   const d = db();
@@ -88,7 +88,7 @@ test("flow 4: more requests than seats, and the most reliable rider gets it", as
   const rider = await signedIn(browser, RIDER.email);
   await rider.goto(`/rides/${RIDE}`);
   await expect(
-    rider.getByRole("heading", { name: "You're #1 on the waitlist" }),
+    rider.getByRole("heading", { name: "You're #1 in line for a seat" }),
   ).toBeVisible();
 });
 
@@ -99,12 +99,10 @@ test("flow 5: a confirmed rider cancels and the next in line gets the seat", asy
   await second.goto(`/rides/${RIDE}`);
   await second.getByText("Cancel my seat").click();
   // After 22:00 it's a late cancel, and the screen says so before it happens.
-  await expect(
-    second.getByText(/costs you 5 reliability points/),
-  ).toBeVisible();
+  await expect(second.getByText(/lowers your score by 5/)).toBeVisible();
   await second.getByRole("button", { name: "Yes, give up my seat" }).click();
   await expect(
-    second.getByRole("button", { name: "Request seat" }),
+    second.getByRole("button", { name: "Ask for a seat" }),
   ).toBeVisible();
 
   // The waitlisted rider is in, without anyone doing anything.
@@ -122,7 +120,7 @@ test("flow 5: a confirmed rider cancels and the next in line gets the seat", asy
   expect(data).toEqual([{ kind: "LATE_CANCEL", points: -5 }]);
 });
 
-test("flow 3: the owner's morning: start, mark, complete", async ({
+test("flow 3: the owner's morning: start, tick who came, finish", async ({
   browser,
 }) => {
   // The ride leaves in half an hour.
@@ -135,10 +133,10 @@ test("flow 3: the owner's morning: start, mark, complete", async ({
   await owner.goto(`/rides/${RIDE}`);
   await expect(owner.getByText("Demo Rider")).toBeVisible();
   await owner.getByRole("button", { name: "Start ride" }).click();
-  await owner.getByRole("button", { name: "Picked up" }).click();
-  await expect(owner.getByText("Picked up", { exact: true })).toBeVisible();
-  await owner.getByRole("button", { name: "Complete ride" }).click();
-  await expect(owner.getByText(/Ride complete/)).toBeVisible();
+  await owner.getByRole("button", { name: "Came" }).click();
+  await expect(owner.getByText("Came", { exact: true })).toBeVisible();
+  await owner.getByRole("button", { name: "Finish ride" }).click();
+  await expect(owner.getByText(/Ride finished/)).toBeVisible();
 
   const rider = await signedIn(browser, RIDER.email);
   await rider.goto(`/rides/${RIDE}`);
@@ -156,8 +154,8 @@ test("flow 9: two people, one seat, the same second", async ({ browser }) => {
   ]);
   await Promise.all([a.goto(`/rides/${RIDE}`), b.goto(`/rides/${RIDE}`)]);
   await Promise.all([
-    a.getByRole("button", { name: "Request seat" }).click(),
-    b.getByRole("button", { name: "Request seat" }).click(),
+    a.getByRole("button", { name: "Ask for a seat" }).click(),
+    b.getByRole("button", { name: "Ask for a seat" }).click(),
   ]);
 
   // Exactly one seat taken, the other rider waitlisted, and the count never below zero.
@@ -173,13 +171,13 @@ test("flow 9: two people, one seat, the same second", async ({ browser }) => {
     [a, b].map((p) =>
       p
         .getByRole("heading", {
-          name: /Your seat is confirmed|on the waitlist/,
+          name: /Your seat is confirmed|in line for a seat/,
         })
         .textContent(),
     ),
   );
   expect(headings.sort()).toEqual([
-    "You're #1 on the waitlist",
+    "You're #1 in line for a seat",
     "Your seat is confirmed",
   ]);
 });

@@ -252,7 +252,8 @@ async function Results({
 
       {rides.length === 0 ? (
         <p className="text-sm text-neutral-500">
-          Owners usually go live the evening before, so check again later.
+          Owners usually post their rides the evening before, so check again
+          later.
           {(query.after || query.before) && (
             <>
               {" "}

@@ -35,8 +35,8 @@ export default function ReliabilityPage() {
 }
 
 const BOOKING_LABEL: Record<string, string> = {
-  COMPLETED: "Rode",
-  NO_SHOW: "No-show",
+  COMPLETED: "Came",
+  NO_SHOW: "Didn't come",
   CANCELLED: "Cancelled",
   EXPIRED: "Didn't get a seat",
   DECLINED: "Declined",

@@ -158,7 +158,7 @@ describe("notificationText", () => {
         { ride_id: ride, rank: 2 },
         departAt,
       ).title,
-    ).toBe("Waitlisted #2");
+    ).toBe("In line for a seat #2");
   });
 
   it("passes on the owner's reason for cancelling", () => {

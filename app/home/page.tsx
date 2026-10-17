@@ -15,7 +15,7 @@ const FEATURES = [
   },
   {
     title: "Fill your empty seats",
-    body: "Driving anyway? Save your usual route once, then go live with one tap the evening before. Seat counts look after themselves.",
+    body: "Driving anyway? Save your usual route once, then post it with one tap the evening before. Seat counts look after themselves.",
   },
   {
     title: "Fair when seats are short",

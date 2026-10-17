@@ -73,15 +73,15 @@ export function CompleteRideButton({ rideId }: { rideId: string }) {
       <ActionButton
         action={completeRide}
         fields={{ rideId }}
-        label="Complete ride"
-        pendingLabel="Completing…"
+        label="Finish ride"
+        pendingLabel="Finishing…"
         className={`${big} bg-neutral-900 hover:bg-neutral-700 dark:bg-white dark:text-neutral-900`}
       />
     </div>
   );
 }
 
-// Picked up / No-show for one rider while the ride is under way, or Undo once marked.
+// Came / Didn't come for one rider while the ride is under way, or Undo once marked.
 export function MarkRider({
   bookingId,
   mark,
@@ -99,7 +99,7 @@ export function MarkRider({
               : "text-sm font-medium text-red-600 dark:text-red-400"
           }
         >
-          {mark === "picked_up" ? "Picked up" : "No-show"}
+          {mark === "picked_up" ? "Came" : "Didn't come"}
         </span>
         <ActionButton
           action={markRider}
@@ -116,14 +116,14 @@ export function MarkRider({
       <ActionButton
         action={markRider}
         fields={{ bookingId, outcome: "picked_up" }}
-        label="Picked up"
+        label="Came"
         pendingLabel="…"
         className={`${small} border-emerald-500 text-emerald-700 dark:text-emerald-400`}
       />
       <ActionButton
         action={markRider}
         fields={{ bookingId, outcome: "no_show" }}
-        label="No-show"
+        label="Didn't come"
         pendingLabel="…"
         className={`${small} border-red-400 text-red-600 dark:text-red-400`}
       />

@@ -75,7 +75,7 @@ describe("ridersSummary", () => {
         { bookings: [booking("c", "CONFIRMED"), booking("d", "WAITLISTED")] },
       ]),
     ).toBe(
-      "2 riders booked on your 2 upcoming rides · 1 more asking for a seat · 1 on the waitlist",
+      "2 riders booked on your 2 upcoming rides · 1 more asking for a seat · 1 waiting in line",
     );
   });
 
