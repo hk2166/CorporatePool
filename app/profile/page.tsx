@@ -21,7 +21,7 @@ export default function ProfilePage({ searchParams }: PageProps<"/profile">) {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 md:max-w-xl px-4 py-6">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 md:max-w-xl lg:max-w-7xl lg:px-8">
         <Suspense
           fallback={
             <div className="space-y-4">
@@ -66,7 +66,11 @@ async function ProfileSection({
     : { data: null };
 
   return (
-    <div className="space-y-6">
+    // Finishing sign-up is one short form; otherwise, on a laptop, your details sit on the
+    // left and the settings on the right.
+    <div
+      className={isWelcome ? "space-y-6 lg:mx-auto lg:max-w-xl" : "space-y-6"}
+    >
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold tracking-tight">
           {isWelcome ? "Welcome! One more step" : "Your profile"}
@@ -79,112 +83,117 @@ async function ProfileSection({
           </p>
         )}
       </div>
-      <ProfileForm
-        welcome={isWelcome}
-        isOwner={owner}
-        userId={user.id}
-        upiQr={qrPath ? { path: qrPath, url: qr?.signedUrl ?? null } : null}
-        places={(places ?? []).map((p) => ({
-          id: p.id,
-          name: p.name,
-          lat: p.lat,
-          lng: p.lng,
-        }))}
-        profile={{
-          name: profile.name,
-          phone: profile.phone,
-          upiId: profile.upi_vpa,
-          homePlaceId: profile.home_place_id,
-          workPlaceId: profile.work_place_id,
-        }}
-      />
-      {!isWelcome && (
-        <>
-          <section id="preference" className="space-y-3">
-            <div className="space-y-1">
-              <h2 className="text-lg font-semibold">
-                Do you have a car to share?
-              </h2>
-              <p className="text-sm text-neutral-500">
-                Car owners get Offer and Riders in the menu: set up your car and
-                your morning and evening rides with your price, then see who has
-                booked. Riders just find seats.
-              </p>
-            </div>
-            <RidePreferencePicker
-              current={parseRidePreference(profile.ride_preference)}
-            />
-            {owner && (
-              <div className="space-y-2 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-                <h3 className="text-sm font-medium">Your rides and prices</h3>
-                <ul className="space-y-1 text-sm">
-                  {DIRECTIONS.map((d) => {
-                    const usual = (usuals ?? []).find(
-                      (u) => parseDirection(u.direction) === d.value,
-                    );
-                    const stops = (usual?.stops ?? []) as { label?: string }[];
-                    return (
-                      <li
-                        key={d.value}
-                        className="flex items-baseline justify-between gap-3"
-                      >
-                        <span className="min-w-0">
-                          <span className="font-medium capitalize">
-                            {d.word}
-                          </span>{" "}
-                          <span className="text-neutral-600 dark:text-neutral-400">
-                            {usual
-                              ? `${stops[0]?.label ?? "Start"} → ${stops.at(-1)?.label ?? "End"}, ${usual.depart_time.slice(0, 5)}`
-                              : "not set up yet"}
-                          </span>
-                        </span>
-                        <span className="shrink-0 font-semibold tabular-nums">
-                          {usual ? `₹${usual.price_per_seat} a seat` : ""}
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
-                <div className="flex flex-wrap gap-x-4 text-sm">
-                  <Link
-                    href="/usual-ride"
-                    className="inline-flex min-h-10 items-center underline"
-                  >
-                    Change routes or prices
-                  </Link>
-                  <Link
-                    href="/car"
-                    className="inline-flex min-h-10 items-center underline"
-                  >
-                    Your car
-                  </Link>
-                </div>
+      <div className="space-y-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-12 lg:space-y-0">
+        <ProfileForm
+          welcome={isWelcome}
+          isOwner={owner}
+          userId={user.id}
+          upiQr={qrPath ? { path: qrPath, url: qr?.signedUrl ?? null } : null}
+          places={(places ?? []).map((p) => ({
+            id: p.id,
+            name: p.name,
+            lat: p.lat,
+            lng: p.lng,
+          }))}
+          profile={{
+            name: profile.name,
+            phone: profile.phone,
+            upiId: profile.upi_vpa,
+            homePlaceId: profile.home_place_id,
+            workPlaceId: profile.work_place_id,
+          }}
+        />
+        {!isWelcome && (
+          <div className="space-y-6">
+            <section id="preference" className="space-y-3">
+              <div className="space-y-1">
+                <h2 className="text-lg font-semibold">
+                  Do you have a car to share?
+                </h2>
+                <p className="text-sm text-neutral-500">
+                  Car owners get Offer and Riders in the menu: set up your car
+                  and your morning and evening rides with your price, then see
+                  who has booked. Riders just find seats.
+                </p>
               </div>
-            )}
-          </section>
-          <section id="alerts" className="space-y-3">
-            <div className="space-y-1">
-              <h2 className="text-lg font-semibold">Ride alerts</h2>
-              <p className="text-sm text-neutral-500">
-                Hear about cars going your way, like in the WhatsApp group: to
-                the office in the morning and home in the evening, matched to
-                your home and office stops above.
-              </p>
-            </div>
-            {!(profile.home_place_id && profile.work_place_id) && (
-              <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-                Set your home and office above first: alerts are matched to
-                them.
-              </p>
-            )}
-            <RideAlertsPicker current={parseRideAlerts(profile.ride_alerts)} />
-            <PushToggle />
-          </section>
-          <BlockedList />
-          <SignOutButton />
-          <DeleteAccount />
-        </>
-      )}
+              <RidePreferencePicker
+                current={parseRidePreference(profile.ride_preference)}
+              />
+              {owner && (
+                <div className="space-y-2 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
+                  <h3 className="text-sm font-medium">Your rides and prices</h3>
+                  <ul className="space-y-1 text-sm">
+                    {DIRECTIONS.map((d) => {
+                      const usual = (usuals ?? []).find(
+                        (u) => parseDirection(u.direction) === d.value,
+                      );
+                      const stops = (usual?.stops ?? []) as {
+                        label?: string;
+                      }[];
+                      return (
+                        <li
+                          key={d.value}
+                          className="flex items-baseline justify-between gap-3"
+                        >
+                          <span className="min-w-0">
+                            <span className="font-medium capitalize">
+                              {d.word}
+                            </span>{" "}
+                            <span className="text-neutral-600 dark:text-neutral-400">
+                              {usual
+                                ? `${stops[0]?.label ?? "Start"} → ${stops.at(-1)?.label ?? "End"}, ${usual.depart_time.slice(0, 5)}`
+                                : "not set up yet"}
+                            </span>
+                          </span>
+                          <span className="shrink-0 font-semibold tabular-nums">
+                            {usual ? `₹${usual.price_per_seat} a seat` : ""}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <div className="flex flex-wrap gap-x-4 text-sm">
+                    <Link
+                      href="/usual-ride"
+                      className="inline-flex min-h-10 items-center underline"
+                    >
+                      Change routes or prices
+                    </Link>
+                    <Link
+                      href="/car"
+                      className="inline-flex min-h-10 items-center underline"
+                    >
+                      Your car
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </section>
+            <section id="alerts" className="space-y-3">
+              <div className="space-y-1">
+                <h2 className="text-lg font-semibold">Ride alerts</h2>
+                <p className="text-sm text-neutral-500">
+                  Hear about cars going your way, like in the WhatsApp group: to
+                  the office in the morning and home in the evening, matched to
+                  your home and office stops.
+                </p>
+              </div>
+              {!(profile.home_place_id && profile.work_place_id) && (
+                <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+                  Set your home and office first: alerts are matched to them.
+                </p>
+              )}
+              <RideAlertsPicker
+                current={parseRideAlerts(profile.ride_alerts)}
+              />
+              <PushToggle />
+            </section>
+            <BlockedList />
+            <SignOutButton />
+            <DeleteAccount />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

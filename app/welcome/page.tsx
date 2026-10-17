@@ -13,7 +13,7 @@ export default function WelcomePage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 px-4 py-8 md:max-w-xl">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-8 md:max-w-xl lg:max-w-7xl lg:px-8">
         <Suspense
           fallback={
             <div className="h-80 animate-pulse rounded-2xl bg-neutral-100 dark:bg-neutral-800" />

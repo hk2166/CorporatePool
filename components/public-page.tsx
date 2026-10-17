@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 export function PublicPage({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 py-4">
+      <header className="mx-auto flex w-full max-w-4xl items-center justify-between gap-3 px-4 py-4 lg:max-w-6xl lg:px-8">
         <Link href="/home" className="flex items-center gap-2 font-semibold">
           {/* The app icon, drawn by app/icon-192.png/route.tsx. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -30,7 +30,7 @@ export function PublicPage({ children }: { children: ReactNode }) {
       {children}
 
       <footer className="border-t border-neutral-200 dark:border-neutral-800">
-        <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-sm text-neutral-500">
+        <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-sm text-neutral-500 lg:max-w-6xl lg:px-8">
           <span>CorporatePool · Free shared rides to work</span>
           <nav className="flex gap-1">
             <Link

@@ -21,7 +21,7 @@ export default function FeedbackPage({ searchParams }: PageProps<"/feedback">) {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-6 lg:grid lg:max-w-5xl lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start lg:gap-10 lg:space-y-0">
+      <main className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 py-6 lg:grid lg:max-w-7xl lg:px-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start lg:gap-10 lg:space-y-0">
         {/* On a laptop: sending on the left, the list on the right. */}
         <div className="space-y-6 lg:sticky lg:top-20">
           <div className="space-y-2">

@@ -14,7 +14,7 @@ export default function RidesPage() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-3xl flex-1 lg:max-w-5xl space-y-6 px-4 py-6">
+      <main className="mx-auto w-full max-w-3xl flex-1 lg:max-w-7xl lg:px-8 space-y-6 px-4 py-6">
         <AdminNav current="/admin/rides" />
         <Suspense
           fallback={

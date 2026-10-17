@@ -24,7 +24,7 @@ export default function UsualRidePage({
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 md:max-w-xl">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 md:max-w-xl lg:max-w-7xl lg:px-8">
         <Suspense
           fallback={
             <div className="space-y-4">
@@ -159,48 +159,51 @@ async function UsualRideSection({
           ))}
         </nav>
       </div>
-      {DIRECTIONS.map((d) => {
-        const usual = saved.get(d.value);
-        const stops = usual ? toInputs(usual.stops) : suggested[d.value];
-        return (
-          <section
-            key={d.value}
-            id={d.word}
-            aria-label={d.title}
-            className="scroll-mt-20 space-y-4"
-          >
-            <h2 className="text-lg font-semibold">{d.title}</h2>
-            <UsualRideForm
-              direction={d.value}
-              defaultTime={d.defaultTime}
-              places={placeList}
-              car={{ id: car.id, seats: car.seats_total }}
-              usualRide={
-                usual || stops
-                  ? {
-                      id: usual?.id ?? "",
-                      departTime:
-                        usual?.depart_time.slice(0, 5) ?? d.defaultTime,
-                      // A new evening ride starts with the morning one's seats and price.
-                      seats:
-                        usual?.seats_offered ??
-                        morning?.seats_offered ??
-                        Math.min(3, car.seats_total),
-                      // Empty until the owner names their price (or copies the morning's).
-                      price:
-                        usual?.price_per_seat ??
-                        morning?.price_per_seat ??
-                        null,
-                      notes: usual?.notes ?? "",
-                      autoDays: usual?.auto_golive_days ?? 0,
-                      stops: stops ?? [],
-                    }
-                  : null
-              }
-            />
-          </section>
-        );
-      })}
+      {/* On a laptop: the morning ride and the evening ride side by side. */}
+      <div className="space-y-8 lg:grid lg:grid-cols-2 lg:items-start lg:gap-10 lg:space-y-0">
+        {DIRECTIONS.map((d) => {
+          const usual = saved.get(d.value);
+          const stops = usual ? toInputs(usual.stops) : suggested[d.value];
+          return (
+            <section
+              key={d.value}
+              id={d.word}
+              aria-label={d.title}
+              className="scroll-mt-20 space-y-4"
+            >
+              <h2 className="text-lg font-semibold">{d.title}</h2>
+              <UsualRideForm
+                direction={d.value}
+                defaultTime={d.defaultTime}
+                places={placeList}
+                car={{ id: car.id, seats: car.seats_total }}
+                usualRide={
+                  usual || stops
+                    ? {
+                        id: usual?.id ?? "",
+                        departTime:
+                          usual?.depart_time.slice(0, 5) ?? d.defaultTime,
+                        // A new evening ride starts with the morning one's seats and price.
+                        seats:
+                          usual?.seats_offered ??
+                          morning?.seats_offered ??
+                          Math.min(3, car.seats_total),
+                        // Empty until the owner names their price (or copies the morning's).
+                        price:
+                          usual?.price_per_seat ??
+                          morning?.price_per_seat ??
+                          null,
+                        notes: usual?.notes ?? "",
+                        autoDays: usual?.auto_golive_days ?? 0,
+                        stops: stops ?? [],
+                      }
+                    : null
+                }
+              />
+            </section>
+          );
+        })}
+      </div>
       {isWelcome && (
         <Link
           href="/"

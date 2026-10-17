@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <>
       <AppHeader />
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 py-6 lg:max-w-5xl">
+      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 py-6 lg:max-w-7xl lg:px-8">
         {/* Who's signed in is only known per request, so that part streams in. */}
         <Suspense
           fallback={

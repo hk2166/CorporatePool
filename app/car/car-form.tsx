@@ -71,7 +71,11 @@ export function CarForm({ userId, car }: Props) {
   }
 
   return (
-    <form action={action} className="space-y-5" noValidate>
+    <form
+      action={action}
+      className="space-y-5 lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-6 lg:gap-y-5 lg:space-y-0"
+      noValidate
+    >
       {carId && <input type="hidden" name="carId" value={carId} />}
       {photos.map((photo) => (
         <input key={photo.path} type="hidden" name="photo" value={photo.path} />
@@ -143,13 +147,13 @@ export function CarForm({ userId, car }: Props) {
         </select>
       </Field>
 
-      <fieldset className="space-y-2">
+      <fieldset className="space-y-2 lg:col-span-2">
         <legend className="text-sm font-medium">Photos</legend>
         <p className="text-sm text-neutral-500">
           Up to {MAX_CAR_PHOTOS}. They help riders spot your car, and only
           riders with a confirmed seat can see them.
         </p>
-        <ul className="grid grid-cols-3 gap-2">
+        <ul className="grid grid-cols-3 gap-2 lg:grid-cols-6">
           {photos.map((photo) => (
             <li
               key={photo.path}
@@ -209,13 +213,13 @@ export function CarForm({ userId, car }: Props) {
       {state.errors.form && (
         <p
           role="alert"
-          className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+          className="lg:col-span-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
         >
           {state.errors.form}
         </p>
       )}
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 lg:col-span-2">
         <button
           type="submit"
           disabled={pending || uploading}

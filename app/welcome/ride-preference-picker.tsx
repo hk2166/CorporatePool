@@ -21,9 +21,10 @@ export function RidePreferencePicker({
   const chosen = pending ? tapped : current;
 
   return (
-    <form action={run} className="space-y-3">
+    <form action={run} className="@container space-y-3">
       {onboarding && <input type="hidden" name="next" value="onboarding" />}
-      <div className="grid gap-3">
+      {/* Side by side where there's room (the welcome page on a laptop), else stacked. */}
+      <div className="grid gap-3 @2xl:grid-cols-3">
         {RIDE_PREFERENCES.map((p) => (
           <button
             key={p.value}

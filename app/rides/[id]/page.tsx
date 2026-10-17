@@ -22,7 +22,7 @@ export default function RidePage({
   return (
     <>
       <AppHeader />
-      <main className="mx-auto w-full max-w-md flex-1 lg:max-w-2xl px-4 py-6">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 py-6 lg:max-w-7xl lg:px-8">
         <Suspense
           fallback={
             <div className="h-80 animate-pulse rounded-xl bg-neutral-100 dark:bg-neutral-800" />
@@ -107,66 +107,74 @@ async function RideDetails({
   // Seats and the rider list update by themselves while the owner watches (F-C3).
   return (
     <LiveSeatsProvider rideIds={[ride.id]} refresh={open}>
-      <div className="space-y-6">
-        {live === "1" && open && (
-          <p
-            role="status"
-            className="rounded-xl bg-emerald-50 px-4 py-3 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
-          >
-            You&apos;re live. Share it in your WhatsApp group so riders can
-            book.
-          </p>
-        )}
-        <div className="space-y-1">
-          <p className="text-sm text-neutral-500">{dayLabel(day)}</p>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {indiaTime(ride.depart_at)} ·{" "}
-            <LiveSeatsLeft
-              rideId={ride.id}
-              seatsLeft={ride.seats_left}
-              status={ride.status}
-              total={ride.seats_total}
-            />
-          </h1>
-          <p className="text-neutral-600 dark:text-neutral-400">
-            ₹{ride.price_per_seat} a seat
-          </p>
+      {/* On a laptop: the ride on the left; its riders and what to do on the right. */}
+      <div className="space-y-6 lg:grid lg:grid-cols-2 lg:items-start lg:gap-10 lg:space-y-0">
+        <div className="space-y-6">
+          {live === "1" && open && (
+            <p
+              role="status"
+              className="rounded-xl bg-emerald-50 px-4 py-3 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
+            >
+              You&apos;re live. Share it in your WhatsApp group so riders can
+              book.
+            </p>
+          )}
+          <div className="space-y-1">
+            <p className="text-sm text-neutral-500">{dayLabel(day)}</p>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              {indiaTime(ride.depart_at)} ·{" "}
+              <LiveSeatsLeft
+                rideId={ride.id}
+                seatsLeft={ride.seats_left}
+                status={ride.status}
+                total={ride.seats_total}
+              />
+            </h1>
+            <p className="text-neutral-600 dark:text-neutral-400">
+              ₹{ride.price_per_seat} a seat
+            </p>
+          </div>
+
+          <ol className="space-y-1">
+            {(stops ?? []).map((stop) => (
+              <li key={stop.seq} className="flex justify-between gap-3">
+                <span>{stop.label}</span>
+                <span className="text-sm text-neutral-500">
+                  {stop.seq === 0 ? "sets off" : `+${stop.eta_offset_min} min`}
+                </span>
+              </li>
+            ))}
+          </ol>
         </div>
 
-        <ol className="space-y-1">
-          {(stops ?? []).map((stop) => (
-            <li key={stop.seq} className="flex justify-between gap-3">
-              <span>{stop.label}</span>
-              <span className="text-sm text-neutral-500">
-                {stop.seq === 0 ? "sets off" : `+${stop.eta_offset_min} min`}
-              </span>
-            </li>
-          ))}
-        </ol>
+        <div className="space-y-6">
+          <OwnerRiders
+            ride={ride}
+            bookings={bookings ?? []}
+            stops={stops ?? []}
+          />
 
-        <OwnerRiders
-          ride={ride}
-          bookings={bookings ?? []}
-          stops={stops ?? []}
-        />
-
-        {publicRide && (
-          <ShareRideButton message={shareMessage(publicRide, url)} url={url} />
-        )}
-
-        {open && (
-          <>
-            <RideNotes rideId={ride.id} notes={ride.notes ?? ""} />
-            <CancelRide
-              rideId={ride.id}
-              riders={
-                (bookings ?? []).filter((b) =>
-                  ["REQUESTED", "CONFIRMED", "WAITLISTED"].includes(b.status),
-                ).length
-              }
+          {publicRide && (
+            <ShareRideButton
+              message={shareMessage(publicRide, url)}
+              url={url}
             />
-          </>
-        )}
+          )}
+
+          {open && (
+            <>
+              <RideNotes rideId={ride.id} notes={ride.notes ?? ""} />
+              <CancelRide
+                rideId={ride.id}
+                riders={
+                  (bookings ?? []).filter((b) =>
+                    ["REQUESTED", "CONFIRMED", "WAITLISTED"].includes(b.status),
+                  ).length
+                }
+              />
+            </>
+          )}
+        </div>
       </div>
     </LiveSeatsProvider>
   );
