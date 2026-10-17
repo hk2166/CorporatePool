@@ -136,7 +136,7 @@ export function PushToggle({ compact = false }: { compact?: boolean }) {
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
             {state === "on"
               ? "On for this browser."
-              : "Seat confirmed, waitlist, cancellations, car full."}
+              : "Seat confirmed, waiting list, cancellations, car full."}
           </p>
           <button
             type="button"

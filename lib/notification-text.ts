@@ -57,15 +57,15 @@ export function notificationText(
     case "booking_waitlisted": {
       const rank = typeof payload.rank === "number" ? ` #${payload.rank}` : "";
       return {
-        title: `Waitlisted${rank}`,
+        title: `In line for a seat${rank}`,
         body: `The car for ${at} is full. If a seat comes free, it's yours.`,
         url,
       };
     }
     case "request_withdrawn":
       return {
-        title: "Request withdrawn",
-        body: `You have a seat in another car around then, so your request for ${at} was withdrawn.`,
+        title: "Request cancelled",
+        body: `You have a seat in another car around then, so we cancelled your request for ${at}.`,
         url,
       };
     case "ride_cancelled": {
@@ -103,14 +103,14 @@ export function notificationText(
       };
     case "marked_no_show":
       return {
-        title: "Marked as a no-show",
-        body: "That costs 15 reliability points. If it's wrong, tell your group admin.",
+        title: "Marked as not coming",
+        body: "Your score went down by 15. If that's wrong, tell your group admin.",
         url: "/reliability",
       };
     case "ride_completed":
       return {
         title: "Thanks for riding",
-        body: "+2 reliability. Don't forget to pay the owner.",
+        body: "Your score went up by 2. Don't forget to pay the owner.",
         url,
       };
     case "reminder":
@@ -126,7 +126,7 @@ export function notificationText(
       const riders = typeof payload.riders === "number" ? payload.riders : 0;
       return {
         title: "Time to set off soon",
-        body: `Your ride leaves in about 15 minutes with ${riders} ${riders === 1 ? "rider" : "riders"}. Tap Start when you go.`,
+        body: `Your ride leaves in about 15 minutes with ${riders} ${riders === 1 ? "rider" : "riders"}. Tap Start ride when you leave.`,
         url,
       };
     }
@@ -163,8 +163,8 @@ export function notificationText(
       };
     case "ride_auto_live":
       return {
-        title: "You're live for tomorrow",
-        body: `Your usual ride for ${at} is up. Skip it if you're not driving.`,
+        title: "Your ride is posted for tomorrow",
+        body: `Your ride for ${at} is up. Skip it if you're not driving.`,
         url,
       };
     // Route alerts: a car going the member's way (right away, or tomorrow's in a summary).

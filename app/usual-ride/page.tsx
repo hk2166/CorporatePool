@@ -143,8 +143,8 @@ async function UsualRideSection({
         </h1>
         <p className="text-neutral-600 dark:text-neutral-400">
           Your morning ride to the office and your evening ride home, with the
-          stops where you pick people up. Save them once; going live for a day
-          is then one tap.
+          stops where you pick people up. Save them once; posting a ride for a
+          day is then one tap.
         </p>
         <nav aria-label="Rides" className="flex gap-2 text-sm">
           {DIRECTIONS.map((d) => (

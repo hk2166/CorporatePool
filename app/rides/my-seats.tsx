@@ -3,9 +3,9 @@ import { dayLabel, indiaDate, indiaTime } from "@/lib/india-time";
 import { createClient } from "@/lib/supabase/server";
 
 const STATUS: Record<string, string> = {
-  REQUESTED: "Requested",
+  REQUESTED: "Asked",
   CONFIRMED: "Confirmed",
-  WAITLISTED: "Waitlisted",
+  WAITLISTED: "In line",
 };
 
 // The rider's upcoming seats on the home page, each a tap away from its ride page. Nothing is

@@ -265,8 +265,8 @@ function RideRiders({
             Asking for a seat ({asking.length})
           </h3>
           <p className="text-sm text-neutral-500">
-            Seats are given out {handedOut}, to the most reliable riders first.
-            You&apos;ll see their numbers then.
+            Seats are given out {handedOut}, and riders who always turn up get
+            them first. You&apos;ll see their numbers then.
           </p>
           <ul className="space-y-2 text-sm">
             {asking.map((b) => (
@@ -311,8 +311,8 @@ function RideRiders({
       {started && (
         <>
           <p className="text-sm text-neutral-500">
-            Mark who came. Anyone you don&apos;t mark counts as having come. Tap
-            Complete at the office.
+            Tick who came. Anyone you don&apos;t tick counts as having come. Tap
+            Finish ride when you arrive.
           </p>
           <CompleteRideButton rideId={ride.id} />
         </>

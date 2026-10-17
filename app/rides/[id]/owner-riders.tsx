@@ -21,10 +21,10 @@ type Booking = {
 type Stop = { seq: number; label: string; eta_offset_min: number };
 
 const STATUS_LABEL: Record<string, string> = {
-  REQUESTED: "requested",
-  WAITLISTED: "waitlisted",
-  COMPLETED: "rode",
-  NO_SHOW: "no-show",
+  REQUESTED: "asked",
+  WAITLISTED: "in line",
+  COMPLETED: "came",
+  NO_SHOW: "didn't come",
 };
 
 // The owner's riders, and the morning of the ride (F-B8, user flow 3 step 5): who to pick up
@@ -171,24 +171,24 @@ export async function OwnerRiders({
       {open && !canStart && riding.length > 0 && (
         <p className="text-sm text-neutral-500">
           On the day, tap Start from{" "}
-          {indiaTime(new Date(departAt - 60 * 60 * 1000))}, then mark each rider
+          {indiaTime(new Date(departAt - 60 * 60 * 1000))}, then tick who came
           as you pick them up.
         </p>
       )}
       {started && (
         <>
           <p className="text-sm text-neutral-500">
-            Anyone you don&apos;t mark counts as having ridden. Tap Complete at
-            the office.
+            Anyone you don&apos;t tick counts as having come. Tap Finish ride
+            when you arrive.
           </p>
           <CompleteRideButton rideId={ride.id} />
         </>
       )}
       {ride.status === "COMPLETED" && (
         <p className="rounded-xl bg-emerald-50 px-4 py-3 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
-          Ride complete.{" "}
+          Ride finished.{" "}
           {toCollect > 0
-            ? `Riders pay you ₹${toCollect} in all by UPI or cash.`
+            ? `Riders pay you ₹${toCollect} in all, by UPI or cash.`
             : "Nobody rode this time."}
         </p>
       )}

@@ -19,7 +19,7 @@ type Props = {
 
 const initialState: GoLiveState = {};
 
-// "Go live for tomorrow — 08:00, 3 seats, ₹110?" (user flow 3). One tap, with an optional
+// "Post your ride for tomorrow — 08:00, 3 seats, ₹110?" (user flow 3). One tap, with an optional
 // change of time or seats for that day only.
 export function GoLiveCard(props: Props) {
   const [state, action, pending] = useActionState(goLive, initialState);
@@ -118,7 +118,7 @@ export function GoLiveCard(props: Props) {
         disabled={pending}
         className="h-12 w-full rounded-xl bg-emerald-600 text-base font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
       >
-        {pending ? "Going live…" : "Go live"}
+        {pending ? "Posting…" : "Post my ride"}
       </button>
     </form>
   );

@@ -30,7 +30,7 @@ export function RequestSeatForm({
   pickup: number;
   drop: number;
   maxSeats: number;
-  // What happens next: "Seats are handed out at 22:00 …" or "Free seats go first come".
+  // What happens next: "Ask any time until 22:00 …" or "Free seats go to whoever asks first".
   note: string;
 }) {
   const [state, action, pending] = useActionState(requestSeat, initialState);
@@ -107,10 +107,10 @@ export function RequestSeatForm({
           className="mt-1 h-4 w-4"
         />
         <span className="text-sm">
-          <span className="font-medium">Any car that fits is fine</span>
+          <span className="font-medium">Put me in any car going my way</span>
           <span className="block text-neutral-500">
-            If this one fills up, we can put you in another car on your route
-            around the same time.
+            If this car fills up, we&apos;ll find you a seat in another car on
+            your route around the same time.
           </span>
         </span>
       </label>
@@ -134,7 +134,7 @@ export function RequestSeatForm({
         disabled={pending}
         className="h-12 w-full rounded-xl bg-emerald-600 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
       >
-        {pending ? "Asking…" : "Request seat"}
+        {pending ? "Asking…" : "Ask for a seat"}
       </button>
       <p className="text-sm text-neutral-500">{note}</p>
     </form>
@@ -142,7 +142,7 @@ export function RequestSeatForm({
 }
 
 // Cancel a request, a waitlist place or a seat. Giving up a confirmed seat asks first, and
-// says when it will cost reliability points.
+// says when it will lower the rider's score.
 export function CancelBookingForm({
   bookingId,
   label,

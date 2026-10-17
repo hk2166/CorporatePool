@@ -18,7 +18,7 @@ export type UsualRideFormState = {
   usualRideId?: string;
 };
 
-// Saves one of the owner's usual rides (F-B1, F-B3), the template that "Go live" copies into a
+// Saves one of the owner's usual rides (F-B1, F-B3), the template that "Post my ride" copies into a
 // ride: the morning one (home → office) or the evening one (office → home).
 export async function saveUsualRide(
   _previous: UsualRideFormState,

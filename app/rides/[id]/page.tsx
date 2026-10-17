@@ -115,7 +115,7 @@ async function RideDetails({
               role="status"
               className="rounded-xl bg-emerald-50 px-4 py-3 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200"
             >
-              You&apos;re live. Share it in your WhatsApp group so riders can
+              Your ride is posted. Share it in your WhatsApp group so people can
               book.
             </p>
           )}

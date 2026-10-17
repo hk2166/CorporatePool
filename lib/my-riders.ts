@@ -82,7 +82,7 @@ export function ridersSummary(
   return [
     `${count(booked, "rider", "riders")} booked ${onRides}`,
     asking > 0 && `${asking} more asking for a seat`,
-    waitlisted > 0 && `${waitlisted} on the waitlist`,
+    waitlisted > 0 && `${waitlisted} waiting in line`,
   ]
     .filter(Boolean)
     .join(" · ");
