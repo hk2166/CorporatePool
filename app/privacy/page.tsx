@@ -133,8 +133,8 @@ export default function PrivacyPage() {
               to match riders with cars going their way, and run bookings;
             </li>
             <li>
-              to hand out seats fairly: when seats are short, riders with a
-              better reliability record get them first;
+              to keep your reliability record (rides you turned up for, missed
+              or cancelled late), which you and your group admins can see;
             </li>
             <li>
               to send you notifications you turned on (seat confirmed,

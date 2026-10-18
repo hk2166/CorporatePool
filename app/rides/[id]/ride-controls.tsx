@@ -74,8 +74,8 @@ export function CancelRide({
           {riders === 0
             ? "Nobody has booked yet."
             : `${riders} rider${riders === 1 ? "" : "s"} will be told straight away, and riders happy with any car will be offered another one.`}{" "}
-          Cancelling after 22:00 the evening before, once seats are handed out,
-          counts against your reliability.
+          Cancelling after 10 pm the evening before, with riders booked, lowers
+          your reliability score.
         </p>
         <label htmlFor="reason" className="block text-sm font-medium">
           Reason (optional, riders see it)

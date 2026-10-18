@@ -52,8 +52,8 @@ select is((select count(*) from pg_temp.alerts()), 1::bigint,
 select isnt(pg_temp.alert('One', '1'), null, 'by name');
 select is((select (a ->> 'from') || ' → ' || (a ->> 'to') from pg_temp.alert('One', '1') a),
   'Demo Stop 0 → Demo Stop 2', 'with where they get in and out');
-select is(pg_temp.alert('One', '1') ->> 'status', 'REQUESTED',
-  'and that they''re still asking');
+select is(pg_temp.alert('One', '1') ->> 'status', 'CONFIRMED',
+  'and that they have a seat (seats go first come)');
 
 select request_seat('00000000-0000-0000-0000-000000000902',
                     '30000000-0000-0000-0000-000000000901', 1::smallint, 2::smallint);
@@ -75,13 +75,13 @@ select is((select status::text from bookings
 select is((select count(*) from pg_temp.alerts()), 3::bigint,
   'and the owner isn''t told about a waitlisted rider');
 
--- Seats given out later don't tell the owner twice ------------------------------------------- 1
+-- A request queued before seats went first come tells the owner once -------------------------- 1
 
-update rides set allocation_at = now() - interval '1 minute'
- where id = '30000000-0000-0000-0000-000000000901';
+insert into bookings (ride_id, rider_id, pickup_seq, drop_seq)
+values ('30000000-0000-0000-0000-000000000901', '00000000-0000-0000-0000-000000000903', 0, 2);
 select private.allocate('30000000-0000-0000-0000-000000000901');
-select is((select count(*) from pg_temp.alerts()), 3::bigint,
-  'confirming riders who already asked doesn''t tell the owner again');
+select is((select count(*) from pg_temp.alerts()), 4::bigint,
+  'the owner heard when it was made, and isn''t told again when it''s confirmed');
 
 select * from finish();
 rollback;

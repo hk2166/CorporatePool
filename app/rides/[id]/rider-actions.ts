@@ -23,8 +23,8 @@ const REQUEST_ERRORS: Record<string, string> = {
   ALREADY_BOOKED: "You already have a seat in a car around this time.",
 };
 
-// Asks for a seat (F-D1, user flow 1 step 5). request_seat() decides what happens: queued until
-// 22:00, confirmed, or waitlisted (T-5.1).
+// Asks for a seat (F-D1, user flow 1 step 5). request_seat() decides what happens: a free seat
+// is confirmed straight away, a full car means the waiting list.
 export async function requestSeat(
   _previous: RiderActionState,
   formData: FormData,

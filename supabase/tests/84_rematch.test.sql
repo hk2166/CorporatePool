@@ -19,8 +19,8 @@ select ('20000000-0000-0000-0000-00000000080' || n)::uuid,
        ('00000000-0000-0000-0000-00000000080' || n)::uuid, 'Demo Car', 'White', 'HR26DM080' || n, 4
   from unnest(array['1', '2', '3']) as n;
 
--- Rides on the same route, 10 hours from now ("8:00") and after. Seats on "8:00", "8:15" and
--- "11:00" are being handed out first come; "8:30" still waits for its 22:00 allocation.
+-- Rides on the same route, 10 hours from now ("8:00") and after. Seats go first come on all of
+-- them, including "8:30", whose 22:00 is still to come.
 create temporary table names (name text primary key, id uuid not null) on commit drop;
 create function pg_temp.ride(p_name text, p_owner text, p_after interval, p_seats smallint,
                              p_alloc interval default '-1 hour')
@@ -84,9 +84,9 @@ select is(
 select is(cancel_ride(pg_temp.rider('2'), pg_temp.id('8:15'), 'Demo reason'), 1,
   'the 8:15 is cancelled with B on it');
 select is(run_rematch(), 1, 'cross-car matching finds B another car');
-select is(pg_temp.where_is('b'), '8:30 REQUESTED',
-  'the 8:00 is full and the 11:00 is too far off, so B queues for the 8:30, whose seats '
-  'are handed out at 22:00');
+select is(pg_temp.where_is('b'), '8:30 CONFIRMED',
+  'the 8:00 is full and the 11:00 is too far off, so B gets a seat on the 8:30 straight '
+  'away: seats go first come, even before 22:00');
 select is(
   (select rematch_requested from bookings where rider_id = pg_temp.rider('b') and ride_id = pg_temp.id('8:15')),
   false, 'B''s old booking is no longer looking');

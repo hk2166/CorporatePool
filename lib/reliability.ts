@@ -41,8 +41,8 @@ export type EventKind =
 export const EVENT_LABEL: Record<EventKind, string> = {
   COMPLETED: "Ride completed",
   NO_SHOW: "Didn't turn up",
-  LATE_CANCEL: "Cancelled a confirmed seat after 22:00",
-  OWNER_LATE_CANCEL: "Cancelled your ride after seats were handed out",
+  LATE_CANCEL: "Cancelled a confirmed seat after 10 pm the night before",
+  OWNER_LATE_CANCEL: "Cancelled a booked ride after 10 pm the night before",
 };
 
 // Whether an event still counts: completed rides always do; misses for 90 days.
