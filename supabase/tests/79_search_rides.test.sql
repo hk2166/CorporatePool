@@ -1,7 +1,7 @@
 -- search_rides() (T-4.1, lld.md §1).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(19);
+select plan(20);
 
 -- People (all fake): rider M (a man), rider W (a woman), owner O with most rides, owner B who
 -- blocked M, owner X whom M blocked.
@@ -71,7 +71,7 @@ select pg_temp.ride('mine',     '1', '08:00', '{{28.140,77.330,0},{28.490,77.090
 select pg_temp.ride('blocker',  '4', '08:00', '{{28.140,77.330,0},{28.490,77.090,70}}');
 select pg_temp.ride('blocked',  '5', '08:00', '{{28.140,77.330,0},{28.490,77.090,70}}');
 
--- The names of the rides a search finds, best fit first.
+-- The names of the rides a search finds, closest first.
 create function pg_temp.found(
   p_time_from time default '00:00', p_time_to time default '23:59:59', p_seats smallint default 1
 ) returns text language sql as $$
@@ -87,12 +87,15 @@ create function pg_temp.as_user(p_id text) returns void language sql as $$
                     true)
 $$;
 
--- Matching -------------------------------------------------------------------------------- 10
+-- Matching -------------------------------------------------------------------------------- 11
 
 select pg_temp.as_user('1');
 
-select is(pg_temp.found('07:00', '09:00'), 'via, match, near, one seat',
-  'the rides that fit, best fit first');
+select is(pg_temp.found('07:00', '09:00'), 'via, match, one seat, near',
+  'the rides that fit, closest first (no walking before 1 km), equally close ones earliest first');
+select ok(
+  position('late' in pg_temp.found()) < position('near' in pg_temp.found()),
+  'any time of day: the 11:00 stopping right there comes before the 08:00 a kilometre away');
 select ok(pg_temp.found() not like '%opposite%',
   'a car going the other way isn''t found (its drop stop comes before the pickup)');
 select ok(pg_temp.found() not like '%far%', 'a car whose nearest stop is 2.1 km away isn''t found');
@@ -100,8 +103,8 @@ select ok(pg_temp.found() not like '%full%', 'a full car isn''t found');
 select ok(pg_temp.found() not like '%cancelled%', 'a cancelled ride isn''t found');
 select is(pg_temp.found('07:00', '09:00', 2::smallint), 'via, match, near',
   'a car with fewer seats left than asked for isn''t found');
-select is(pg_temp.found(), 'via, match, near, one seat, late',
-  'without a window, the whole day (a later car ranks lower)');
+select is(pg_temp.found(), 'via, match, one seat, late, near',
+  'without a window, the whole day: closest first, so the 11:00 at the door beats the 08:00 1 km off');
 select ok(pg_temp.found() not like '%mine%', 'the rider''s own ride isn''t found');
 select ok(pg_temp.found() not like '%blocker%' and pg_temp.found() not like '%blocked%',
   'rides from someone who blocked the rider, or whom the rider blocked, aren''t found');

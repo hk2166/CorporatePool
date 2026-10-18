@@ -270,6 +270,11 @@ async function Results({
         </p>
       ) : (
         <LiveSeatsProvider rideIds={rides.map((r) => r.ride_id)}>
+          {rides.length > 1 && (
+            <p className="mb-3 text-sm text-neutral-500">
+              Closest to your stops first.
+            </p>
+          )}
           <ul className="space-y-3 xl:grid xl:grid-cols-2 xl:gap-3 xl:space-y-0">
             {rides.map((ride) => (
               <li key={ride.ride_id}>
