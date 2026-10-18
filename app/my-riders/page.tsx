@@ -164,7 +164,6 @@ function RideRiders({
   const at = (seq: number) => stopAt(stops, seq, ride.depart_at);
   const started = ride.status === "STARTED";
   const headingId = `ride-${ride.id}`;
-  const handedOut = `${dayLabel(indiaDate(new Date(ride.allocation_at)))} at ${indiaTime(ride.allocation_at)}`;
 
   return (
     <section
@@ -265,8 +264,8 @@ function RideRiders({
             Asking for a seat ({asking.length})
           </h3>
           <p className="text-sm text-neutral-500">
-            Seats are given out {handedOut}, and riders who always turn up get
-            them first. You&apos;ll see their numbers then.
+            Waiting to hear back. You&apos;ll see their numbers once their seat
+            is confirmed.
           </p>
           <ul className="space-y-2 text-sm">
             {asking.map((b) => (

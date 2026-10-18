@@ -71,8 +71,8 @@ export default function TermsPage() {
               your car and your driving.
             </li>
             <li>
-              Cancel as early as you can. Cancelling after seats are handed out
-              lowers your reliability score.
+              Cancel as early as you can. Cancelling a booked ride after 10 pm
+              the evening before lowers your reliability score.
             </li>
           </ul>
         </PolicySection>
@@ -93,8 +93,7 @@ export default function TermsPage() {
 
         <PolicySection title="Reliability and fair seats">
           <p>
-            When there are more requests than seats, the app gives seats to the
-            riders with the best reliability scores first, and moves riders who
+            Free seats go to whoever asks first, and the app moves riders who
             are waiting into other cars with room. The score goes up with
             completed rides and down with no-shows and late cancellations; the
             exact rules are shown to every member in the app. A driver marks who

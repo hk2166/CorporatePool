@@ -35,10 +35,8 @@ export default function HowTheScoreWorksPage() {
         </h1>
         <p>
           Every member has a score from {r.min} to {r.max}. It goes up when you
-          turn up for your rides and down when you don&apos;t. When more people
-          ask for seats than a car has, the seats go to the highest scores
-          first, at 10 pm the night before. After that, free seats go to whoever
-          asks first.
+          turn up for your rides and down when you don&apos;t. Seats go to
+          whoever asks first.
         </p>
 
         <section className="space-y-2">
@@ -58,7 +56,7 @@ export default function HowTheScoreWorksPage() {
           <p className="text-sm text-neutral-500">
             Not turning up and cancelling late count for {r.windowDays} days,
             then drop off. Rides you turned up for always count. Owners who
-            cancel a ride after seats were given out lose{" "}
+            cancel a booked ride after 10 pm the night before lose{" "}
             {Math.abs(r.lateCancel)} points too. Cancelling a request, or
             leaving the waiting list, never costs anything.
           </p>

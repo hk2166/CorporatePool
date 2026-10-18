@@ -19,7 +19,7 @@ const FEATURES = [
   },
   {
     title: "Fair when seats are short",
-    body: "Riders who turn up get seats first, and anyone waiting is moved into another car with room, so no car leaves half empty.",
+    body: "Free seats go to whoever asks first, and anyone waiting is moved into another car with room, so no car leaves half empty.",
   },
 ] as const;
 

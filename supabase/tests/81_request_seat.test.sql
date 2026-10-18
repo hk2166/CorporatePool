@@ -71,16 +71,21 @@ select pg_temp.ride('women',     '10 hours', '-1 hour', p_women_only => true);
 insert into bookings (ride_id, rider_id, pickup_seq, drop_seq)
 values (pg_temp.id('pending'), pg_temp.rider('4'), 0, 2);
 
--- Before allocation time --------------------------------------------------------------------- 2
+-- Seats go first come, any time (20261018090000_first_come_seats.sql) ----------------------- 2
 
-select is(pg_temp.ask('1', 'tomorrow'), 'REQUESTED',
-  'before 22:00 the evening before, a request only queues');
-select is(pg_temp.seats('tomorrow'), '3 OPEN', 'and takes no seat yet');
+select is(pg_temp.ask('1', 'tomorrow'), 'CONFIRMED',
+  'even before 22:00 the evening before, a free seat is confirmed straight away');
+select is(pg_temp.seats('tomorrow'), '2 OPEN', 'and the seat is taken');
 
--- After it: first come, first served --------------------------------------------------------- 13
+-- First come, first served -------------------------------------------------------------------- 13
 
-select is(pg_temp.ask('5', 'soon later'), 'REQUESTED', 'R5 asks for the later car too');
-select is(pg_temp.ask('5', 'soon'), 'CONFIRMED', 'after allocation time, a free seat is confirmed');
+-- R5 still has a request from before seats went first come, for a car an hour later.
+insert into bookings (ride_id, rider_id, pickup_seq, drop_seq)
+values (pg_temp.id('soon later'), pg_temp.rider('5'), 0, 2);
+select is(
+  (select status::text from bookings where rider_id = pg_temp.rider('5') and ride_id = pg_temp.id('soon later')),
+  'REQUESTED', 'R5 has an old request for the later car');
+select is(pg_temp.ask('5', 'soon'), 'CONFIRMED', 'a free seat is confirmed');
 select is(pg_temp.seats('soon'), '2 OPEN', 'and the seat is taken');
 select is(pg_temp.outbox('5', 'booking_confirmed'), 1::bigint, 'R5 is told');
 select is(
@@ -99,14 +104,14 @@ select is(pg_temp.seats('soon'), '0 FULL', 'the car is full');
 select is(pg_temp.outbox('0', 'ride_full'), 1::bigint, 'and the owner hears "your car is full"');
 select is(pg_temp.ask('4', 'soon'), 'WAITLISTED #2', 'R4 is second on the waitlist');
 
--- Allocation not run yet ----------------------------------------------------------------------- 2
+-- A request queued before the switch, not decided yet ------------------------------------------ 2
 
 select is(pg_temp.ask('2', 'pending'), 'CONFIRMED',
-  'past allocation time but not yet allocated: the ride is allocated first, then this request');
+  'a request still queued from before is decided first, then this one');
 select is(
   (select status::text from bookings where ride_id = pg_temp.id('pending') and rider_id = pg_temp.rider('4')),
   'CONFIRMED',
-  'so R4, who asked in time, got their seat first'
+  'so R4, who asked first, got their seat first'
 );
 
 -- Who can't ------------------------------------------------------------------------------------ 13

@@ -35,11 +35,11 @@ test("flow 1: a commuter finds a seat", async ({ page }) => {
   await expect(page.getByLabel("Put me in any car going my way")).toBeChecked();
   await page.getByRole("button", { name: "Ask for a seat" }).click();
 
-  // Before 22:00 the evening before, a request only queues (Q4).
+  // Seats go first come: a free seat is confirmed straight away.
   await expect(
-    page.getByRole("heading", { name: "You've asked for a seat" }),
+    page.getByRole("heading", { name: "Your seat is confirmed" }),
   ).toBeVisible();
-  expect(await bookingStatuses()).toEqual(["REQUESTED"]);
+  expect(await bookingStatuses()).toEqual(["CONFIRMED"]);
 });
 
 test("flow 2: an owner's one-time setup is there to use", async ({ page }) => {
@@ -56,37 +56,22 @@ test("flow 2: an owner's one-time setup is there to use", async ({ page }) => {
   ).toHaveText("Demo Palwal Start");
 });
 
-test("flow 4: more requests than seats, and the most reliable rider gets it", async ({
+test("flow 4: the car fills up, and the next rider waits in line", async ({
   browser,
 }) => {
-  // The rider asked first (flow 1); a second rider asks too. One seat, and the second rider
-  // has the better record.
+  // One seat, and it's past 22:00 the evening before (so cancelling it later costs points).
+  await freshRide({ seats: 1, allocationInHours: -1 });
   const second = await signedIn(browser, SECOND.email);
   await second.goto(`/rides/${RIDE}`);
   await second.getByRole("button", { name: "Ask for a seat" }).click();
   await expect(
-    second.getByRole("heading", { name: "You've asked for a seat" }),
-  ).toBeVisible();
-
-  const d = db();
-  await d
-    .from("rides")
-    .update({ seats_total: 1, seats_left: 1 })
-    .eq("id", RIDE);
-  await d.from("users").update({ reliability_score: 90 }).eq("id", SECOND.id);
-  // 22:00 comes: allocation runs.
-  await d
-    .from("rides")
-    .update({ allocation_at: new Date(Date.now() - 60_000).toISOString() })
-    .eq("id", RIDE);
-  await d.rpc("run_allocation");
-
-  await second.reload();
-  await expect(
     second.getByRole("heading", { name: "Your seat is confirmed" }),
   ).toBeVisible();
+
+  // The car is full, so the next rider to ask waits in line.
   const rider = await signedIn(browser, RIDER.email);
   await rider.goto(`/rides/${RIDE}`);
+  await rider.getByRole("button", { name: "Ask for a seat" }).click();
   await expect(
     rider.getByRole("heading", { name: "You're #1 in line for a seat" }),
   ).toBeVisible();

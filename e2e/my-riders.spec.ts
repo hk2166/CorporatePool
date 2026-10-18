@@ -7,7 +7,7 @@ test("an owner sees who has booked their ride", async ({ page }) => {
   try {
     await freshRide();
     const d = db();
-    // The rider asks for a seat from the first stop to the last, before seats are given out.
+    // The rider asks for a seat from the first stop to the last, and gets it straight away.
     const { error } = await d.rpc("request_seat", {
       p_rider_id: RIDER.id,
       p_ride_id: RIDE,
@@ -24,27 +24,7 @@ test("an owner sees who has booked their ride", async ({ page }) => {
     await expect(
       page.getByRole("heading", { name: "Your riders" }),
     ).toBeVisible();
-    await expect(
-      page.getByText(
-        "0 riders booked on your 1 upcoming ride · 1 more asking for a seat",
-      ),
-    ).toBeVisible();
     const ride = page.getByRole("region", { name: /^Tomorrow · / });
-    await expect(
-      ride.getByRole("heading", { name: "Asking for a seat (1)" }),
-    ).toBeVisible();
-    await expect(ride.getByText("Demo Rider")).toBeVisible();
-    // No number until the seat is confirmed.
-    await expect(ride.getByRole("link", { name: "Call" })).toHaveCount(0);
-
-    // Seats are given out.
-    await d
-      .from("rides")
-      .update({ allocation_at: new Date(Date.now() - 60_000).toISOString() })
-      .eq("id", RIDE);
-    await d.rpc("run_allocation");
-
-    await page.reload();
     await expect(
       page.getByText("1 rider booked on your 1 upcoming ride"),
     ).toBeVisible();

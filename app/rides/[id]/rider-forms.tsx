@@ -30,7 +30,7 @@ export function RequestSeatForm({
   pickup: number;
   drop: number;
   maxSeats: number;
-  // What happens next: "Ask any time until 22:00 …" or "Free seats go to whoever asks first".
+  // What happens next: "Free seats go to whoever asks first …".
   note: string;
 }) {
   const [state, action, pending] = useActionState(requestSeat, initialState);

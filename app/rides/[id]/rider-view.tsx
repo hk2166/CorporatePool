@@ -136,12 +136,7 @@ export async function RiderView({
         <div className="space-y-6">
           {active?.status === "REQUESTED" && (
             <Status title="You've asked for a seat" tone="neutral">
-              Seats are given out at {indiaTime(ride.allocation_at)}{" "}
-              {indiaDate(new Date(ride.allocation_at)) === indiaDate()
-                ? "today"
-                : dayLabel(indiaDate(new Date(ride.allocation_at)))}
-              . Riders who always turn up get seats first. We&apos;ll tell you
-              if you get one.
+              We&apos;ll tell you as soon as it&apos;s confirmed.
             </Status>
           )}
           {active?.status === "WAITLISTED" && (
@@ -189,7 +184,7 @@ export async function RiderView({
               warning={
                 active.status === "CONFIRMED"
                   ? allocated
-                    ? "Seats were given out at 10 pm, so cancelling now lowers your score by 5. Your seat goes straight to the next person in line."
+                    ? "It's after 10 pm the night before, so cancelling now lowers your score by 5. Your seat goes straight to the next person in line."
                     : "Your seat goes straight to the next person in line."
                   : undefined
               }
@@ -203,11 +198,7 @@ export async function RiderView({
               pickup={defaultPickup}
               drop={defaultDrop}
               maxSeats={Math.min(MAX_SEATS, ride.seats_total)}
-              note={
-                allocated
-                  ? "Free seats go to whoever asks first. If the car is full, you join the waiting list."
-                  : `Ask any time until ${indiaTime(ride.allocation_at)} the night before. Then seats go to riders who always turn up, so there's no need to rush.`
-              }
+              note="Free seats go to whoever asks first. If the car is full, you join the waiting list."
             />
           )}
 
