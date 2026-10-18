@@ -14,8 +14,4 @@ export const GOOGLE_SITE_VERIFICATION =
 export const LEGAL_UPDATED = "18 October 2026";
 
 // Who built the app, credited at the foot of every page.
-export const MAKER = {
-  name: "Hemant",
-  github: "hk2166",
-  githubUrl: "https://github.com/hk2166",
-};
+export const MAKER = { name: "Hemant" };
