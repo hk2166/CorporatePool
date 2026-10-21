@@ -742,6 +742,11 @@ isOneToOne: false
 "mark_rider":
 { Args: { "p_booking_id": string,"p_outcome": string,"p_owner_id": string }; Returns: Database["public"]['Enums']["booking_status"]
                            },
+"owner_add_place":
+{ Args: { "p_lat": number,"p_lng": number,"p_name": string }; Returns: {
+              "created": boolean,"lat": number,"lng": number,"place_id": string,"place_name": string
+            }[]
+                           },
 "recompute_scores":
 { Args: Record<PropertyKey, never>; Returns: number
                            },

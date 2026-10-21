@@ -1,7 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useActionState, useMemo, useState } from "react";
-import { AddStopLink } from "@/components/add-stop-link";
 import { StopOptions } from "@/components/city-stop-select";
 import { suggestedPricePerSeat } from "@/lib/pricing";
 import { pickedByOthers } from "@/lib/stop-choices";
@@ -13,8 +13,12 @@ import {
   type StopRole,
 } from "@/lib/usual-ride";
 import { saveUsualRide, type UsualRideFormState } from "./actions";
+import { NewPlacePanel } from "./new-place-panel";
 
 export type Place = { id: string; name: string; lat: number; lng: number };
+
+// The last choice in every stop list: add a stop that isn't there.
+const NEW_PLACE = "__new";
 
 type Props = {
   direction: Direction;
@@ -66,9 +70,21 @@ export function UsualRideForm({
   const [notes, setNotes] = useState(usualRide?.notes ?? "");
   const [days, setDays] = useState<number>(usualRide?.autoDays ?? 0);
 
+  // Stops this owner adds here join the list at once; the page's list catches up on refresh.
+  const router = useRouter();
+  const [added, setAdded] = useState<Place[]>([]);
+  const [addingAt, setAddingAt] = useState<number | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const allPlaces = useMemo(
+    () => [
+      ...places,
+      ...added.filter((a) => !places.some((p) => p.id === a.id)),
+    ],
+    [places, added],
+  );
   const placeById = useMemo(
-    () => new Map(places.map((place) => [place.id, place])),
-    [places],
+    () => new Map(allPlaces.map((place) => [place.id, place])),
+    [allPlaces],
   );
   const suggested = useMemo(() => {
     const route = stops
@@ -83,8 +99,10 @@ export function UsualRideForm({
     setStops((current) =>
       current.map((stop, i) => (i === index ? { ...stop, ...change } : stop)),
     );
-  const removeStop = (index: number) =>
+  const removeStop = (index: number) => {
+    setAddingAt(null);
     setStops((current) => current.filter((_, i) => i !== index));
+  };
   // A new drop spot goes at the end; a new pickup spot after the last pickup, timed between
   // it and the first drop.
   const addStop = (role: StopRole) =>
@@ -131,10 +149,17 @@ export function UsualRideForm({
         </legend>
         <p className="text-sm text-neutral-500">
           In order, with roughly how many minutes after setting off you reach
-          each one. A spot that isn&apos;t listed can be requested: add its
-          Google Maps link if you can, so the admin puts it in the right place.
+          each one. Not in a list? Pick &ldquo;+ Add a new location&rdquo; at
+          the bottom of it.
         </p>
-        <AddStopLink next="/usual-ride" empty={places.length === 0} />
+        {notice && (
+          <p
+            role="status"
+            className="text-sm font-medium text-emerald-700 dark:text-emerald-400"
+          >
+            {notice}
+          </p>
+        )}
         {(["pickup", "drop"] as const).map((role) => {
           const group = stops
             .map((stop, index) => ({ stop, index }))
@@ -152,60 +177,81 @@ export function UsualRideForm({
               </div>
               <ol className="space-y-2">
                 {group.map(({ stop, index }, n) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <span className="w-5 shrink-0 text-center text-sm text-neutral-500">
-                      {n + 1}
-                    </span>
-                    <select
-                      aria-label={`${noun} ${n + 1}`}
-                      value={stop.placeId}
-                      onChange={(e) =>
-                        updateStop(index, { placeId: e.target.value })
-                      }
-                      className={`${fieldClass} min-w-0 flex-1`}
-                    >
-                      <option value="">Choose a spot</option>
-                      <StopOptions
-                        places={places}
-                        exclude={pickedByOthers(
-                          stops.map((s) => s.placeId),
-                          index,
-                        )}
-                      />
-                    </select>
-                    {index === 0 ? (
-                      <span className="w-24 shrink-0 text-sm text-neutral-500">
-                        sets off
+                  <li key={index} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 shrink-0 text-center text-sm text-neutral-500">
+                        {n + 1}
                       </span>
-                    ) : (
-                      <label className="flex w-24 shrink-0 items-center gap-1 text-sm text-neutral-500">
-                        +
-                        <input
-                          type="number"
-                          inputMode="numeric"
-                          min={1}
-                          max={600}
-                          aria-label={`Minutes to ${noun.toLowerCase()} ${n + 1}`}
-                          value={stop.etaOffsetMin}
-                          onChange={(e) =>
-                            updateStop(index, {
-                              etaOffsetMin: Number(e.target.value),
-                            })
-                          }
-                          className="h-12 w-14 rounded-xl border border-neutral-300 bg-white px-2 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
-                        />
-                        min
-                      </label>
-                    )}
-                    {group.length > 1 && index > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => removeStop(index)}
-                        aria-label={`Remove ${noun.toLowerCase()} ${n + 1}`}
-                        className="h-12 shrink-0 rounded-xl px-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                      <select
+                        aria-label={`${noun} ${n + 1}`}
+                        value={stop.placeId}
+                        onChange={(e) => {
+                          if (e.target.value === NEW_PLACE) setAddingAt(index);
+                          else updateStop(index, { placeId: e.target.value });
+                        }}
+                        className={`${fieldClass} min-w-0 flex-1`}
                       >
-                        ✕
-                      </button>
+                        <option value="">Choose a spot</option>
+                        <StopOptions
+                          places={allPlaces}
+                          exclude={pickedByOthers(
+                            stops.map((s) => s.placeId),
+                            index,
+                          )}
+                        />
+                        <option value={NEW_PLACE}>+ Add a new location…</option>
+                      </select>
+                      {index === 0 ? (
+                        <span className="w-24 shrink-0 text-sm text-neutral-500">
+                          sets off
+                        </span>
+                      ) : (
+                        <label className="flex w-24 shrink-0 items-center gap-1 text-sm text-neutral-500">
+                          +
+                          <input
+                            type="number"
+                            inputMode="numeric"
+                            min={1}
+                            max={600}
+                            aria-label={`Minutes to ${noun.toLowerCase()} ${n + 1}`}
+                            value={stop.etaOffsetMin}
+                            onChange={(e) =>
+                              updateStop(index, {
+                                etaOffsetMin: Number(e.target.value),
+                              })
+                            }
+                            className="h-12 w-14 rounded-xl border border-neutral-300 bg-white px-2 text-base text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
+                          />
+                          min
+                        </label>
+                      )}
+                      {group.length > 1 && index > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => removeStop(index)}
+                          aria-label={`Remove ${noun.toLowerCase()} ${n + 1}`}
+                          className="h-12 shrink-0 rounded-xl px-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                    {addingAt === index && (
+                      <NewPlacePanel
+                        label={`New location for ${noun.toLowerCase()} ${n + 1}`}
+                        onCancel={() => setAddingAt(null)}
+                        onAdded={(place, created) => {
+                          setAdded((current) => [...current, place]);
+                          updateStop(index, { placeId: place.id });
+                          setAddingAt(null);
+                          setNotice(
+                            created
+                              ? `Added “${place.name}”. It's in everyone's list now.`
+                              : `“${place.name}” was already there, so it's picked.`,
+                          );
+                          router.refresh();
+                        }}
+                      />
                     )}
                   </li>
                 ))}
