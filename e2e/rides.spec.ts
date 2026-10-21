@@ -73,3 +73,44 @@ test("a driver's sign-up goes on to the car and the rides", async ({
     page.getByRole("heading", { name: "Evening: office → home" }),
   ).toBeVisible();
 });
+
+// An owner adds a stop that isn't in the list, right from a pickup list: it's picked in that
+// row and is in every list straight away.
+test("an owner adds a new location from a pickup list", async ({ page }) => {
+  const name = `Demo Owner Corner ${Date.now()}`;
+  try {
+    await signIn(page, OWNER.email);
+    await page.goto("/usual-ride");
+    const morning = page.getByRole("region", {
+      name: "Morning: home → office",
+    });
+    await morning.getByRole("button", { name: "+ Add a pickup spot" }).click();
+    await morning
+      .getByLabel("Pickup spot 2", { exact: true })
+      .selectOption({ label: "+ Add a new location…" });
+    const panel = morning.getByRole("group", {
+      name: "New location for pickup spot 2",
+    });
+    await panel.getByLabel("Name").fill(name);
+    await panel
+      .getByLabel("Google Maps link")
+      .fill("https://www.google.com/maps/search/28.2512,77.2633");
+    await panel.getByRole("button", { name: "Add location" }).click();
+
+    await expect(morning.getByRole("status")).toContainText(`Added “${name}”`);
+    await expect(
+      morning
+        .getByLabel("Pickup spot 2", { exact: true })
+        .locator("option:checked"),
+    ).toHaveText(name);
+    // Everyone's list has it, including the evening ride's.
+    await expect(
+      page
+        .getByRole("region", { name: "Evening: office → home" })
+        .getByLabel("Pickup spot 1", { exact: true })
+        .locator("option", { hasText: name }),
+    ).toHaveCount(1);
+  } finally {
+    await db().from("places").delete().eq("name", name);
+  }
+});
